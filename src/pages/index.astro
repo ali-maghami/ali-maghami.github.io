@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { getNavHref } from '../lib/nav';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
@@ -123,22 +124,22 @@ const posts = (await getCollection('blog'))
 					technical writings, and experiments.
 				</p>
 				<div class="cta-buttons">
-					<a href="/projects" class="btn btn-primary">Explore Projects &rarr;</a>
-					<a href="/blog" class="btn">Read Blog</a>
+					<a href={getNavHref('/projects')} class="btn btn-primary">Explore Projects &rarr;</a>
+					<a href={getNavHref('/blog')} class="btn">Read Blog</a>
 				</div>
 			</div>
 
 			<section class="section">
 				<div class="section-header">
 					<h2>Featured Projects</h2>
-					<a href="/projects">View all &rarr;</a>
+					<a href={getNavHref('/projects')}>View all &rarr;</a>
 				</div>
 				<div class="project-list">
 					{
 						projects.map((proj) => (
 							<div class="project-item">
 								<h3>
-									<a href={`/projects/${proj.id}/`}>{proj.data.title}</a>
+									<a href={getNavHref(`/projects/${proj.id}/`)}>{proj.data.title}</a>
 									<span class={`badge ${proj.data.type === 'personal' ? 'badge-personal' : 'badge-previous'}`}>
 										{proj.data.type === 'personal' ? 'Personal' : 'Previous'}
 									</span>
@@ -155,14 +156,14 @@ const posts = (await getCollection('blog'))
 			<section class="section">
 				<div class="section-header">
 					<h2>Recent Writings</h2>
-					<a href="/blog">View all &rarr;</a>
+					<a href={getNavHref('/blog')}>View all &rarr;</a>
 				</div>
 				<div class="project-list">
 					{
 						posts.map((post) => (
 							<div class="project-item">
 								<h3>
-									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+									<a href={getNavHref(`/blog/${post.id}/`)}>{post.data.title}</a>
 								</h3>
 								<p style="margin: 0; font-size: 0.9rem; color: rgb(var(--gray-dark));">
 									{post.data.description}

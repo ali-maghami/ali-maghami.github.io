@@ -1,16 +1,17 @@
 ---
 import { SITE_TITLE } from '../consts';
+import { getNavHref } from '../lib/nav';
 import HeaderLink from './HeaderLink.astro';
 ---
 
 <header>
 	<nav>
-		<h2><a href="/">{SITE_TITLE}</a></h2>
+		<h2><a href={getNavHref('/')}>{SITE_TITLE}</a></h2>
 		<div class="internal-links">
-			<HeaderLink href="/">Home</HeaderLink>
-			<HeaderLink href="/projects">Projects</HeaderLink>
-			<HeaderLink href="/blog">Blog</HeaderLink>
-			<HeaderLink href="/about">About</HeaderLink>
+			<HeaderLink href={getNavHref('/')}>Home</HeaderLink>
+			<HeaderLink href={getNavHref('/projects/')}>Projects</HeaderLink>
+			<HeaderLink href={getNavHref('/blog/')}>Blog</HeaderLink>
+			<HeaderLink href={getNavHref('/about/')}>About</HeaderLink>
 		</div>
 		<div class="social-links">
 			<a href="https://github.com/maghamis" target="_blank">
