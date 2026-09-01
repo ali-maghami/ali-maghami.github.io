@@ -1,63 +1,53 @@
-# Astro Starter Kit: Blog
+# maghamis - Personal Website & Portfolio
+
+A modern, fast, and content-driven personal website built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
+
+## ✨ Features
+
+- 💼 **Project Showcase:** Separate sections and categorization for **Personal Projects** and **Previous Work / Professional Experience**.
+- 📝 **Blog & Markdown Support:** MDX and Markdown content collections with schema validation.
+- 🎨 **Tailwind CSS Integration:** Fast and flexible styling.
+- ⚡ **Blazing Fast:** Static site generation with Astro for 100/100 Lighthouse performance.
+- 🚀 **GitHub Pages Ready:** Built-in GitHub Actions CI/CD workflow (`.github/workflows/deploy.yml`).
+- 📡 **SEO & Feeds:** Automatic sitemap and RSS feed generation.
+
+## 📁 Content Structure
+
+- **Projects (`src/content/projects/`):**
+  Add markdown files with `type: 'personal'` or `type: 'previous'` frontmatter to showcase your work.
+  ```yaml
+  ---
+  title: 'My Project Name'
+  description: 'A brief description of what was built.'
+  type: 'personal' # or 'previous'
+  pubDate: 2026-09-01
+  tags: ['Astro', 'TypeScript', 'TailwindCSS']
+  repoUrl: 'https://github.com/maghamis/...'
+  liveUrl: 'https://...'
+  ---
+  ```
+- **Blog Posts (`src/content/blog/`):**
+  Add markdown / MDX articles to share technical insights, tutorials, and notes.
+
+## 🚀 Quick Start
 
 ```sh
-npm create astro@latest -- --template blog
+# 1. Install dependencies
+npm install
+
+# 2. Start development server
+npm run dev
+
+# 3. Build for production
+npm run build
+
+# 4. Preview production build
+npm run preview
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 🌐 Deploying to GitHub Pages
 
-Features:
+1. In your GitHub repository settings, go to **Settings > Pages**.
+2. Under **Build and deployment > Source**, select **GitHub Actions**.
+3. Push to `main` branch and the workflow will build and deploy automatically!
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).

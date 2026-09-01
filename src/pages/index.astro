@@ -1,48 +1,177 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const projects = (await getCollection('projects')).slice(0, 4);
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			.hero {
+				padding: 2rem 0 3rem 0;
+				border-bottom: 1px solid rgb(var(--gray-light));
+				margin-bottom: 2.5rem;
+			}
+			.hero h1 {
+				font-size: 2.5rem;
+				margin-bottom: 0.75rem;
+			}
+			.hero p {
+				font-size: 1.15rem;
+				color: rgb(var(--gray-dark));
+				line-height: 1.6;
+			}
+			.cta-buttons {
+				display: flex;
+				gap: 1rem;
+				margin-top: 1.5rem;
+			}
+			.btn {
+				display: inline-block;
+				padding: 0.6rem 1.2rem;
+				border-radius: 8px;
+				text-decoration: none;
+				font-weight: 600;
+				font-size: 0.95rem;
+				border: 1px solid rgb(var(--gray));
+				color: rgb(var(--gray-dark));
+			}
+			.btn-primary {
+				background-color: var(--accent);
+				color: white;
+				border-color: var(--accent);
+			}
+			.btn-primary:hover {
+				background-color: var(--accent-dark);
+			}
+			.section {
+				margin-bottom: 3rem;
+			}
+			.section-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: baseline;
+				margin-bottom: 1.25rem;
+			}
+			.section-header h2 {
+				margin: 0;
+				font-size: 1.5rem;
+			}
+			.section-header a {
+				color: var(--accent);
+				font-size: 0.9rem;
+				text-decoration: none;
+			}
+			.project-list {
+				display: grid;
+				grid-template-columns: 1fr;
+				gap: 1rem;
+			}
+			.project-item {
+				background: white;
+				border: 1px solid #e2e8f0;
+				border-radius: 8px;
+				padding: 1.25rem;
+				transition: border-color 0.2s ease;
+			}
+			.project-item:hover {
+				border-color: var(--accent);
+			}
+			.project-item h3 {
+				margin: 0 0 0.4rem 0;
+				font-size: 1.15rem;
+			}
+			.project-item h3 a {
+				color: rgb(var(--black));
+				text-decoration: none;
+			}
+			.badge {
+				display: inline-block;
+				padding: 0.15rem 0.5rem;
+				border-radius: 9999px;
+				font-size: 0.7rem;
+				font-weight: 600;
+				text-transform: uppercase;
+				margin-left: 0.5rem;
+			}
+			.badge-personal {
+				background-color: #e0f2fe;
+				color: #0369a1;
+			}
+			.badge-previous {
+				background-color: #f3e8ff;
+				color: #6b21a8;
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+			<div class="hero">
+				<h1>👋 Hi, I'm maghamis</h1>
+				<p>
+					Welcome to my personal website! Here I share my personal projects, previous professional work,
+					technical writings, and experiments.
+				</p>
+				<div class="cta-buttons">
+					<a href="/projects" class="btn btn-primary">Explore Projects &rarr;</a>
+					<a href="/blog" class="btn">Read Blog</a>
+				</div>
+			</div>
+
+			<section class="section">
+				<div class="section-header">
+					<h2>Featured Projects</h2>
+					<a href="/projects">View all &rarr;</a>
+				</div>
+				<div class="project-list">
+					{
+						projects.map((proj) => (
+							<div class="project-item">
+								<h3>
+									<a href={`/projects/${proj.id}/`}>{proj.data.title}</a>
+									<span class={`badge ${proj.data.type === 'personal' ? 'badge-personal' : 'badge-previous'}`}>
+										{proj.data.type === 'personal' ? 'Personal' : 'Previous'}
+									</span>
+								</h3>
+								<p style="margin: 0; font-size: 0.9rem; color: rgb(var(--gray-dark));">
+									{proj.data.description}
+								</p>
+							</div>
+						))
+					}
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-header">
+					<h2>Recent Writings</h2>
+					<a href="/blog">View all &rarr;</a>
+				</div>
+				<div class="project-list">
+					{
+						posts.map((post) => (
+							<div class="project-item">
+								<h3>
+									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+								</h3>
+								<p style="margin: 0; font-size: 0.9rem; color: rgb(var(--gray-dark));">
+									{post.data.description}
+								</p>
+							</div>
+						))
+					}
+				</div>
+			</section>
 		</main>
 		<Footer />
 	</body>
