@@ -7,23 +7,18 @@ tags: ['Deep Learning', 'Robotics', 'Synthetic Data', 'Computer Vision', 'Point 
 featured: false
 ---
 
-## Project Overview
+## Overview
 
-Architected and implemented a complete automated 3D perception pipeline for robotic bin picking applications at TetraGen Robotics, leveraging synthetic data generation, deep learning, and point-cloud processing for precise object localization and grasp planning.
+Developed a complete 3D perception pipeline for robotic bin picking applications, leveraging synthetic data generation and deep learning for object localization and grasp planning.
 
-## Key Achievements
+## Contributions
 
-- **Synthetic Data Pipeline:** Developed automated 3D data generation framework for creating large-scale training datasets
-- **Deep Learning Models:** Trained instance segmentation models (Mask R-CNN) on synthetic data with successful transfer to real-world bin-picking scenarios
-- **Point Cloud Processing:** Implemented target pose estimation and colored point-cloud analysis for grasp planning
-- **Scalable Architecture:** Built distributed client-server framework for parallel synthetic data generation across multiple networked computers
-- **Commercialization:** Translated research concepts into production-ready perception tools
+- Built automated 3D data generation framework for training dataset creation
+- Trained instance segmentation models on synthetic data for real-world transfer
+- Implemented point-cloud processing for pose estimation and grasp planning
+- Developed distributed client-server framework for parallel data generation
 
 ## Technologies
 
-- **Deep Learning:** PyTorch, Mask R-CNN, instance segmentation
-- **Vision & Geometry:** OpenCV, Open3D, point-cloud processing
-- **Robotics:** Robot OS (ROS), robot kinematics, grasp planning
-- **Data Generation:** Blender API, synthetic image rendering
-- **Software Architecture:** Python, multi-threaded data pipelines
+PyTorch, Mask R-CNN, OpenCV, Open3D, Robot OS (ROS), Blender API, Python
 

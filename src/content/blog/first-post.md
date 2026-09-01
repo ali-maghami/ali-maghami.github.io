@@ -1,6 +1,6 @@
 ---
 title: 'Calibration of Multi-Robot Cooperative Systems Using Deep Neural Networks'
-description: 'Using machine learning to achieve 80%+ error reduction in dual-arm robotic systems for aerospace manufacturing'
+description: 'Using machine learning to calibrate dual-arm robotic systems for precision aerospace manufacturing'
 pubDate: 'Jun 15 2023'
 heroImage: '../../assets/blog-placeholder-3.jpg'
 ---
@@ -13,34 +13,18 @@ heroImage: '../../assets/blog-placeholder-3.jpg'
 
 ## Overview
 
-This peer-reviewed research article presents a deep-learning approach for calibrating multi-robot cooperative systems, achieving unprecedented levels of accuracy for precision aerospace assembly applications.
+This research explores using deep neural networks to calibrate multi-robot systems, with application to precision aerospace assembly.
 
-## Key Contributions
+## Problem
 
-### The Challenge
-Traditional calibration methods struggle with accumulated positional errors when two robotic arms must work together with sub-millimeter precision for aerospace part handling and assembly tasks.
+Traditional calibration methods struggle when two robotic arms must work together with sub-millimeter precision. We explored whether machine learning could help improve this process.
 
-### Our Solution
-We trained deep neural networks to learn and compensate for calibration residuals, leveraging robotic measurement data to achieve highly accurate cooperative positioning without extensive manual calibration procedures.
+## Approach
 
-### Results
-- **80%+ error reduction** in relative positioning between cooperating robots
-- **Practical deployment procedures** suitable for manufacturing environments
-- **Validated across multiple robot configurations** and assembly scenarios
-- **Production-ready methodology** enabling immediate industrial application
+We trained neural networks to learn and compensate for calibration errors from robotic measurement data, enabling more accurate cooperative positioning.
 
-## Technical Highlights
+## Results
 
-- Neural network-based residual learning for systematic error compensation
-- Rigorous data quality analysis and handling strategies
-- Cross-platform validation and generalization testing
-- Published research advancing the field of robotic precision assembly
+The methods were validated across multiple robot configurations and assembly scenarios, demonstrating practical potential for manufacturing environments.
 
-## Impact
-
-This work advances the practical applicability of cooperative robotic systems in aerospace manufacturing, where precision directly impacts part quality, assembly repeatability, and final product certification and safety.
-
-## Access
-
-The full paper is available through the Journal of Intelligent & Robotic Systems and provides detailed methodology, experimental validation, and results for researchers and practitioners in robotics and aerospace manufacturing.
 
