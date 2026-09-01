@@ -1,16 +1,46 @@
 ---
-title: 'First post'
-description: 'Lorem ipsum dolor sit amet'
-pubDate: 'Jul 08 2022'
+title: 'Calibration of Multi-Robot Cooperative Systems Using Deep Neural Networks'
+description: 'Using machine learning to achieve 80%+ error reduction in dual-arm robotic systems for aerospace manufacturing'
+pubDate: 'Jun 15 2023'
 heroImage: '../../assets/blog-placeholder-3.jpg'
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
+## Publication
 
-Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc. Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra massa massa ultricies mi.
+**Authors:** Maghami, A., Imbert, A., Côté, G., Monsarrat, B., Birglen, L., and Khoshdarregi, M.
 
-Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
+**Journal:** Journal of Intelligent & Robotic Systems, 2023
 
-Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id cursus metus aliquam eleifend mi.
+## Overview
 
-Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
+This peer-reviewed research article presents a deep-learning approach for calibrating multi-robot cooperative systems, achieving unprecedented levels of accuracy for precision aerospace assembly applications.
+
+## Key Contributions
+
+### The Challenge
+Traditional calibration methods struggle with accumulated positional errors when two robotic arms must work together with sub-millimeter precision for aerospace part handling and assembly tasks.
+
+### Our Solution
+We trained deep neural networks to learn and compensate for calibration residuals, leveraging robotic measurement data to achieve highly accurate cooperative positioning without extensive manual calibration procedures.
+
+### Results
+- **80%+ error reduction** in relative positioning between cooperating robots
+- **Practical deployment procedures** suitable for manufacturing environments
+- **Validated across multiple robot configurations** and assembly scenarios
+- **Production-ready methodology** enabling immediate industrial application
+
+## Technical Highlights
+
+- Neural network-based residual learning for systematic error compensation
+- Rigorous data quality analysis and handling strategies
+- Cross-platform validation and generalization testing
+- Published research advancing the field of robotic precision assembly
+
+## Impact
+
+This work advances the practical applicability of cooperative robotic systems in aerospace manufacturing, where precision directly impacts part quality, assembly repeatability, and final product certification and safety.
+
+## Access
+
+The full paper is available through the Journal of Intelligent & Robotic Systems and provides detailed methodology, experimental validation, and results for researchers and practitioners in robotics and aerospace manufacturing.
+
