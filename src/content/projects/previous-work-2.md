@@ -1,16 +1,25 @@
 ---
-title: 'Real-Time Data Analytics Dashboard'
-description: 'High-throughput event streaming platform processing millions of events daily with sub-second dashboards.'
+title: 'Vision-Based Robotic Drilling for Aerospace Manufacturing'
+description: 'Research on precision robotic drilling with online error correction using machine vision.'
 type: 'previous'
-pubDate: 2024-09-01
-tags: ['React', 'TypeScript', 'Kafka', 'ClickHouse', 'Python']
+pubDate: 2023-12-01
+tags: ['Computer Vision', 'Robotics', 'Deep Learning', 'Aerospace', 'Research']
 featured: false
 ---
 
 ## Overview
 
-Designed and built an end-to-end real-time analytics system for tracking user behavior and system performance metrics.
+Conducted research on vision-based guidance systems for precision robotic drilling in aerospace composite manufacturing, translating computer vision research into practical systems for industrial applications.
 
-### Key Contributions
-- Implemented real-time dashboard visualizations in React and WebSockets.
-- Tuned Kafka consumer groups and database indexing for high throughput.
+## Contributions
+
+- Engineered custom optical measurement system for online robot path correction
+- Developed target-localization methods enabling real-time process adaptation
+- Created automated multi-light imaging workflows with deep learning for defect detection in composites
+- Published peer-reviewed research demonstrating practical applicability to manufacturing
+
+## Technologies
+
+OpenCV, PyTorch, Semantic Segmentation, ROS, KUKA Robot Control, Laser Profiling
+
+

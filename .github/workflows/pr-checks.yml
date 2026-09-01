@@ -1,0 +1,48 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Build and verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint if available
+        run: |
+          HAS_LINT=$(node -p "Boolean(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).scripts?.lint)")
+          if [ "$HAS_LINT" = "true" ]; then
+            npm run lint
+          else
+            echo "No lint script found, skipping."
+          fi
+
+      - name: Run tests if available
+        run: |
+          HAS_TEST=$(node -p "Boolean(JSON.parse(require('fs').readFileSync('package.json', 'utf8')).scripts?.test)")
+          if [ "$HAS_TEST" = "true" ]; then
+            npm test
+          else
+            echo "No test script found, skipping."
+          fi
+
+      - name: Build site
+        run: npm run build

@@ -1,18 +1,24 @@
 ---
-title: 'Interactive CLI Toolkit'
-description: 'A lightning-fast command-line productivity suite for developers and DevOps engineers.'
-type: 'personal'
-pubDate: 2026-05-10
-tags: ['Go', 'CLI', 'Docker']
-repoUrl: 'https://github.com/maghamis'
+title: 'Robotic Bin Picking with Synthetic Data & Deep Learning'
+description: 'End-to-end 3D perception pipeline for automated bin picking using synthetic data and deep learning.'
+type: 'previous'
+pubDate: 2022-03-15
+tags: ['Deep Learning', 'Robotics', 'Synthetic Data', 'Computer Vision', 'Point Cloud Processing']
 featured: false
 ---
 
 ## Overview
 
-A lightweight, cross-platform CLI tool designed to simplify repetitive daily developer operations, container management, and environment setup.
+Developed a complete 3D perception pipeline for robotic bin picking applications, leveraging synthetic data generation and deep learning for object localization and grasp planning.
 
-### Key Highlights
-- Zero external runtime dependencies
-- Fast startup times (<15ms)
-- Interactive terminal prompts and progress spinners
+## Contributions
+
+- Built automated 3D data generation framework for training dataset creation
+- Trained instance segmentation models on synthetic data for real-world transfer
+- Implemented point-cloud processing for pose estimation and grasp planning
+- Developed distributed client-server framework for parallel data generation
+
+## Technologies
+
+PyTorch, Mask R-CNN, OpenCV, Open3D, Robot OS (ROS), Blender API, Python
+

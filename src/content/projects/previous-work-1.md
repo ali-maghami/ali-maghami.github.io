@@ -1,17 +1,25 @@
 ---
-title: 'Enterprise Cloud Migration & Microservices Architecture'
-description: 'Architected and implemented the migration of a legacy monolithic platform into scalable cloud microservices.'
+title: 'Calibration Tools for Computer Vision Systems'
+description: 'GUI-based software suite for camera, robot, and hand-eye calibration workflows.'
 type: 'previous'
-pubDate: 2025-11-20
-tags: ['Kubernetes', 'AWS', 'Node.js', 'PostgreSQL', 'Terraform']
+pubDate: 2021-10-15
+tags: ['Computer Vision', 'Calibration', 'GUI Design', 'Python', 'OpenCV']
 featured: true
 ---
 
 ## Overview
 
-In this previous engineering role, led the transition from an on-premise monolithic architecture to a high-availability AWS cloud infrastructure using Kubernetes.
+Developed calibration software that provides practical tools for camera, robot, and hand-eye calibration workflows, making these critical procedures more accessible and repeatable.
 
-### Achievements
-- Reduced deployment downtime by 99% with automated blue-green deployments.
-- Decreased infrastructure monthly costs by 35% through autoscaling optimization.
-- Built monitoring pipelines with Prometheus and Grafana.
+## Contributions
+
+- Built intuitive interfaces for camera intrinsic and extrinsic parameter estimation
+- Developed workflows for precise end-effector calibration and verification
+- Created hand-eye calibration tools for accurate camera-to-robot coordinate transformation
+- Integrated real-time calibration accuracy assessment and visualization
+
+## Technologies
+
+Python, PyQt5, OpenCV, Intel RealSense, Universal Robots, KUKA
+
+
