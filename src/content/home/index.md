@@ -4,7 +4,6 @@ focusAreas:
   - Computer Vision
   - Robotics
   - Physical AI
-  - Artificial Intelligence
   - Systems Architecture
   - Technical Leadership
 ---
