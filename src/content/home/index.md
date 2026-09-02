@@ -15,6 +15,6 @@ focusAreas:
   - Technical Leadership
 ---
 
-I’m **Ali**, an engineer and researcher specializing in machine vision, AI, and robotics. I build intelligent systems that connect perception and automation to solve real-world problems—from early concepts and prototypes to reliable deployment in the field.
+I’m **Ali**, an engineer and researcher specializing in AI, Vision, and Robotics. I build intelligent systems that connect perception and automation to solve real-world problems—from early concepts and prototypes to reliable deployment in the field.
 
 Here, I share what I’m learning about AI, robotics, technical leadership, and turning emerging technologies into practical solutions.
