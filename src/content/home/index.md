@@ -1,10 +1,12 @@
 ---
 heading: Turning AI into industrial reality.
 focusAreas:
-  - Machine Learning
   - Computer Vision
   - Robotics
-  - Industrial AI
+  - Physical AI
+  - Artificial Intelligence
+  - Systems Architecture
+  - Technical Leadership
 ---
 
 I’m **Ali Maghami**, an engineer and researcher specializing in machine vision, AI, and robotics. I build intelligent systems that connect perception and automation to solve real-world problems—from early concepts and prototypes to reliable deployment in the field.
