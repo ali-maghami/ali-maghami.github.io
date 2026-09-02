@@ -199,11 +199,17 @@ Subtleties worth knowing before editing either file:
   markdown file, not the site root, so the collection sets `media_folder: '../../assets/work'`
   rather than a `/public`-rooted path. Images live in [`src/assets/work/`](../src/assets/work/)
   so that Astro can optimise them; anything in `public/` would be served unprocessed.
-- **Cleared optional fields arrive as `''`, not as absent.** Every optional URL field is therefore
-  built from the shared `optionalUrl` helper, a `z.preprocess` that maps blank to `undefined`.
-  Without it, an editor who types a URL and then deletes it produces `repoUrl: ''`, which fails
-  `.url()` and breaks the build — on a PR the CMS itself opened. Use `optionalUrl` for any further
-  optional URL field rather than `z.string().url().optional()`.
+- **A cleared optional field arrives empty, not absent — and how it is empty depends on the
+  widget.** Text fields write `''`; number, date and image fields write `null`. Neither satisfies a
+  plain `.optional()`, so every optional field is declared with the `optional()` helper from
+  [`src/lib/schema.ts`](../src/lib/schema.ts) rather than `z.optional(...)`. **Use it for any
+  optional field you add.**
+
+  This matters more than it looks. A cleared number breaks the build loudly — `citations: null`
+  fails with `Expected type "number", received "object"`, on a pull request the CMS itself opened.
+  A cleared *date* fails silently instead: `z.coerce.date()` runs `new Date(null)`, which is
+  1970-01-01 rather than an error, so a cleared expiry date would quietly render a certificate as
+  long expired. `src/lib/schema.test.ts` covers both.
 - **The home and about entries must exist.** Both pages render from a single-entry collection and
   throw a clear build error if the file is missing. Delete them and the site stops building; that
   is deliberate, since the alternative is a page that silently renders blank.

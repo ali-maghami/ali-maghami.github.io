@@ -1,14 +1,9 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-
-// Sveltia CMS writes an empty string for an optional field an editor filled in
-// and then cleared, which would fail .url() and break the build on a PR the CMS
-// itself opened. Treat blank as absent.
-const blankToUndefined = (value: unknown) => (value === '' ? undefined : value);
-
-/** An optional URL that tolerates the empty string the CMS writes for a cleared field. */
-const optionalUrl = z.preprocess(blankToUndefined, z.string().url().optional());
+// Optional fields go through these helpers so a field an editor cleared in the
+// CMS is read as absent rather than as an empty string or null. See lib/schema.
+import { optional, optionalUrl } from './lib/schema';
 
 const projects = defineCollection({
 	loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
@@ -22,7 +17,7 @@ const projects = defineCollection({
 			repoUrl: optionalUrl,
 			liveUrl: optionalUrl,
 			featured: z.boolean().default(false),
-			heroImage: z.optional(image()),
+			heroImage: optional(image()),
 		}),
 });
 
@@ -33,12 +28,12 @@ const blog = defineCollection({
 			title: z.string(),
 			description: z.string(),
 			pubDate: z.coerce.date(),
-			updatedDate: z.optional(z.coerce.date()),
+			updatedDate: optional(z.coerce.date()),
 			tags: z.array(z.string()).default([]),
 			// Drafts stay out of the built site but remain editable in the CMS,
 			// so a half-written post can be saved without publishing it.
 			draft: z.boolean().default(false),
-			heroImage: z.optional(image()),
+			heroImage: optional(image()),
 		}),
 });
 
@@ -52,11 +47,11 @@ const papers = defineCollection({
 		venue: z.string(),
 		year: z.coerce.number().int(),
 		kind: z.enum(['journal', 'conference', 'patent', 'thesis', 'preprint']).default('journal'),
-		abstract: z.optional(z.string()),
-		doi: z.optional(z.string()),
+		abstract: optional(z.string()),
+		doi: optional(z.string()),
 		url: optionalUrl,
 		pdfUrl: optionalUrl,
-		citations: z.optional(z.number().int().nonnegative()),
+		citations: optional(z.number().int().nonnegative()),
 		featured: z.boolean().default(false),
 	}),
 });
@@ -67,8 +62,8 @@ const certificates = defineCollection({
 		name: z.string(),
 		issuer: z.string(),
 		issueDate: z.coerce.date(),
-		expiryDate: z.optional(z.coerce.date()),
-		credentialId: z.optional(z.string()),
+		expiryDate: optional(z.coerce.date()),
+		credentialId: optional(z.string()),
 		url: optionalUrl,
 		// Only featured certificates go in the site footer; the rest live on the
 		// certificates page. Without this the footer grows without limit.
@@ -84,7 +79,7 @@ const posts = defineCollection({
 		// embed iframe. See docs/cms.md for how to find it.
 		postId: z.string(),
 		pubDate: z.coerce.date(),
-		summary: z.optional(z.string()),
+		summary: optional(z.string()),
 	}),
 });
 
