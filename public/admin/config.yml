@@ -321,8 +321,53 @@ collections:
               label: Portrait,
               widget: image,
               required: false,
-              hint: 'Shown as a circle beside the heading. Square works best; it is cropped to a circle and rendered in greyscale so it suits every background colour. Leave empty for a text-only hero.',
+              hint: 'Shown as a circle beside the heading. Square works best. Leave empty for a text-only hero.',
             }
+          - {
+              name: portraitSize,
+              label: Portrait size,
+              widget: number,
+              required: false,
+              value_type: int,
+              min: 80,
+              max: 420,
+              default: 250,
+              hint: 'Diameter in pixels. Capped at 150 on phones so it cannot crowd the heading.',
+            }
+          - {
+              name: portraitBorderWidth,
+              label: Portrait ring thickness,
+              widget: number,
+              required: false,
+              value_type: int,
+              min: 0,
+              max: 16,
+              default: 3,
+              hint: 'Pixels. 0 removes the ring.',
+            }
+          - {
+              name: portraitOpacity,
+              label: Portrait opacity,
+              widget: number,
+              required: false,
+              value_type: int,
+              min: 10,
+              max: 100,
+              default: 80,
+              hint: 'Percent. Lower lets more of the background colour through.'
+            }
+          - name: portraitFilter
+            label: Portrait filter
+            widget: select
+            required: false
+            default: grayscale
+            hint: 'The background colour changes on every page load, so a full-colour photo clashes with some palettes. Greyscale suits all of them.'
+            options:
+              - { label: Greyscale, value: grayscale }
+              - { label: Softened greyscale, value: soft-grayscale }
+              - { label: Sepia, value: sepia }
+              - { label: Greyscale with more contrast, value: contrast }
+              - { label: Full colour, value: none }
           - {
               name: focusAreas,
               label: Focus areas,
@@ -393,6 +438,17 @@ collections:
             label: Certificate badges in the footer
             widget: object
             fields:
+              - {
+                  name: limit,
+                  label: How many badges,
+                  widget: number,
+                  required: false,
+                  value_type: int,
+                  min: 0,
+                  max: 20,
+                  default: 6,
+                  hint: 'Most badges to show in the footer strip. 0 shows every certificate marked "Show in site footer".',
+                }
               - name: pages
                 label: Show on these pages
                 widget: select
