@@ -17,7 +17,7 @@ describe('PALETTES', () => {
 	});
 
 	it('keep every surface light enough for the ink to read on', () => {
-		// Rough perceived luminance. --color-ink is #303026, so anything below
+		// Rough perceived luminance. --color-ink is #24292e, so anything below
 		// about 0.8 here would start to hurt body-text contrast.
 		for (const { name, surface } of PALETTES) {
 			const [r, g, b] = [1, 3, 5].map((i) => parseInt(surface.slice(i, i + 2), 16) / 255);
