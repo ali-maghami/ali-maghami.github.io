@@ -1,98 +1,74 @@
 ---
+import { getCollection, render } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 
-const education = [
-	{ label: 'PhD, Mechanical Engineering', detail: 'University of Manitoba, 2023' },
-	{ label: 'MSc, Mechanical Engineering', detail: 'Ferdowsi University of Mashhad, 2012' },
-	{ label: 'BSc, Mechanical Engineering', detail: 'Ferdowsi University of Mashhad, 2010' },
-	{ label: 'PMP Certification', detail: 'Project Management Professional' },
-];
+// A single-entry collection: the About page is content, edited at /admin/,
+// rather than markup. The prose is the markdown body; the two definition
+// lists below come from structured frontmatter so they stay consistently
+// formatted no matter who edits them.
+const [about] = await getCollection('about');
 
-const skills = [
-	{ area: 'Computer Vision', detail: '2D/3D imaging, camera calibration, stereo vision' },
-	{ area: 'Machine Learning', detail: 'Deep learning, PyTorch, synthetic data, training workflows' },
-	{ area: 'Robotics', detail: 'Robot guidance, perception systems, collaborative robots' },
-	{ area: 'Software', detail: 'Python, C++, OpenCV, Open3D, cloud deployment' },
-	{ area: 'Leadership', detail: 'Team coordination, technical mentorship, project planning' },
-];
+if (!about) {
+	throw new Error(
+		'The about collection is empty. Expected src/content/about/index.md — the About page renders from it.',
+	);
+}
+
+const { title, eyebrow, standfirst, skills, education } = about.data;
+const { Content } = await render(about);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title="About | Ali Maghami" description="About Ali Maghami" />
+		<BaseHead title={`About | ${title}`} description={standfirst.slice(0, 160)} />
 	</head>
 
 	<body>
 		<Header />
 		<main>
 			<div class="wrap-narrow article-head">
-				<p class="eyebrow">About</p>
-				<h1>Ali Maghami</h1>
-				<p class="standfirst">
-					A software engineer and researcher interested in computer vision, robotics, and applied AI
-					for industrial automation. I currently work at Hatch Ltd. in Ontario, Canada, where I help
-					teams develop vision and AI solutions for manufacturing and mining applications.
-				</p>
+				<p class="eyebrow">{eyebrow}</p>
+				<h1>{title}</h1>
+				<p class="standfirst">{standfirst}</p>
 			</div>
 
 			<div class="wrap-narrow prose">
-				<h2>Background</h2>
-				<p>
-					I completed my PhD in Mechanical Engineering at the University of Manitoba, where I focused
-					on vision-guided robotics and machine learning. Before that, I worked at TetraGen Robotics
-					on perception systems for automation, and I've also contributed to research at the National
-					Research Council Canada.
-				</p>
+				<Content />
 
-				<h2>What I Work On</h2>
-				<p>
-					My work involves computer vision, robotics, machine learning, calibration, and systems
-					integration. I'm interested in taking research ideas and turning them into practical
-					solutions that work in real manufacturing environments. Recent projects have included
-					large-scale vision systems, deep learning for inspection, and robot calibration methods.
-				</p>
+				{
+					skills.length > 0 && (
+						<>
+							<h2>Skills &amp; Interests</h2>
+							<dl class="fact-list">
+								{skills.map((skill) => (
+									<div class="fact">
+										<dt>{skill.area}</dt>
+										<dd>{skill.detail}</dd>
+									</div>
+								))}
+							</dl>
+						</>
+					)
+				}
 
-				<h2>Skills &amp; Interests</h2>
-				<dl class="fact-list">
-					{
-						skills.map((skill) => (
-							<div class="fact">
-								<dt>{skill.area}</dt>
-								<dd>{skill.detail}</dd>
-							</div>
-						))
-					}
-				</dl>
-
-				<h2>Education</h2>
-				<dl class="fact-list">
-					{
-						education.map((item) => (
-							<div class="fact">
-								<dt>{item.label}</dt>
-								<dd>{item.detail}</dd>
-							</div>
-						))
-					}
-				</dl>
-
-				<h2>Publications &amp; Patents</h2>
-				<p>
-					I've published research in peer-reviewed journals on topics like robot calibration,
-					vision-guided drilling, and inspection automation. I also hold patents related to vision
-					systems for industrial applications. You can find my recent publications in the projects
-					section.
-				</p>
-
-				<h2>Beyond Work</h2>
-				<p>
-					I enjoy learning new technologies, exploring how AI and robotics can improve manufacturing
-					processes, and collaborating with teams on technical challenges. I'm always interested in
-					connecting with others working on similar problems.
-				</p>
+				{
+					education.length > 0 && (
+						<>
+							<h2>Education</h2>
+							<dl class="fact-list">
+								{education.map((item) => (
+									<div class="fact">
+										<dt>{item.label}</dt>
+										<dd>{item.detail}</dd>
+									</div>
+								))}
+							</dl>
+						</>
+					)
+				}
 			</div>
 		</main>
 		<Footer />

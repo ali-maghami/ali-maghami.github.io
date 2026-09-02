@@ -1,0 +1,302 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { SOCIAL } from '../../consts';
+
+const papers = (await getCollection('papers')).sort((a, b) => b.data.year - a.data.year);
+
+// Grouped by year, newest first — the shape a publication list is normally read in.
+const byYear = [...new Set(papers.map((p) => p.data.year))]
+	.sort((a, b) => b - a)
+	.map((year) => ({ year, entries: papers.filter((p) => p.data.year === year) }));
+
+const KIND_LABELS: Record<string, string> = {
+	journal: 'Journal',
+	conference: 'Conference',
+	patent: 'Patent',
+	thesis: 'Thesis',
+	preprint: 'Preprint',
+};
+
+const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 0);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="Papers | Ali Maghami"
+			description="Peer-reviewed publications and patents in computer vision, robotics, and manufacturing automation."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main class="wrap">
+			<header class="page-header">
+				<p class="eyebrow">Research</p>
+				<h1>Papers</h1>
+				<p class="page-lede">
+					Peer-reviewed publications and patents in robot calibration, vision-guided manufacturing,
+					and automated inspection.
+				</p>
+
+				{
+					papers.length > 0 && (
+						<dl class="stats">
+							<div>
+								<dt>Publications</dt>
+								<dd>{papers.length}</dd>
+							</div>
+							{totalCitations > 0 && (
+								<div>
+									<dt>Citations</dt>
+									<dd>{totalCitations}</dd>
+								</div>
+							)}
+						</dl>
+					)
+				}
+
+				{
+					SOCIAL.scholar && (
+						<p class="scholar-link">
+							<a href={SOCIAL.scholar} target="_blank" rel="noopener noreferrer">
+								View on Google Scholar &rarr;
+							</a>
+						</p>
+					)
+				}
+			</header>
+
+			{
+				byYear.length > 0 ? (
+					byYear.map(({ year, entries }) => (
+						<section class="year-group">
+							<h2 class="year">{year}</h2>
+							<ol class="paper-list">
+								{entries.map((paper) => (
+									<li class="paper">
+										<h3 class="paper-title">
+											{paper.data.url ? (
+												<a href={paper.data.url} target="_blank" rel="noopener noreferrer">
+													{paper.data.title}
+												</a>
+											) : (
+												paper.data.title
+											)}
+										</h3>
+										<p class="authors">{paper.data.authors}</p>
+										<p class="venue">
+											<span class="kind">{KIND_LABELS[paper.data.kind] ?? paper.data.kind}</span>
+											<span>{paper.data.venue}</span>
+										</p>
+										{paper.data.abstract && <p class="abstract">{paper.data.abstract}</p>}
+										<p class="paper-meta">
+											{paper.data.doi && (
+												<a
+													href={`https://doi.org/${paper.data.doi}`}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													DOI: {paper.data.doi}
+												</a>
+											)}
+											{paper.data.pdfUrl && (
+												<a href={paper.data.pdfUrl} target="_blank" rel="noopener noreferrer">
+													PDF
+												</a>
+											)}
+											{typeof paper.data.citations === 'number' && paper.data.citations > 0 && (
+												<span class="citations">Cited by {paper.data.citations}</span>
+											)}
+										</p>
+									</li>
+								))}
+							</ol>
+						</section>
+					))
+				) : (
+					<p class="empty">No publications listed yet.</p>
+				)
+			}
+		</main>
+		<Footer />
+
+		<style>
+			.page-header {
+				max-width: 620px;
+				padding: 3rem 0 3rem;
+			}
+
+			.eyebrow {
+				margin: 0 0 0.75rem;
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			.page-header h1 {
+				margin: 0 0 0.85rem;
+				font-size: 2.5rem;
+				letter-spacing: -0.025em;
+			}
+
+			.page-lede {
+				margin: 0;
+				font-size: 1.0625rem;
+				font-weight: 300;
+				line-height: 1.6;
+				color: var(--color-ink-soft);
+			}
+
+			.stats {
+				display: flex;
+				gap: 2.5rem;
+				margin: 1.75rem 0 0;
+			}
+
+			.stats dt {
+				font-family: var(--font-mono);
+				font-size: 0.6875rem;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			.stats dd {
+				margin: 0.15rem 0 0;
+				font-size: 1.5rem;
+				font-weight: 600;
+				letter-spacing: -0.02em;
+			}
+
+			.scholar-link {
+				margin: 1.25rem 0 0;
+				font-size: 0.875rem;
+			}
+
+			.scholar-link a {
+				color: var(--color-ink-muted);
+				text-decoration: none;
+			}
+
+			.scholar-link a:hover {
+				color: var(--color-ink);
+			}
+
+			.year-group {
+				margin-bottom: 2.5rem;
+			}
+
+			.year {
+				margin: 0 0 1rem;
+				padding-bottom: 0.5rem;
+				border-bottom: 1px solid var(--color-sand-200);
+				font-family: var(--font-mono);
+				font-size: 0.875rem;
+				font-weight: 500;
+				color: var(--color-ink-muted);
+			}
+
+			.paper-list {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: grid;
+				gap: 1.75rem;
+			}
+
+			.paper-title {
+				margin: 0 0 0.35rem;
+				font-size: 1.0625rem;
+				font-weight: 600;
+				line-height: 1.35;
+				letter-spacing: -0.01em;
+			}
+
+			.paper-title a {
+				color: inherit;
+				text-decoration: none;
+			}
+
+			.paper-title a:hover {
+				text-decoration: underline;
+			}
+
+			.authors {
+				margin: 0 0 0.3rem;
+				font-size: 0.875rem;
+				color: var(--color-ink-soft);
+			}
+
+			.venue {
+				display: flex;
+				align-items: baseline;
+				flex-wrap: wrap;
+				gap: 0.6rem;
+				margin: 0;
+				font-size: 0.875rem;
+				font-style: italic;
+				color: var(--color-ink-muted);
+			}
+
+			.kind {
+				font-family: var(--font-mono);
+				font-style: normal;
+				font-size: 0.6875rem;
+				letter-spacing: 0.04em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+				background: var(--color-sand-100);
+				border: 1px solid var(--color-sand-200);
+				border-radius: 999px;
+				padding: 0.1rem 0.5rem;
+			}
+
+			.abstract {
+				margin: 0.6rem 0 0;
+				font-size: 0.9375rem;
+				line-height: 1.6;
+				color: var(--color-ink-soft);
+			}
+
+			.paper-meta {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1rem;
+				margin: 0.6rem 0 0;
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				color: var(--color-ink-muted);
+			}
+
+			.paper-meta a {
+				color: var(--color-ink-muted);
+				text-decoration: none;
+				border-bottom: 1px solid var(--color-sand-200);
+			}
+
+			.paper-meta a:hover {
+				color: var(--color-ink);
+			}
+
+			.empty {
+				padding-bottom: 3rem;
+				color: var(--color-ink-muted);
+			}
+
+			@media (max-width: 720px) {
+				.page-header {
+					padding: 2rem 0 2rem;
+				}
+				.page-header h1 {
+					font-size: 1.875rem;
+				}
+			}
+		</style>
+	</body>
+</html>

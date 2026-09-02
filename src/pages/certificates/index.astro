@@ -1,0 +1,184 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+
+const certificates = (await getCollection('certificates')).sort(
+	(a, b) => b.data.issueDate.valueOf() - a.data.issueDate.valueOf(),
+);
+
+const now = new Date();
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title="Certificates | Ali Maghami"
+			description="Professional certifications and credentials."
+		/>
+	</head>
+	<body>
+		<Header />
+		<main class="wrap">
+			<header class="page-header">
+				<p class="eyebrow">Credentials</p>
+				<h1>Certificates</h1>
+				<p class="page-lede">Professional certifications and training credentials.</p>
+			</header>
+
+			{
+				certificates.length > 0 ? (
+					<ul class="cert-list">
+						{certificates.map((cert) => {
+							const expired = cert.data.expiryDate && cert.data.expiryDate < now;
+							return (
+								<li class="cert-row">
+									<div class="cert-main">
+										<h2 class="cert-name">
+											{cert.data.url ? (
+												<a href={cert.data.url} target="_blank" rel="noopener noreferrer">
+													{cert.data.name}
+												</a>
+											) : (
+												cert.data.name
+											)}
+										</h2>
+										<p class="cert-issuer">{cert.data.issuer}</p>
+										{cert.data.credentialId && (
+											<p class="cert-id">ID: {cert.data.credentialId}</p>
+										)}
+									</div>
+									<div class="cert-dates">
+										<FormattedDate date={cert.data.issueDate} />
+										{cert.data.expiryDate && (
+											<span class:list={['expiry', { expired }]}>
+												{expired ? 'Expired' : 'Expires'}{' '}
+												<FormattedDate date={cert.data.expiryDate} />
+											</span>
+										)}
+									</div>
+								</li>
+							);
+						})}
+					</ul>
+				) : (
+					<p class="empty">No certificates listed yet.</p>
+				)
+			}
+		</main>
+		<Footer />
+
+		<style>
+			.page-header {
+				max-width: 620px;
+				padding: 3rem 0 3rem;
+			}
+
+			.eyebrow {
+				margin: 0 0 0.75rem;
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			.page-header h1 {
+				margin: 0 0 0.85rem;
+				font-size: 2.5rem;
+				letter-spacing: -0.025em;
+			}
+
+			.page-lede {
+				margin: 0;
+				font-size: 1.0625rem;
+				font-weight: 300;
+				line-height: 1.6;
+				color: var(--color-ink-soft);
+			}
+
+			.cert-list {
+				list-style: none;
+				margin: 0 0 3rem;
+				padding: 0;
+				border-top: 1px solid var(--color-sand-200);
+			}
+
+			.cert-row {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				flex-wrap: wrap;
+				gap: 0.5rem 1.5rem;
+				padding: 1.15rem 0;
+				border-bottom: 1px solid var(--color-sand-200);
+			}
+
+			.cert-name {
+				margin: 0 0 0.2rem;
+				font-size: 1rem;
+				font-weight: 600;
+				letter-spacing: -0.01em;
+			}
+
+			.cert-name a {
+				color: inherit;
+				text-decoration: none;
+			}
+
+			.cert-name a:hover {
+				text-decoration: underline;
+			}
+
+			.cert-issuer {
+				margin: 0;
+				font-size: 0.875rem;
+				color: var(--color-ink-soft);
+			}
+
+			.cert-id {
+				margin: 0.2rem 0 0;
+				font-family: var(--font-mono);
+				font-size: 0.6875rem;
+				color: var(--color-ink-muted);
+			}
+
+			.cert-dates {
+				display: flex;
+				flex-direction: column;
+				align-items: flex-end;
+				gap: 0.15rem;
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				color: var(--color-ink-muted);
+				text-align: right;
+			}
+
+			.expiry.expired {
+				color: var(--color-ink-muted);
+				text-decoration: line-through;
+			}
+
+			.empty {
+				padding-bottom: 3rem;
+				color: var(--color-ink-muted);
+			}
+
+			@media (max-width: 720px) {
+				.page-header {
+					padding: 2rem 0 2rem;
+				}
+				.page-header h1 {
+					font-size: 1.875rem;
+				}
+				.cert-dates {
+					align-items: flex-start;
+					text-align: left;
+				}
+			}
+		</style>
+	</body>
+</html>
