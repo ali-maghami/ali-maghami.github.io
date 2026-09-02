@@ -60,7 +60,9 @@ body {
 	font-size: 16px;
 	line-height: 1.6;
 	color: var(--color-ink);
-	background-color: var(--color-base);
+	/* --surface is set per page load by BackgroundPalette; the token is the
+	   fallback, so the site keeps its paper tone without JavaScript. */
+	background-color: var(--surface, var(--color-base));
 	text-align: left;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
