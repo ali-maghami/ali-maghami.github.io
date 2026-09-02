@@ -12,6 +12,9 @@ const { date } = Astro.props;
 			year: 'numeric',
 			month: 'short',
 			day: 'numeric',
+			// Date-only frontmatter parses as UTC midnight; formatting in local
+			// time would render the previous day west of Greenwich.
+			timeZone: 'UTC',
 		})
 	}
 </time>

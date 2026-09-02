@@ -1,8 +1,10 @@
 ---
 title: 'Vision-Based Target Localization and Online Error Correction for High-Precision Robotic Drilling'
 description: 'Research on precision robotic drilling for aerospace composite manufacturing'
-pubDate: 'May 20 2024'
-heroImage: '../../assets/blog-placeholder-4.jpg'
+type: 'previous'
+pubDate: 2024-05-20
+tags: ['Computer Vision', 'Robotics', 'Aerospace', 'Real-Time Systems', 'Research']
+featured: false
 ---
 
 ## Research

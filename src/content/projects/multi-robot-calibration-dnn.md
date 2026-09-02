@@ -1,8 +1,10 @@
 ---
 title: 'Calibration of Multi-Robot Cooperative Systems Using Deep Neural Networks'
 description: 'Using machine learning to calibrate dual-arm robotic systems for precision aerospace manufacturing'
-pubDate: 'Jun 15 2023'
-heroImage: '../../assets/blog-placeholder-3.jpg'
+type: 'previous'
+pubDate: 2023-06-15
+tags: ['Deep Learning', 'Robotics', 'Calibration', 'Aerospace', 'Research']
+featured: false
 ---
 
 ## Publication
