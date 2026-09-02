@@ -1,12 +1,24 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
+import { assertBadge } from '../../lib/badges';
 
-const certificates = (await getCollection('certificates')).sort(
+const entries = (await getCollection('certificates')).sort(
 	(a, b) => b.data.issueDate.valueOf() - a.data.issueDate.valueOf(),
+);
+
+// The CMS offers a Notes field on every certificate, so render it. Rendering is
+// async, so it is resolved up front rather than inside the template.
+const certificates = await Promise.all(
+	entries.map(async (entry) => ({
+		...entry,
+		Notes: (await render(entry)).Content,
+		badge: assertBadge(entry.data.badge),
+	})),
 );
 
 const now = new Date();
@@ -21,6 +33,7 @@ const now = new Date();
 		/>
 	</head>
 	<body>
+		<Aurora />
 		<Header />
 		<main class="wrap">
 			<header class="page-header">
@@ -36,6 +49,17 @@ const now = new Date();
 							const expired = cert.data.expiryDate && cert.data.expiryDate < now;
 							return (
 								<li class="cert-row">
+									{cert.badge && (
+										<img
+											class="cert-badge"
+											src={cert.badge}
+											alt=""
+											width="125"
+											height="125"
+											loading="lazy"
+											decoding="async"
+										/>
+									)}
 									<div class="cert-main">
 										<h2 class="cert-name">
 											{cert.data.url ? (
@@ -50,6 +74,9 @@ const now = new Date();
 										{cert.data.credentialId && (
 											<p class="cert-id">ID: {cert.data.credentialId}</p>
 										)}
+										<div class="cert-notes">
+											<cert.Notes />
+										</div>
 									</div>
 									<div class="cert-dates">
 										<FormattedDate date={cert.data.issueDate} />
@@ -109,12 +136,36 @@ const now = new Date();
 
 			.cert-row {
 				display: flex;
-				align-items: baseline;
-				justify-content: space-between;
+				align-items: center;
+				gap: 0.5rem 1.25rem;
 				flex-wrap: wrap;
-				gap: 0.5rem 1.5rem;
 				padding: 1.15rem 0;
 				border-bottom: 1px solid var(--color-sand-200);
+			}
+
+			/* Shown at the badge's native 125px. Twice that is requested from the
+			   image pipeline so it stays sharp on dense screens; Astro will not
+			   upscale past the source, so a smaller upload simply gets what it
+			   has. */
+			.cert-badge {
+				width: 125px;
+				height: 125px;
+				object-fit: contain;
+				flex-shrink: 0;
+			}
+
+			.cert-main {
+				flex: 1;
+				min-width: 12rem;
+			}
+
+			.cert-notes {
+				font-size: 0.875rem;
+				color: var(--color-ink-muted);
+			}
+
+			.cert-notes :global(p) {
+				margin: 0.35rem 0 0;
 			}
 
 			.cert-name {

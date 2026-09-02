@@ -201,6 +201,18 @@ collections:
     slug: '{{slug}}'
     summary: '{{name}} — {{issuer}}'
     sortable_fields: [issueDate, name]
+    # Badges live in public/ rather than src/assets. Files under src/ are never
+    # served — Astro emits them under hashed /_astro/ names the CMS cannot
+    # predict — so a preview URL pointing there 404s and the editor shows a
+    # blank. public/ is served verbatim at the path recorded below, so the
+    # preview resolves. The trade is that Astro does not optimise these, which
+    # is why the committed files are kept small.
+    # The leading slash is required. A collection-level media_folder without
+    # one is read as relative to this collection's folder, which sent the CMS
+    # looking in src/content/certificates/public/badges and left every badge
+    # preview blank. public_folder is the URL the browser fetches.
+    media_folder: '/public/badges'
+    public_folder: '/badges'
     fields:
       - { name: name, label: Name, widget: string, required: true }
       - { name: issuer, label: Issuer, widget: string, required: true }
@@ -226,6 +238,13 @@ collections:
         }
       - { name: credentialId, label: Credential ID, widget: string, required: false }
       - { name: url, label: Verification link, widget: string, required: false }
+      - {
+          name: badge,
+          label: Badge image,
+          widget: image,
+          required: false,
+          hint: 'The issuer badge, square, ideally 125x125. Shown small beside the name.',
+        }
       - {
           name: featured,
           label: Show in site footer,
@@ -352,3 +371,22 @@ collections:
               - { name: linkedin, label: LinkedIn, widget: string, required: false }
               - { name: scholar, label: Google Scholar, widget: string, required: false }
               - { name: email, label: Email, widget: string, required: false }
+          - name: footerBadges
+            label: Certificate badges in the footer
+            widget: object
+            fields:
+              - name: pages
+                label: Show on these pages
+                widget: select
+                multiple: true
+                required: false
+                default: [home, about, certificates]
+                hint: 'Which pages show the badge strip. A section covers its entries, so choosing Projects covers every project page. Only certificates marked "Show in site footer" appear.'
+                options:
+                  - { label: Home, value: home }
+                  - { label: Projects, value: projects }
+                  - { label: Blog, value: blog }
+                  - { label: Papers, value: papers }
+                  - { label: LinkedIn Posts, value: posts }
+                  - { label: Certificates, value: certificates }
+                  - { label: About, value: about }

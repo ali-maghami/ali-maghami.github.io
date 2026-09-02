@@ -1,8 +1,13 @@
 name: Lighthouse CI
 
+# Run on demand only. This audit has no `assert` block in lighthouserc.json, so
+# it measures the build without holding it to any threshold — as a required PR
+# check it could only ever fail when the build itself failed, which "Build and
+# verify" already catches in a third of the time. Kept here so a performance
+# question can still be answered on request; add assertions before making it a
+# gate again.
 on:
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read

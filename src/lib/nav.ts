@@ -40,3 +40,21 @@ export function buildNavItems(counts: Record<string, number>): NavItem[] {
 export function isPublished(entry: { data: { draft?: boolean } }): boolean {
 	return entry.data.draft !== true;
 }
+
+/**
+ * The section a URL belongs to, as used by the footer badge setting.
+ *
+ * The site root is `home`; everything else is its first path segment, so
+ * `/projects/railcar-vision/` and `/projects/` are both `projects`. Keeping it
+ * to the first segment means a setting picks a whole section rather than
+ * needing every individual entry listed.
+ */
+export function sectionForPath(pathname: string): string {
+	const trimmed = pathname.split('?')[0].split('#')[0].replace(/^\/+|\/+$/g, '');
+	return trimmed === '' ? 'home' : trimmed.split('/')[0];
+}
+
+/** Whether the footer should show the certificate badge strip on this page. */
+export function showsFooterBadges(pathname: string, pages: readonly string[]): boolean {
+	return pages.includes(sectionForPath(pathname));
+}

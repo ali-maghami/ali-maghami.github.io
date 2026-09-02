@@ -14,31 +14,66 @@ The real chronological order is:
 
 So "push" workflows run **after** "pull_request" workflows chronologically, even though `push` is listed first alphabetically/in most peoples' mental model of "push, then open a PR."
 
+## What gates a pull request, and why only these
+
+Three checks run on a pull request. They run in parallel, so the wait is the
+slowest of them — about 30 seconds.
+
+| Check | Workflow | Catches |
+|---|---|---|
+| Build and verify | `pr-checks.yml` | a broken build, type errors, failing tests |
+| Check links | `link-check.yml` | dead URLs, including ones typed into content |
+| Scan dependency changes | `dependency-review.yml` | vulnerable dependencies being added |
+
+Two others deliberately do **not** run per pull request:
+
+- **Lighthouse CI** was a required check taking ~93 seconds, three times the
+  build it duplicates. `lighthouserc.json` has no `assert` block, so it measures
+  the build without holding it to any threshold: the only way it could fail was
+  if the build failed, which `pr-checks.yml` already catches far sooner. It is
+  now manual. **Add assertions to `lighthouserc.json` before making it a gate
+  again**, or it will go back to costing a minute and a half for no signal.
+- **CodeQL** now scans `main` after a merge and weekly. This is a static site
+  whose only first-party script is a few inline lines; scanning unchanged code
+  on every content edit cost about a minute each time. Findings still reach the
+  Security tab, and it was never a required check.
+
+The required-check list in the branch protection ruleset must match what
+actually runs on a pull request. A required check that never reports leaves the
+pull request blocked forever, so if you take a workflow off `pull_request`,
+remove it from the ruleset in the same change.
+
 ## Trigger matrix
 
 | Workflow | `push`→main | `pull_request`→main | `schedule` | `workflow_dispatch` |
 |---|:---:|:---:|:---:|:---:|
-| CodeQL | ✅ | ✅ | ✅ weekly (Mon 04:23 UTC) | ✅ |
+| CodeQL | ✅ | — | ✅ weekly (Mon 04:23 UTC) | ✅ |
 | Dependency Review | — | ✅ | — | — |
 | Deploy to GitHub Pages | ✅ | — | — | ✅ |
-| Lighthouse CI | — | ✅ | — | — |
+| Lighthouse CI | — | — | — | ✅ |
 | Link Check | — | ✅ | ✅ weekly (Mon 06:00 UTC) | ✅ |
 | Pull Request Checks | — | ✅ | — | ✅ |
 
 Each choice is deliberate:
 
 - **Dependency Review** only makes sense on a PR — it diffs the base and head manifests, and a plain push has no "before" state to diff against.
-- **Lighthouse CI, Link Check, Pull Request Checks** are pre-merge quality gates, so they only need to run on PRs (see [branch-protection.md](./branch-protection.md) for how they're made *required*).
+- **Link Check and Pull Request Checks** are pre-merge quality gates, so they only need to run on PRs (see [branch-protection.md](./branch-protection.md) for how they're made *required*). **Lighthouse CI** is manual — see the section above for why it is no longer a gate.
 - **Deploy** should only run once code has actually landed on `main` — publishing on every PR would deploy unmerged, unreviewed work.
 - **CodeQL** runs on both, plus a schedule, because each catches something different (see below).
 
-## Why does CodeQL run on push, PR, *and* a schedule?
+## Why does CodeQL run on push *and* a schedule, but not on pull requests?
 
-These aren't redundant:
+The two that remain aren't redundant:
 
-1. **Security alerts are tracked against the default branch, not the PR.** The Security → Code scanning alerts tab reflects `main`'s scan results as the baseline. A PR-triggered run only annotates that PR; it doesn't update the persisted alert list. The post-merge run on `main` is what actually refreshes that baseline.
-2. **The merge commit isn't guaranteed to match what the PR tested.** A squash or rebase merge produces a new commit SHA (and potentially a subtly different diff) than the synthetic preview merge CodeQL scanned during the PR. If two PRs merge close together, the real resulting `main` may combine changes neither PR's individual scan saw.
-3. **The weekly schedule catches drift with zero code changes.** CodeQL's query packs get updated over time — a pattern not flagged last month might be flagged today even though the code hasn't moved. Only a periodic rescan of `main` catches that.
+1. **Security alerts are tracked against the default branch.** The Security → Code scanning alerts tab reflects `main`'s scan results as the baseline. A PR-triggered run only annotated that PR; it never updated the persisted alert list. The post-merge run on `main` is what actually refreshes it — which is also why dropping the PR run costs no alerts.
+2. **The weekly schedule catches drift with zero code changes.** CodeQL's query packs get updated over time — a pattern not flagged last month might be flagged today even though the code hasn't moved. Only a periodic rescan of `main` catches that.
+
+The pull-request run was dropped because this is a static site whose only
+first-party script is a few inline lines. It re-scanned unchanged code on every
+content edit for about a minute, and as a non-required check it gated nothing.
+The trade is that a vulnerability introduced by a PR is reported just after the
+merge rather than just before it. On a repository where almost every change is
+markdown, that is the right side of the trade; it would not be on an application.
 
 ## Workflow-by-workflow reference
 

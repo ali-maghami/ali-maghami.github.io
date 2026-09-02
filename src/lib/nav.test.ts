@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { buildNavItems, getNavHref, isPublished } from './nav';
+import {
+	buildNavItems,
+	getNavHref,
+	isPublished,
+	sectionForPath,
+	showsFooterBadges,
+} from './nav';
 
 describe('getNavHref', () => {
 	it('returns root paths unchanged', () => {
@@ -35,5 +41,47 @@ describe('isPublished', () => {
 	it('excludes drafts', () => {
 		expect(isPublished({ data: { draft: true } })).toBe(false);
 		expect(isPublished({ data: { draft: false } })).toBe(true);
+	});
+});
+
+describe('sectionForPath', () => {
+	it('treats the site root as home', () => {
+		expect(sectionForPath('/')).toBe('home');
+		expect(sectionForPath('')).toBe('home');
+	});
+
+	it('uses the first path segment, so a section covers its entries', () => {
+		expect(sectionForPath('/projects/')).toBe('projects');
+		expect(sectionForPath('/projects/railcar-vision-inspection/')).toBe('projects');
+		expect(sectionForPath('/certificates/')).toBe('certificates');
+	});
+
+	it('ignores a query string or fragment', () => {
+		expect(sectionForPath('/papers/?sort=year')).toBe('papers');
+		expect(sectionForPath('/about/#education')).toBe('about');
+	});
+
+	it('tolerates a missing trailing slash', () => {
+		expect(sectionForPath('/about')).toBe('about');
+	});
+});
+
+describe('showsFooterBadges', () => {
+	const pages = ['home', 'about', 'certificates'];
+
+	it('shows the strip only on the configured sections', () => {
+		expect(showsFooterBadges('/', pages)).toBe(true);
+		expect(showsFooterBadges('/about/', pages)).toBe(true);
+		expect(showsFooterBadges('/certificates/', pages)).toBe(true);
+	});
+
+	it('hides it everywhere else, including inside a listed section is not implied', () => {
+		expect(showsFooterBadges('/projects/', pages)).toBe(false);
+		expect(showsFooterBadges('/blog/a-post/', pages)).toBe(false);
+		expect(showsFooterBadges('/papers/', pages)).toBe(false);
+	});
+
+	it('shows nothing when no sections are configured', () => {
+		expect(showsFooterBadges('/', [])).toBe(false);
 	});
 });

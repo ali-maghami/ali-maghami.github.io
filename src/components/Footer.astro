@@ -1,39 +1,60 @@
 ---
-import { SITE_TITLE, SOCIAL } from '../consts';
-import { buildNavItems, getNavHref } from '../lib/nav';
+import { FOOTER_BADGE_PAGES, SITE_TITLE, SOCIAL } from '../consts';
+import { assertBadge } from '../lib/badges';
+import { buildNavItems, getNavHref, showsFooterBadges } from '../lib/nav';
 import { getSiteSections } from '../lib/sections';
 
 const today = new Date();
 const { counts, certificates: allCertificates } = await getSiteSections();
 const navItems = buildNavItems(counts);
 
-// Only the ones marked featured appear here — the footer is on every page, so
-// an unbounded list would grow into the page. The rest live on /certificates/.
-const featured = allCertificates.filter((c) => c.data.featured);
+// Two independent switches. `featured` picks *which* certificates are worth
+// showing; the footerBadges setting picks *which pages* show them at all, since
+// the footer is on every page and the strip is not wanted on all of them. Both
+// are edited in the CMS.
+const featured = allCertificates
+	.filter((c) => c.data.featured)
+	.map((c) => ({ ...c, badge: assertBadge(c.data.badge) }));
+const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 ---
 
 <footer class="site-footer">
 	{
-		featured.length > 0 && (
+		showBadges &&
+			featured.length > 0 && (
 			<div class="cert-strip">
 				<div class="cert-inner">
 					<p class="cert-label">Certifications</p>
 					<ul class="cert-list">
-						{featured.map((cert) => (
-							<li class="cert">
-								{cert.data.url ? (
-									<a href={cert.data.url} target="_blank" rel="noopener noreferrer">
-										<span class="cert-name">{cert.data.name}</span>
-										<span class="cert-issuer">{cert.data.issuer}</span>
-									</a>
-								) : (
-									<span>
-										<span class="cert-name">{cert.data.name}</span>
-										<span class="cert-issuer">{cert.data.issuer}</span>
-									</span>
-								)}
-							</li>
-						))}
+						{featured.map((cert) => {
+							const inner = (
+								<>
+									{cert.badge && (
+										<img
+											class="cert-badge"
+											src={cert.badge}
+											alt=""
+											width="100"
+											height="100"
+											loading="lazy"
+											decoding="async"
+										/>
+									)}
+									<span class="cert-name">{cert.data.name}</span>
+								</>
+							);
+							return (
+								<li class="cert">
+									{cert.data.url ? (
+										<a href={cert.data.url} target="_blank" rel="noopener noreferrer">
+											{inner}
+										</a>
+									) : (
+										<span>{inner}</span>
+									)}
+								</li>
+							);
+						})}
 					</ul>
 					{allCertificates.length > featured.length && (
 						<a class="cert-all" href={getNavHref('/certificates/')}>
@@ -76,29 +97,29 @@ const featured = allCertificates.filter((c) => c.data.featured);
 
 <style>
 	.site-footer {
+		position: relative;
+		z-index: 1;
 		border-top: 1px solid var(--color-sand-200);
 		/* body is a flex column, so this pins the footer to the bottom
 		   of short pages without collapsing the gap on long ones. */
 		margin-top: auto;
 	}
 
+	/* Translucent white rather than a fixed sand tone: the page surface changes
+	   colour on every load, and a warm panel clashed with the cooler palettes. */
 	.cert-strip {
 		border-bottom: 1px solid var(--color-sand-200);
-		background: var(--color-sand-100);
-		padding: 1.25rem;
+		background: rgb(255 255 255 / 45%);
+		padding: 1.5rem 1.25rem 1.25rem;
 	}
 
 	.cert-inner {
-		display: flex;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: 0.75rem 1.5rem;
 		max-width: 1160px;
 		margin-inline: auto;
 	}
 
 	.cert-label {
-		margin: 0;
+		margin: 0 0 0.9rem;
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
 		letter-spacing: 0.08em;
@@ -106,28 +127,41 @@ const featured = allCertificates.filter((c) => c.data.featured);
 		color: var(--color-ink-muted);
 	}
 
+	/* Tiles rather than a row: the badge stacks over its name, so a column is
+	   only as wide as the badge plus a little, and many fit across one page. */
 	.cert-list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1.5rem;
-		margin: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+		gap: 1.5rem 1rem;
+		margin: 0 0 1rem;
 		padding: 0;
 		list-style: none;
-		flex: 1;
 	}
 
 	.cert a,
 	.cert > span {
 		display: flex;
 		flex-direction: column;
-		gap: 0.1rem;
+		align-items: center;
+		gap: 0.5rem;
+		text-align: center;
 		text-decoration: none;
 		color: inherit;
 	}
 
+	/* Shown at 100px. Twice that is requested from the image pipeline so it
+	   stays sharp on dense screens; Astro will not upscale past the source. */
+	.cert-badge {
+		width: 100px;
+		height: 100px;
+		object-fit: contain;
+		flex-shrink: 0;
+	}
+
 	.cert-name {
-		font-size: 0.8125rem;
+		font-size: 0.75rem;
 		font-weight: 500;
+		line-height: 1.3;
 		color: var(--color-ink);
 	}
 
@@ -135,13 +169,8 @@ const featured = allCertificates.filter((c) => c.data.featured);
 		text-decoration: underline;
 	}
 
-	.cert-issuer {
-		font-family: var(--font-mono);
-		font-size: 0.6875rem;
-		color: var(--color-ink-muted);
-	}
-
 	.cert-all {
+		display: inline-block;
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
 		color: var(--color-ink-muted);
@@ -189,8 +218,14 @@ const featured = allCertificates.filter((c) => c.data.featured);
 	}
 
 	@media (max-width: 720px) {
-		.cert-inner {
-			gap: 0.5rem 1rem;
+		.cert-list {
+			grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+			gap: 1.25rem 0.75rem;
+		}
+
+		.cert-badge {
+			width: 72px;
+			height: 72px;
 		}
 	}
 </style>

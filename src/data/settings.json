@@ -6,5 +6,11 @@
     "linkedin": "",
     "scholar": "",
     "email": ""
+  },
+  "footerBadges": {
+    "pages": [
+      "home",
+      "about"
+    ]
   }
 }
