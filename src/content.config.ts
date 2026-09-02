@@ -97,6 +97,15 @@ const home = defineCollection({
 		// same reason certificate badges live there. Optional: with no portrait
 		// the hero simply renders as text.
 		portrait: optional(z.string()),
+		// Presentation, all editable from the CMS. Bounded rather than free
+		// text: these become CSS, so a number with a range and a fixed set of
+		// filters keeps the styling out of reach of whatever gets typed in.
+		portraitSize: z.number().int().min(80).max(420).default(250),
+		portraitBorderWidth: z.number().int().min(0).max(16).default(3),
+		portraitOpacity: z.number().int().min(10).max(100).default(80),
+		portraitFilter: z
+			.enum(['grayscale', 'soft-grayscale', 'sepia', 'contrast', 'none'])
+			.default('grayscale'),
 	}),
 });
 

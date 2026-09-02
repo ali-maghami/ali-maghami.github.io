@@ -8,5 +8,7 @@ export const SITE_DESCRIPTION = settings.siteDescription;
 export const SOCIAL = settings.social;
 /** Which page sections show the certificate badge strip in the footer. */
 export const FOOTER_BADGE_PAGES: string[] = settings.footerBadges?.pages ?? [];
+/** How many badges the footer strip shows at most. 0 means no limit. */
+export const FOOTER_BADGE_LIMIT: number = settings.footerBadges?.limit ?? 0;
 
 export default settings;

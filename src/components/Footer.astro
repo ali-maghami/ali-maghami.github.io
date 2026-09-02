@@ -1,5 +1,5 @@
 ---
-import { FOOTER_BADGE_PAGES, SITE_TITLE, SOCIAL } from '../consts';
+import { FOOTER_BADGE_LIMIT, FOOTER_BADGE_PAGES, SITE_TITLE, SOCIAL } from '../consts';
 import { assertBadge } from '../lib/badges';
 import { buildNavItems, getNavHref, showsFooterBadges } from '../lib/nav';
 import { getSiteSections } from '../lib/sections';
@@ -8,13 +8,15 @@ const today = new Date();
 const { counts, certificates: allCertificates } = await getSiteSections();
 const navItems = buildNavItems(counts);
 
-// Two independent switches. `featured` picks *which* certificates are worth
-// showing; the footerBadges setting picks *which pages* show them at all, since
-// the footer is on every page and the strip is not wanted on all of them. Both
-// are edited in the CMS.
-const featured = allCertificates
-	.filter((c) => c.data.featured)
-	.map((c) => ({ ...c, badge: assertBadge(c.data.badge) }));
+// Three separate switches, all set in the CMS. `featured` on a certificate
+// picks *which* are worth showing; footerBadges.pages picks *which pages* show
+// them at all, since the footer is on every page; footerBadges.limit caps *how
+// many* appear, so marking another certificate featured cannot quietly stretch
+// the strip. A limit of 0 means no cap.
+const eligible = allCertificates.filter((c) => c.data.featured);
+const featured = (FOOTER_BADGE_LIMIT > 0 ? eligible.slice(0, FOOTER_BADGE_LIMIT) : eligible).map(
+	(c) => ({ ...c, badge: assertBadge(c.data.badge) }),
+);
 const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 ---
 

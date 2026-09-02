@@ -8,6 +8,7 @@ import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { assertPortrait } from '../lib/badges';
 import { getNavHref } from '../lib/nav';
+import { portraitStyle } from '../lib/portrait';
 
 const projects = (await getCollection('projects'))
 	.sort((a, b) => {
@@ -28,6 +29,15 @@ const { heading, focusAreas } = home.data;
 // Checked rather than trusted: a public path is only a string, so a stale one
 // would render a broken image in the most prominent place on the site.
 const portrait = assertPortrait(home.data.portrait);
+// Size, border, opacity and filter are all set in the CMS. They arrive as
+// custom properties rather than as classes so any value in range works without
+// a stylesheet listing every one.
+const portraitVars = portraitStyle({
+	size: home.data.portraitSize,
+	borderWidth: home.data.portraitBorderWidth,
+	opacity: home.data.portraitOpacity,
+	filter: home.data.portraitFilter,
+});
 // The lede carries a link and emphasis, so it is markdown rather than a plain
 // string and Astro renders it here.
 const { Content: HeroLede } = await render(home);
@@ -47,7 +57,7 @@ const { Content: HeroLede } = await render(home);
 					<div class:list={['hero-inner', { 'has-portrait': portrait }]}>
 						{
 							portrait && (
-								<div class="portrait">
+								<div class="portrait" style={portraitVars}>
 									<img src={portrait} alt={`Portrait of ${SITE_TITLE}`} width="320" height="320" />
 								</div>
 							)
@@ -134,9 +144,9 @@ const { Content: HeroLede } = await render(home);
 			   stays crisp while the photo still melts into the wash inside it. */
 			.portrait {
 				flex-shrink: 0;
-				width: 250px;
-				height: 250px;
-				border: 3px solid var(--color-sand-300);
+				width: var(--portrait-size, 250px);
+				height: var(--portrait-size, 250px);
+				border: var(--portrait-border, 3px) solid var(--color-sand-300);
 				border-radius: 50%;
 				display: grid;
 				place-items: center;
@@ -150,8 +160,8 @@ const { Content: HeroLede } = await render(home);
 				/* Desaturated on purpose: the wash behind it is a different
 				   colour on every load, and full-strength skin tones clash with
 				   most of them. Grey sits with all six. */
-				filter: grayscale(1);
-				opacity: 0.8;
+				filter: var(--portrait-filter, grayscale(1));
+				opacity: var(--portrait-opacity, 0.8);
 				/* Softens the cut-out edge so the circle belongs to the wash
 				   instead of being stamped on top of it. Held just inside the
 				   ring so the two do not fight. */
@@ -227,10 +237,11 @@ const { Content: HeroLede } = await render(home);
 					align-items: flex-start;
 					gap: 1.5rem;
 				}
+				/* Capped rather than fixed, so the size chosen in the CMS is
+				   respected until it would crowd the heading. */
 				.portrait {
-					width: 150px;
-					height: 150px;
-					border-width: 2px;
+					width: min(var(--portrait-size, 250px), 150px);
+					height: min(var(--portrait-size, 250px), 150px);
 				}
 				.hero h1 {
 					font-size: 1.875rem;
