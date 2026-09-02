@@ -201,10 +201,14 @@ collections:
     slug: '{{slug}}'
     summary: '{{name}} — {{issuer}}'
     sortable_fields: [issueDate, name]
-    # Badges live apart from project imagery. Relative, because Astro's image()
-    # helper resolves them from the markdown file rather than the site root.
-    media_folder: '../../assets/certificates'
-    public_folder: '../../assets/certificates'
+    # Badges live in public/ rather than src/assets. Files under src/ are never
+    # served — Astro emits them under hashed /_astro/ names the CMS cannot
+    # predict — so a preview URL pointing there 404s and the editor shows a
+    # blank. public/ is served verbatim at the path recorded below, so the
+    # preview resolves. The trade is that Astro does not optimise these, which
+    # is why the committed files are kept small.
+    media_folder: 'public/badges'
+    public_folder: '/badges'
     fields:
       - { name: name, label: Name, widget: string, required: true }
       - { name: issuer, label: Issuer, widget: string, required: true }

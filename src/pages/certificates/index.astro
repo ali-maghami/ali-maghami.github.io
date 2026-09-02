@@ -1,11 +1,11 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
 import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
+import { assertBadge } from '../../lib/badges';
 
 const entries = (await getCollection('certificates')).sort(
 	(a, b) => b.data.issueDate.valueOf() - a.data.issueDate.valueOf(),
@@ -14,7 +14,11 @@ const entries = (await getCollection('certificates')).sort(
 // The CMS offers a Notes field on every certificate, so render it. Rendering is
 // async, so it is resolved up front rather than inside the template.
 const certificates = await Promise.all(
-	entries.map(async (entry) => ({ ...entry, Notes: (await render(entry)).Content })),
+	entries.map(async (entry) => ({
+		...entry,
+		Notes: (await render(entry)).Content,
+		badge: assertBadge(entry.data.badge),
+	})),
 );
 
 const now = new Date();
@@ -45,14 +49,15 @@ const now = new Date();
 							const expired = cert.data.expiryDate && cert.data.expiryDate < now;
 							return (
 								<li class="cert-row">
-									{cert.data.badge && (
-										<Image
+									{cert.badge && (
+										<img
 											class="cert-badge"
-											src={cert.data.badge}
+											src={cert.badge}
 											alt=""
-											width={250}
-											height={250}
+											width="125"
+											height="125"
 											loading="lazy"
+											decoding="async"
 										/>
 									)}
 									<div class="cert-main">
