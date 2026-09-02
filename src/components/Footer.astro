@@ -1,6 +1,6 @@
 ---
-import { Image } from 'astro:assets';
 import { FOOTER_BADGE_PAGES, SITE_TITLE, SOCIAL } from '../consts';
+import { assertBadge } from '../lib/badges';
 import { buildNavItems, getNavHref, showsFooterBadges } from '../lib/nav';
 import { getSiteSections } from '../lib/sections';
 
@@ -12,7 +12,9 @@ const navItems = buildNavItems(counts);
 // showing; the footerBadges setting picks *which pages* show them at all, since
 // the footer is on every page and the strip is not wanted on all of them. Both
 // are edited in the CMS.
-const featured = allCertificates.filter((c) => c.data.featured);
+const featured = allCertificates
+	.filter((c) => c.data.featured)
+	.map((c) => ({ ...c, badge: assertBadge(c.data.badge) }));
 const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 ---
 
@@ -27,14 +29,15 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 						{featured.map((cert) => {
 							const inner = (
 								<>
-									{cert.data.badge && (
-										<Image
+									{cert.badge && (
+										<img
 											class="cert-badge"
-											src={cert.data.badge}
+											src={cert.badge}
 											alt=""
-											width={200}
-											height={200}
+											width="100"
+											height="100"
 											loading="lazy"
+											decoding="async"
 										/>
 									)}
 									<span class="cert-name">{cert.data.name}</span>
