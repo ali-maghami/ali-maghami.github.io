@@ -49,5 +49,13 @@ npm run preview
 
 1. In your GitHub repository settings, go to **Settings > Pages**.
 2. Under **Build and deployment > Source**, select **GitHub Actions**.
-3. Push to `main` branch and the workflow will build and deploy automatically!
+3. Merge a PR into `main` and the workflow will build and deploy automatically!
+
+## 🔧 CI/CD & Contributing
+
+`main` is protected — changes go through a branch and PR, not a direct push. See [`docs/`](./docs/) for the full picture:
+
+- [`docs/ci-cd.md`](./docs/ci-cd.md) — what each GitHub Actions workflow does and what its output means
+- [`docs/branch-protection.md`](./docs/branch-protection.md) — the rules governing what can land on `main`, and why
+- [`docs/agentic-workflows.md`](./docs/agentic-workflows.md) — how AI coding agents should operate in this repo
 
