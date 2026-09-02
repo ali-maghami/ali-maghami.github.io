@@ -42,7 +42,7 @@ jobs:
             --no-progress
             --accept 200,206,301,302,303,307,308,429
             --max-retries 2
-            --exclude '^https://maghamis\.github\.io'
+            --exclude '^https://ali-maghami\.github\.io'
             --root-dir "${{ github.workspace }}/dist"
             './dist/**/*.html'
           fail: true
