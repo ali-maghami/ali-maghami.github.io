@@ -8,10 +8,10 @@
     "email": "seyedali.maghami@gmail.com"
   },
   "footerBadges": {
+    "limit": 5,
     "pages": [
       "home",
       "about"
-    ],
-    "limit": 6
+    ]
   }
 }
