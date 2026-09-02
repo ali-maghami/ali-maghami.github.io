@@ -6,5 +6,5 @@ expiryDate: ''
 credentialId: ''
 url: https://www.credly.com/badges/fc3f8880-20de-417e-a61f-1cb58b0aa888/public_url
 badge: /badges/professional-scrum-product-owner-i-pspo-i.png
-featured: false
+featured: true
 ---
