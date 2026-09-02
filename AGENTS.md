@@ -1,3 +1,7 @@
+## Repository Workflow
+
+`main` is protected by a branch protection ruleset — direct pushes are not possible, and every change needs a branch + PR that passes required checks. Read [`docs/branch-protection.md`](./docs/branch-protection.md), [`docs/ci-cd.md`](./docs/ci-cd.md), and [`docs/agentic-workflows.md`](./docs/agentic-workflows.md) before making changes.
+
 ## Development
 
 When starting the dev server, use background mode:
