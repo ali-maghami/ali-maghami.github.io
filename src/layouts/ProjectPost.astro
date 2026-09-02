@@ -14,142 +14,135 @@ const { title, description, pubDate, tags, repoUrl, liveUrl, type, heroImage } =
 <html lang="en">
 	<head>
 		<BaseHead title={`${title} | Projects`} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1.5em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1.2;
-			}
-			.title h1 {
-				margin: 0.3em 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.badge {
-				display: inline-block;
-				padding: 0.25rem 0.75rem;
-				border-radius: 9999px;
-				font-size: 0.85rem;
-				font-weight: 600;
-				text-transform: capitalize;
-			}
-			.badge-personal {
-				background-color: #e0f2fe;
-				color: #0369a1;
-			}
-			.badge-previous {
-				background-color: #f3e8ff;
-				color: #6b21a8;
-			}
-			.tags {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.5rem;
-				justify-content: center;
-				margin: 1rem 0;
-			}
-			.tag {
-				background: #f1f5f9;
-				color: #334155;
-				padding: 0.2rem 0.6rem;
-				border-radius: 6px;
-				font-size: 0.85rem;
-			}
-			.links {
-				display: flex;
-				gap: 1rem;
-				justify-content: center;
-				margin-top: 1rem;
-			}
-			.btn {
-				display: inline-block;
-				padding: 0.4rem 0.9rem;
-				border-radius: 6px;
-				text-decoration: none;
-				font-weight: 500;
-				font-size: 0.95rem;
-				border: 1px solid rgb(var(--gray));
-				color: rgb(var(--gray-dark));
-			}
-			.btn:hover {
-				background-color: rgb(var(--gray-light));
-			}
-			.btn-primary {
-				background-color: var(--accent);
-				color: white;
-				border-color: var(--accent);
-			}
-			.btn-primary:hover {
-				background-color: var(--accent-dark);
-			}
-		</style>
 	</head>
 
 	<body>
 		<Header />
 		<main>
 			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<span class={`badge ${type === 'personal' ? 'badge-personal' : 'badge-previous'}`}>
-							{type === 'personal' ? 'Personal Project' : 'Previous Project'}
+				<div class="wrap-narrow article-head">
+					<div class="meta-row">
+						<FormattedDate date={pubDate} />
+						<span class:list={['badge', `badge-${type}`]}>
+							{type === 'personal' ? 'Personal Project' : 'Previous Work'}
 						</span>
-						<h1>{title}</h1>
-						<div class="date">
-							<FormattedDate date={pubDate} />
-						</div>
-						{tags && tags.length > 0 && (
+					</div>
+
+					<h1>{title}</h1>
+					{description && <p class="standfirst">{description}</p>}
+
+					{
+						tags && tags.length > 0 && (
 							<div class="tags">
 								{tags.map((tag: string) => (
-									<span class="tag">#{tag}</span>
+									<span class="tag">{tag}</span>
 								))}
 							</div>
-						)}
-						<div class="links">
-							{repoUrl && (
-								<a href={repoUrl} target="_blank" rel="noopener noreferrer" class="btn">
-									GitHub Repository &rarr;
-								</a>
-							)}
-							{liveUrl && (
-								<a href={liveUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-									Live Preview &rarr;
-								</a>
-							)}
+						)
+					}
+
+					{
+						(repoUrl || liveUrl) && (
+							<div class="links">
+								{repoUrl && (
+									<a href={repoUrl} target="_blank" rel="noopener noreferrer" class="btn">
+										GitHub Repository &rarr;
+									</a>
+								)}
+								{liveUrl && (
+									<a
+										href={liveUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="btn btn-primary"
+									>
+										Live Preview &rarr;
+									</a>
+								)}
+							</div>
+						)
+					}
+				</div>
+
+				{
+					heroImage && (
+						<div class="hero-image">
+							<Image width={1020} height={510} src={heroImage} alt="" />
 						</div>
-						<hr />
-					</div>
+					)
+				}
+
+				<div class="wrap-narrow prose">
 					<slot />
 				</div>
 			</article>
 		</main>
 		<Footer />
+
+		<style>
+			.article-head {
+				padding: 3rem 1.25rem 2rem;
+			}
+
+			.article-head h1 {
+				margin: 0.85rem 0 0;
+				font-size: 2.5rem;
+				line-height: 1.15;
+				letter-spacing: -0.025em;
+			}
+
+			.standfirst {
+				margin: 1rem 0 0;
+				font-size: 1.125rem;
+				font-weight: 300;
+				line-height: 1.55;
+				color: var(--color-ink-soft);
+			}
+
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.4rem;
+				margin-top: 1.25rem;
+			}
+
+			.links {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.75rem;
+				margin-top: 1.5rem;
+			}
+
+			.hero-image {
+				max-width: 1020px;
+				margin: 0 auto 3rem;
+				padding-inline: 1.25rem;
+			}
+
+			.hero-image :global(img) {
+				display: block;
+				width: 100%;
+				height: auto;
+				border-radius: 16px;
+				border: 1px solid var(--color-sand-200);
+				box-shadow: 0 8px 30px rgb(48 48 38 / 8%);
+			}
+
+			.prose {
+				padding-bottom: 2rem;
+			}
+
+			@media (max-width: 720px) {
+				.article-head {
+					padding: 2rem 1.25rem 1.5rem;
+				}
+				.article-head h1 {
+					font-size: 1.875rem;
+				}
+				.hero-image {
+					margin-bottom: 2rem;
+				}
+			}
+		</style>
 	</body>
 </html>

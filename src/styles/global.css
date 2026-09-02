@@ -1,42 +1,72 @@
 @import "tailwindcss";
 
 /*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
+  Theme inspired by the GitHub Next site (githubnext.com):
+  warm "paper" surfaces, a soft sand palette, a floating pill nav,
+  monospace metadata, and lifted white cards.
+*/
+
+@theme {
+	/* Surfaces — warm paper rather than pure white */
+	--color-paper: #fefefd;
+	--color-base: #f6f7ee;
+	--color-sand-50: #fbfcf5;
+	--color-sand-100: #f1f3e6;
+	--color-sand-200: #e4e6d6;
+	--color-sand-300: #d3d6c2;
+
+	/* Text */
+	--color-ink: #303026;
+	--color-ink-soft: #55564c;
+	--color-ink-muted: #75766d;
+
+	/* Accents */
+	--color-copper: #ce6d53;
+	--color-copper-warm: #d78a67;
+	--color-sea: #60a0b3;
+	--color-mint: #dedfbd;
+	--color-banana: #fdc987;
+	--color-sky: #c4d7d9;
+	--color-slate-blue: #b4bdcb;
+	--color-lavender: #6b73d1;
+	--color-lavender-deep: #5158a8;
+
+	--font-sans: var(--font-mona), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+	--font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
 
 :root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
-	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
-	--box-shadow:
-		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
-		0 16px 32px rgba(var(--gray), 33%);
+	--shadow-card: 0 1px 2px rgb(48 48 38 / 6%);
+	--shadow-card-hover: 0 6px 20px rgb(48 48 38 / 10%);
 }
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+}
+
 body {
-	font-family: var(--font-atkinson);
 	margin: 0;
 	padding: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	font-family: var(--font-sans);
+	font-size: 16px;
+	line-height: 1.6;
+	color: var(--color-ink);
+	background-color: var(--color-base);
 	text-align: left;
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
-	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	color: rgb(var(--gray-dark));
-	font-size: 20px;
-	line-height: 1.7;
+	-webkit-font-smoothing: antialiased;
 }
-main {
-	width: 720px;
-	max-width: calc(100% - 2em);
-	margin: auto;
-	padding: 3em 1em;
-}
+
 h1,
 h2,
 h3,
@@ -44,85 +74,300 @@ h4,
 h5,
 h6 {
 	margin: 0 0 0.5rem 0;
-	color: rgb(var(--black));
+	color: var(--color-ink);
 	line-height: 1.2;
+	letter-spacing: -0.015em;
+	font-weight: 600;
 }
+
 h1 {
-	font-size: 3.052em;
-}
-h2 {
-	font-size: 2.441em;
-}
-h3 {
-	font-size: 1.953em;
-}
-h4 {
-	font-size: 1.563em;
-}
-h5 {
-	font-size: 1.25em;
-}
-strong,
-b {
+	font-size: 2.25rem;
 	font-weight: 700;
 }
+h2 {
+	font-size: 1.75rem;
+}
+h3 {
+	font-size: 1.375rem;
+}
+h4 {
+	font-size: 1.125rem;
+}
+h5 {
+	font-size: 1rem;
+}
+
+strong,
+b {
+	font-weight: 600;
+}
+
 a {
-	color: var(--accent);
+	color: var(--color-lavender);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+	transition: color 0.2s ease;
 }
 a:hover {
-	color: var(--accent);
+	color: var(--color-lavender-deep);
 }
+
 p {
-	margin-bottom: 1em;
+	margin: 0 0 1em 0;
 }
-.prose p {
-	margin-bottom: 2em;
-}
-textarea {
-	width: 100%;
-	font-size: 16px;
-}
-input {
-	font-size: 16px;
-}
-table {
-	width: 100%;
-}
+
 img {
 	max-width: 100%;
 	height: auto;
-	border-radius: 8px;
 }
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
 code {
-	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
-	border-radius: 2px;
+	font-family: var(--font-mono);
+	font-size: 0.875em;
+	padding: 0.15em 0.35em;
+	background-color: var(--color-sand-100);
+	border: 1px solid var(--color-sand-200);
+	border-radius: 4px;
 }
+
 pre {
-	padding: 1.5em;
-	border-radius: 8px;
+	font-family: var(--font-mono);
+	padding: 1.25em;
+	border-radius: 12px;
+	border: 1px solid var(--color-sand-200);
+	overflow-x: auto;
 }
+
 pre > code {
 	all: unset;
+	font-family: var(--font-mono);
 }
+
 blockquote {
-	border-left: 4px solid var(--accent);
-	padding: 0 0 0 20px;
-	margin: 0;
-	font-size: 1.333em;
+	border-left: 3px solid var(--color-copper);
+	padding: 0 0 0 1.25rem;
+	margin: 1.5rem 0;
+	color: var(--color-ink-soft);
+	font-size: 1.0625rem;
 }
+
 hr {
 	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
+	border-top: 1px solid var(--color-sand-200);
+	margin: 2rem 0;
 }
-@media (max-width: 720px) {
-	body {
-		font-size: 18px;
-	}
-	main {
-		padding: 1em;
-	}
+
+/* ---------------------------------------------------------------- layout */
+
+.wrap {
+	width: 100%;
+	max-width: 1160px;
+	margin-inline: auto;
+	padding-inline: 1.25rem;
 }
+
+.wrap-narrow {
+	width: 100%;
+	max-width: 720px;
+	margin-inline: auto;
+	padding-inline: 1.25rem;
+}
+
+main {
+	width: 100%;
+	padding-bottom: 4rem;
+}
+
+/* ------------------------------------------------------------ eyebrow/meta */
+
+.meta-row {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	font-family: var(--font-mono);
+	font-size: 0.75rem;
+	color: var(--color-ink-muted);
+}
+
+.section-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 1rem;
+	padding-bottom: 0.75rem;
+}
+
+.section-head h2 {
+	margin: 0;
+	font-size: 1.125rem;
+	font-weight: 600;
+}
+
+.view-all {
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.view-all:hover {
+	text-decoration: underline;
+}
+
+/* ----------------------------------------------------------------- badges */
+
+.badge {
+	display: inline-block;
+	border-radius: 4px;
+	padding: 0.375rem 0.5rem;
+	font-family: var(--font-mono);
+	font-size: 0.6875rem;
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: 0.01em;
+	white-space: nowrap;
+}
+
+.badge-personal {
+	background-color: color-mix(in srgb, var(--color-mint) 55%, var(--color-base));
+	color: #5e6136;
+}
+
+.badge-previous {
+	background-color: color-mix(in srgb, var(--color-copper) 20%, var(--color-base));
+	color: #8c412d;
+}
+
+.tag {
+	display: inline-block;
+	font-family: var(--font-mono);
+	font-size: 0.6875rem;
+	color: var(--color-ink-muted);
+	background: var(--color-sand-100);
+	border: 1px solid var(--color-sand-200);
+	border-radius: 4px;
+	padding: 0.2rem 0.4rem;
+	line-height: 1.2;
+}
+
+/* ------------------------------------------------------------------ cards */
+
+.card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	background: var(--color-paper);
+	border: 1px solid var(--color-sand-200);
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: var(--shadow-card);
+	transition:
+		box-shadow 0.2s ease-out,
+		transform 0.2s ease-out,
+		border-color 0.2s ease-out;
+}
+
+.card:hover {
+	box-shadow: var(--shadow-card-hover);
+	transform: translateY(-3px);
+	border-color: var(--color-sand-300);
+}
+
+.card:focus-within {
+	border-color: var(--color-lavender);
+}
+
+/* ----------------------------------------------------------------- prose */
+
+.prose {
+	color: var(--color-ink-soft);
+	font-size: 1.0625rem;
+	line-height: 1.75;
+}
+
+.prose h2 {
+	margin-top: 2.25rem;
+	font-size: 1.5rem;
+}
+
+.prose h3 {
+	margin-top: 1.75rem;
+	font-size: 1.25rem;
+}
+
+/* Tailwind's preflight strips list markers, so restore them for prose. */
+.prose ul,
+.prose ol {
+	padding-left: 1.35rem;
+	margin: 0 0 1.25rem 0;
+}
+
+.prose ul {
+	list-style: disc;
+}
+
+.prose ol {
+	list-style: decimal;
+}
+
+.prose li::marker {
+	color: var(--color-ink-muted);
+}
+
+.prose li {
+	margin-bottom: 0.4rem;
+}
+
+.prose img {
+	border-radius: 12px;
+	border: 1px solid var(--color-sand-200);
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.5rem 0.95rem;
+	border-radius: 999px;
+	border: 1px solid var(--color-sand-200);
+	background: var(--color-paper);
+	color: var(--color-ink);
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-decoration: none;
+	box-shadow: var(--shadow-card);
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		color 0.2s ease;
+}
+
+.btn:hover {
+	color: var(--color-ink);
+	border-color: var(--color-sand-300);
+	background: var(--color-sand-50);
+}
+
+.btn-primary {
+	background: var(--color-ink);
+	border-color: var(--color-ink);
+	color: var(--color-paper);
+}
+
+.btn-primary:hover {
+	background: #45453a;
+	border-color: #45453a;
+	color: var(--color-paper);
+}
+
+/* ------------------------------------------------------------------ a11y */
 
 .sr-only {
 	border: 0;
@@ -132,12 +377,22 @@ hr {
 	height: 1px;
 	width: 1px;
 	overflow: hidden;
-	/* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
-	clip: rect(1px 1px 1px 1px);
-	/* maybe deprecated but we need to support legacy browsers */
 	clip: rect(1px, 1px, 1px, 1px);
-	/* modern browsers, clip-path works inwards from each corner */
 	clip-path: inset(50%);
-	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
+}
+
+:focus-visible {
+	outline: 2px solid var(--color-lavender);
+	outline-offset: 2px;
+	border-radius: 4px;
+}
+
+@media (max-width: 720px) {
+	h1 {
+		font-size: 1.875rem;
+	}
+	h2 {
+		font-size: 1.5rem;
+	}
 }

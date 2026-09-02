@@ -1,0 +1,127 @@
+---
+/*
+ * Soft, slowly drifting colour wash sitting behind the hero — a CSS
+ * stand-in for the animated gradient canvas on githubnext.com.
+ */
+---
+
+<div class="aurora" aria-hidden="true">
+	<span class="blob blob-1"></span>
+	<span class="blob blob-2"></span>
+	<span class="blob blob-3"></span>
+	<span class="blob blob-4"></span>
+	<span class="grain"></span>
+</div>
+
+<style>
+	.aurora {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		overflow: hidden;
+		pointer-events: none;
+		mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+		-webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+	}
+
+	.blob {
+		position: absolute;
+		border-radius: 50%;
+		filter: blur(70px);
+		opacity: 0.45;
+		will-change: transform;
+	}
+
+	.blob-1 {
+		width: 42vw;
+		height: 42vw;
+		min-width: 320px;
+		min-height: 320px;
+		top: -14%;
+		left: 4%;
+		background: var(--color-sky);
+		animation: drift-1 26s ease-in-out infinite alternate;
+	}
+
+	.blob-2 {
+		width: 34vw;
+		height: 34vw;
+		min-width: 260px;
+		min-height: 260px;
+		top: 6%;
+		right: 6%;
+		background: var(--color-banana);
+		opacity: 0.3;
+		animation: drift-2 32s ease-in-out infinite alternate;
+	}
+
+	.blob-3 {
+		width: 30vw;
+		height: 30vw;
+		min-width: 240px;
+		min-height: 240px;
+		bottom: -18%;
+		left: 28%;
+		background: var(--color-mint);
+		opacity: 0.5;
+		animation: drift-3 24s ease-in-out infinite alternate;
+	}
+
+	.blob-4 {
+		width: 24vw;
+		height: 24vw;
+		min-width: 200px;
+		min-height: 200px;
+		top: 34%;
+		left: 46%;
+		background: var(--color-copper-warm);
+		opacity: 0.22;
+		animation: drift-2 29s ease-in-out infinite alternate-reverse;
+	}
+
+	/* A whisper of texture so the wash reads as paper, not as a screen. */
+	.grain {
+		position: absolute;
+		inset: 0;
+		background-image: radial-gradient(
+			circle at 1px 1px,
+			rgb(48 48 38 / 10%) 1px,
+			transparent 0
+		);
+		background-size: 4px 4px;
+		opacity: 0.12;
+	}
+
+	@keyframes drift-1 {
+		from {
+			transform: translate3d(0, 0, 0) scale(1);
+		}
+		to {
+			transform: translate3d(6%, 8%, 0) scale(1.12);
+		}
+	}
+
+	@keyframes drift-2 {
+		from {
+			transform: translate3d(0, 0, 0) scale(1.05);
+		}
+		to {
+			transform: translate3d(-8%, 6%, 0) scale(0.95);
+		}
+	}
+
+	@keyframes drift-3 {
+		from {
+			transform: translate3d(0, 0, 0) scale(0.95);
+		}
+		to {
+			transform: translate3d(10%, -6%, 0) scale(1.1);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.blob {
+			animation: none;
+		}
+	}
+</style>
