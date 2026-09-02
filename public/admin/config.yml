@@ -1,0 +1,85 @@
+# Sveltia CMS — a browser UI over the markdown in src/content/projects/.
+#
+# Every field below mirrors the Zod schema in src/content.config.ts. If you
+# change one, change the other: the CMS commits to a branch and opens a PR,
+# and pr-checks.yml runs `astro check` on it, so a mismatch surfaces as a
+# failing PR rather than a broken site.
+
+backend:
+  name: github
+  repo: ali-maghami/ali-maghami.github.io
+  branch: main
+  # GitHub Pages can't run the OAuth token exchange, so it lives in a
+  # Cloudflare Worker. Replace with your deployed Worker URL — see docs/cms.md.
+  base_url: https://REPLACE-WITH-YOUR-WORKER.workers.dev
+
+# `main` is protected, so the CMS must not push to it. Editorial workflow turns
+# every save into a branch + PR that the required checks gate, exactly like a
+# change made from an editor.
+publish_mode: editorial_workflow
+
+# Fallback only. The projects collection overrides these — see the note there.
+media_folder: src/assets/work
+public_folder: /src/assets/work
+
+collections:
+  - name: projects
+    label: Projects
+    label_singular: Project
+    folder: src/content/projects
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: '{{slug}}'
+    summary: '{{title}}'
+    sortable_fields: [pubDate, title]
+    # Astro's image() helper resolves heroImage relative to the markdown file,
+    # not to the site root, so these are relative paths rather than the usual
+    # /public-rooted ones. src/content/projects/x.md -> ../../assets/work/y.png
+    media_folder: '../../assets/work'
+    public_folder: '../../assets/work'
+    fields:
+      - { name: title, label: Title, widget: string, required: true }
+      - {
+          name: description,
+          label: Description,
+          widget: text,
+          required: true,
+          hint: 'One or two sentences. Shown on the project cards and in search results.',
+        }
+      - name: type
+        label: Type
+        widget: select
+        required: true
+        default: previous
+        options:
+          - { label: Personal project, value: personal }
+          - { label: Previous work, value: previous }
+      - {
+          name: pubDate,
+          label: Date,
+          widget: datetime,
+          required: true,
+          date_format: 'YYYY-MM-DD',
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          picker_utc: true,
+        }
+      - { name: tags, label: Tags, widget: list, required: false, default: [] }
+      - { name: featured, label: Featured, widget: boolean, required: false, default: false }
+      - {
+          name: repoUrl,
+          label: Repository URL,
+          widget: string,
+          required: false,
+          pattern: ['^https?://.+', 'Must be a full URL starting with http:// or https://'],
+        }
+      - {
+          name: liveUrl,
+          label: Live URL,
+          widget: string,
+          required: false,
+          pattern: ['^https?://.+', 'Must be a full URL starting with http:// or https://'],
+        }
+      - { name: heroImage, label: Hero image, widget: image, required: false }
+      - { name: body, label: Body, widget: markdown }
