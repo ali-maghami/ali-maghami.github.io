@@ -18,8 +18,9 @@ Conducted research on vision-based guidance systems for precision robotic drilli
 - Created automated multi-light imaging workflows with deep learning for defect detection in composites
 - Published peer-reviewed research demonstrating practical applicability to manufacturing
 
+A crosshair laser profiler recovers the surface geometry ahead of the tool. Laser lines are tracked inside a moving window on each frame, transformed from the camera frame into the laser-plane frame, and interpolated into a 3D spline that the robot path is corrected against online.
+
 ## Technologies
 
 OpenCV, PyTorch, Semantic Segmentation, ROS, KUKA Robot Control, Laser Profiling
-
 

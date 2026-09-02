@@ -22,4 +22,3 @@ Architected and deployed a sophisticated vision system for railcar loading opera
 
 Computer Vision, 3D Imaging, Python, OpenCV, Open3D, Azure IoT Hub, Docker, Linux
 
-

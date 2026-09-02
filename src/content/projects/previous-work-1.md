@@ -22,4 +22,3 @@ Developed calibration software that provides practical tools for camera, robot, 
 
 Python, PyQt5, OpenCV, Intel RealSense, Universal Robots, KUKA
 
-

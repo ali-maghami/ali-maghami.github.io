@@ -29,4 +29,3 @@ We trained neural networks to learn and compensate for calibration errors from r
 
 The methods were validated across multiple robot configurations and assembly scenarios, demonstrating practical potential for manufacturing environments.
 
-

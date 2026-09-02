@@ -33,4 +33,3 @@ The system achieved high accuracy for defect detection and significantly reduced
 
 This work demonstrates the potential for automating quality control in precision composite manufacturing, where visual inspection is critical but challenging to automate effectively.
 
-

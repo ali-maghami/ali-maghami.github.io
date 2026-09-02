@@ -23,4 +23,3 @@ We developed camera systems and algorithms to detect tool position in real-time 
 
 The system demonstrated sub-millimeter accuracy on composite structures and was validated across multiple drilling scenarios, showing promise for automated precision manufacturing.
 
-
