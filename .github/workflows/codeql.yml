@@ -1,9 +1,12 @@
 name: CodeQL
 
+# Scans `main` after a merge and weekly, rather than on every pull request.
+# This is a static site whose only first-party script is a few lines inline, so
+# per-PR scanning cost about a minute on each content edit to re-scan code that
+# had not changed. Findings still surface in the Security tab, just after the
+# fact rather than as a gate — CodeQL was never a required check here.
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
   schedule:
     - cron: '23 4 * * 1'
