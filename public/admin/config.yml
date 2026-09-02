@@ -1,9 +1,8 @@
 # Sveltia CMS — a browser UI over the markdown in src/content/projects/.
 #
 # Every field below mirrors the Zod schema in src/content.config.ts. If you
-# change one, change the other: the CMS commits to a branch and opens a PR,
-# and pr-checks.yml runs `astro check` on it, so a mismatch surfaces as a
-# failing PR rather than a broken site.
+# change one, change the other: a save commits straight to `main`, so a mismatch
+# shows up as a failed build that never deploys rather than as a broken site.
 
 backend:
   name: github
@@ -13,10 +12,17 @@ backend:
   # so that one step lives in a Cloudflare Worker. See docs/cms.md.
   base_url: https://sveltia-cms-auth.seyedali-maghami.workers.dev
 
-# `main` is protected, so the CMS must not push to it. Editorial workflow turns
-# every save into a branch + PR that the required checks gate, exactly like a
-# change made from an editor.
-publish_mode: editorial_workflow
+# No publish_mode, so the CMS uses its simple workflow: Save commits straight to
+# `main` and the deploy publishes it. One button, no review step, and no branch
+# or pull request per entry.
+#
+# This depends on `main` not demanding a pull request for every change. With
+# that requirement in place the CMS's push is refused and saving fails outright,
+# so the two settings have to match.
+#
+# What still protects the site is that deploy.yml publishes only a successful
+# build. A save that breaks the schema fails the build, nothing is deployed, and
+# the live site stays on its last good version until the entry is fixed.
 
 # Fallback only. The projects collection overrides these — see the note there.
 media_folder: src/assets/work

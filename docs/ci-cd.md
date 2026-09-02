@@ -52,12 +52,12 @@ remove it from the ruleset in the same change.
 | Deploy to GitHub Pages | ✅ | — | — | ✅ |
 | Lighthouse CI | — | — | — | ✅ |
 | Link Check | — | ✅ | ✅ weekly (Mon 06:00 UTC) | ✅ |
-| Pull Request Checks | — | ✅ | — | ✅ |
+| Build Checks | ✅ | ✅ | — | ✅ |
 
 Each choice is deliberate:
 
 - **Dependency Review** only makes sense on a PR — it diffs the base and head manifests, and a plain push has no "before" state to diff against.
-- **Link Check and Pull Request Checks** are pre-merge quality gates, so they only need to run on PRs (see [branch-protection.md](./branch-protection.md) for how they're made *required*). **Lighthouse CI** is manual — see the section above for why it is no longer a gate.
+- **Link Check** is a pre-merge quality gate, so it only needs to run on PRs (see [branch-protection.md](./branch-protection.md) for how it is made *required*). **Build Checks** runs on PRs *and* on `main`, because CMS saves commit to `main` without opening a PR and would otherwise reach the site with no check naming what broke. **Lighthouse CI** is manual — see the section above for why it is no longer a gate.
 - **Deploy** should only run once code has actually landed on `main` — publishing on every PR would deploy unmerged, unreviewed work.
 - **CodeQL** runs on both, plus a schedule, because each catches something different (see below).
 
@@ -147,7 +147,7 @@ markdown, that is the right side of the trade; it would not be on an application
 
 These are real failures hit in this repo — worth knowing before you touch these workflows again:
 
-- **Required status check names come from the job's `name:` field, not the workflow's top-level `name:`.** E.g. the check to require is `Build and verify`, not "Pull Request Checks" (that's the workflow file's display name in the Actions tab, not the check name GitHub rulesets match against).
+- **Required status check names come from the job's `name:` field, not the workflow's top-level `name:`.** E.g. the check to require is `Build and verify`, not "Build Checks" (that's the workflow file's display name in the Actions tab, not the check name GitHub rulesets match against). The workflow was renamed from "Pull Request Checks" when it started running on `main` too; the job name did not change, so the required check kept working.
 - **`treosh/lighthouse-ci-action@v12` does not accept `staticDistDir` as a direct input.** It must go through a `lighthouserc.json` file referenced via `configPath`.
 - **lychee needs `--root-dir` to resolve root-relative links** (e.g. `href="/blog"`) against `dist/` instead of the runner's filesystem root — without it, every internal link gets flagged as broken.
 - **lychee v0.24+ removed `--exclude-mail`** in favor of `--include-mail` (excluding `mailto:` links is now the default). Passing the old flag crashes the run with exit code 2 before it scans anything — it doesn't degrade gracefully.

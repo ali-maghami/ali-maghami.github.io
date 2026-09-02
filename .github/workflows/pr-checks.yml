@@ -1,6 +1,12 @@
-name: Pull Request Checks
+name: Build Checks
 
+# Also runs on `main` directly, because CMS saves commit there without opening a
+# pull request — without this, a save that breaks the schema would be caught
+# only by the deploy failing, with nothing naming the cause. This run does the
+# same lint, tests and build, so the failure says what is actually wrong.
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
