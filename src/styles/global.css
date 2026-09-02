@@ -51,6 +51,11 @@ html {
 }
 
 body {
+	/* The colour wash is the first child of <body>, absolutely positioned; this
+	   is what it positions against. `isolation` keeps it out of any stacking
+	   context above, so it stays a backdrop rather than climbing over content. */
+	position: relative;
+	isolation: isolate;
 	margin: 0;
 	padding: 0;
 	min-height: 100vh;
@@ -180,7 +185,11 @@ hr {
 	padding-inline: 1.25rem;
 }
 
+/* Above the colour wash, which sits at z-index 0. Without this, content in
+   normal flow would paint underneath a positioned backdrop. */
 main {
+	position: relative;
+	z-index: 1;
 	width: 100%;
 	padding-bottom: 4rem;
 }

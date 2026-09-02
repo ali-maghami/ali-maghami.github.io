@@ -32,15 +32,12 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 											class="cert-badge"
 											src={cert.data.badge}
 											alt=""
-											width={125}
-											height={125}
+											width={200}
+											height={200}
 											loading="lazy"
 										/>
 									)}
-									<span class="cert-text">
-										<span class="cert-name">{cert.data.name}</span>
-										<span class="cert-issuer">{cert.data.issuer}</span>
-									</span>
+									<span class="cert-name">{cert.data.name}</span>
 								</>
 							);
 							return (
@@ -97,29 +94,29 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 
 <style>
 	.site-footer {
+		position: relative;
+		z-index: 1;
 		border-top: 1px solid var(--color-sand-200);
 		/* body is a flex column, so this pins the footer to the bottom
 		   of short pages without collapsing the gap on long ones. */
 		margin-top: auto;
 	}
 
+	/* Translucent white rather than a fixed sand tone: the page surface changes
+	   colour on every load, and a warm panel clashed with the cooler palettes. */
 	.cert-strip {
 		border-bottom: 1px solid var(--color-sand-200);
-		background: var(--color-sand-100);
-		padding: 1.25rem;
+		background: rgb(255 255 255 / 45%);
+		padding: 1.5rem 1.25rem 1.25rem;
 	}
 
 	.cert-inner {
-		display: flex;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: 0.75rem 1.5rem;
 		max-width: 1160px;
 		margin-inline: auto;
 	}
 
 	.cert-label {
-		margin: 0;
+		margin: 0 0 0.9rem;
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
 		letter-spacing: 0.08em;
@@ -127,44 +124,41 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 		color: var(--color-ink-muted);
 	}
 
+	/* Tiles rather than a row: the badge stacks over its name, so a column is
+	   only as wide as the badge plus a little, and many fit across one page. */
 	.cert-list {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1.5rem;
-		margin: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+		gap: 1.5rem 1rem;
+		margin: 0 0 1rem;
 		padding: 0;
 		list-style: none;
-		flex: 1;
 	}
 
 	.cert a,
 	.cert > span {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
-		gap: 0.55rem;
+		gap: 0.5rem;
+		text-align: center;
 		text-decoration: none;
 		color: inherit;
 	}
 
-	.cert-text {
-		display: flex;
-		flex-direction: column;
-		gap: 0.1rem;
-	}
-
-	/* Badges arrive at 125x125 and are rendered at a third of that, so they
-	   read as a mark beside the name rather than as artwork. The intrinsic
-	   size is kept in the markup so the image stays sharp on dense screens. */
+	/* Shown at 100px. Twice that is requested from the image pipeline so it
+	   stays sharp on dense screens; Astro will not upscale past the source. */
 	.cert-badge {
-		width: 36px;
-		height: 36px;
+		width: 100px;
+		height: 100px;
 		object-fit: contain;
 		flex-shrink: 0;
 	}
 
 	.cert-name {
-		font-size: 0.8125rem;
+		font-size: 0.75rem;
 		font-weight: 500;
+		line-height: 1.3;
 		color: var(--color-ink);
 	}
 
@@ -172,13 +166,8 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 		text-decoration: underline;
 	}
 
-	.cert-issuer {
-		font-family: var(--font-mono);
-		font-size: 0.6875rem;
-		color: var(--color-ink-muted);
-	}
-
 	.cert-all {
+		display: inline-block;
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
 		color: var(--color-ink-muted);
@@ -226,8 +215,14 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 	}
 
 	@media (max-width: 720px) {
-		.cert-inner {
-			gap: 0.5rem 1rem;
+		.cert-list {
+			grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+			gap: 1.25rem 0.75rem;
+		}
+
+		.cert-badge {
+			width: 72px;
+			height: 72px;
 		}
 	}
 </style>
