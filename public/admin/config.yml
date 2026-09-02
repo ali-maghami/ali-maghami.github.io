@@ -9,9 +9,9 @@ backend:
   name: github
   repo: ali-maghami/ali-maghami.github.io
   branch: main
-  # GitHub Pages can't run the OAuth token exchange, so it lives in a
-  # Cloudflare Worker. Replace with your deployed Worker URL — see docs/cms.md.
-  base_url: https://REPLACE-WITH-YOUR-WORKER.workers.dev
+  # GitHub Pages can't run the OAuth token exchange (it needs a client secret),
+  # so that one step lives in a Cloudflare Worker. See docs/cms.md.
+  base_url: https://sveltia-cms-auth.seyedali-maghami.workers.dev
 
 # `main` is protected, so the CMS must not push to it. Editorial workflow turns
 # every save into a branch + PR that the required checks gate, exactly like a
