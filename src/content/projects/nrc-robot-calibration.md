@@ -5,6 +5,7 @@ type: 'previous'
 pubDate: 2022-08-15
 tags: ['Deep Learning', 'Robotics', 'Aerospace', 'Research', 'Machine Learning']
 featured: false
+heroImage: '../../assets/work/multi-robot-cell-setup.jpg'
 ---
 
 ## Overview

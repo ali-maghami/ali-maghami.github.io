@@ -51,6 +51,7 @@ const previousProjects = allProjects.filter((p) => p.data.type === 'previous');
 									badge="Personal Project"
 									badgeVariant="personal"
 									tags={project.data.tags}
+									image={project.data.heroImage}
 								/>
 							))}
 						</div>
@@ -75,6 +76,7 @@ const previousProjects = allProjects.filter((p) => p.data.type === 'previous');
 									badge="Previous Work"
 									badgeVariant="previous"
 									tags={project.data.tags}
+									image={project.data.heroImage}
 								/>
 							))}
 						</div>
@@ -139,6 +141,9 @@ const previousProjects = allProjects.filter((p) => p.data.type === 'previous');
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 				gap: 1.25rem;
+				/* Not every entry has a banner; stretching rows to equal height
+				   would open a gap inside the ones that don't. */
+				align-items: start;
 			}
 
 			@media (max-width: 720px) {

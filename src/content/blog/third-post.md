@@ -2,7 +2,7 @@
 title: 'Automated Vision-Based Inspection of Drilled CFRP Composites Using Multi-Light Imaging'
 description: 'Deep learning for detecting defects in aerospace composite structures'
 pubDate: 'Aug 10 2021'
-heroImage: '../../assets/blog-placeholder-2.jpg'
+heroImage: '../../assets/work/multi-light-inspection-setup.png'
 ---
 
 ## Publication
@@ -22,6 +22,8 @@ Detecting microscopic defects around drilled holes in aerospace composites is ti
 ## Approach
 
 We developed a system using multiple light angles to reveal different types of defects, then trained deep learning models to recognize damage patterns and anomalies automatically.
+
+![Inspection pipeline: multi-light images are fused and processed to train a U-Net, which then segments damage on unconstrained images and feeds a damage evaluation step.](../../assets/work/multi-light-inspection-pipeline.png)
 
 ## Results
 
