@@ -1,13 +1,58 @@
 # Content Management (Sveltia CMS)
 
-Project pages live as markdown in [`src/content/projects/`](../src/content/projects/), validated
-against the Zod schema in [`src/content.config.ts`](../src/content.config.ts). Editing them means
-editing files. [Sveltia CMS](https://github.com/sveltia/sveltia-cms) puts a browser UI over
-exactly those files, so content can be written from any device without a clone, a branch, or a
-text editor.
+The site's content lives as markdown and JSON under [`src/content/`](../src/content/) and
+[`src/data/`](../src/data/), validated against the schemas in
+[`src/content.config.ts`](../src/content.config.ts). Editing it means editing files.
+[Sveltia CMS](https://github.com/sveltia/sveltia-cms) puts a browser UI over exactly those files,
+so content can be written from any device without a clone, a branch, or a text editor.
 
 It is a *git-based* CMS: there is no database and no content API. The editor reads and writes the
-same markdown through the GitHub API, and every save is a real commit.
+same files through the GitHub API, and every save is a real commit.
+
+## What is editable
+
+| In the CMS | Writes to | Appears at |
+|---|---|---|
+| Projects | `src/content/projects/` | `/projects/` |
+| Blog | `src/content/blog/` | `/blog/` |
+| Papers | `src/content/papers/` | `/papers/` |
+| Certificates | `src/content/certificates/` | `/certificates/` and the site footer |
+| LinkedIn Posts | `src/content/posts/` | `/posts/` |
+| Pages → Home page | `src/content/home/index.md` | the home page hero |
+| Pages → About page | `src/content/about/index.md` | `/about/` |
+| Settings → Site and social links | `src/data/settings.json` | title, description, header and footer links |
+
+Three behaviours are worth knowing before you wonder whether something is broken:
+
+- **Empty sections are hidden.** A section with no entries is dropped from the navigation rather
+  than linking to an empty page — see `buildNavItems` in [`src/lib/nav.ts`](../src/lib/nav.ts).
+  Blog, Papers and LinkedIn Posts therefore stay invisible until you add the first entry, and
+  appear on their own once you do.
+- **Only *featured* certificates reach the footer.** The footer renders on every page, so an
+  unbounded list would grow into the layout. Everything appears on `/certificates/` regardless.
+- **Blog drafts stay out of the built site.** A post with `draft: true` remains editable in the
+  CMS and is not published, so a half-written post can be saved safely.
+
+## Adding a LinkedIn post
+
+There is no way to pull LinkedIn posts automatically. LinkedIn removed public RSS years ago, and
+their API needs partner approval that does not cover reading your own feed. Anything claiming
+otherwise is scraping, against their terms, and breaks often.
+
+What does work is LinkedIn's own embed, one post at a time. On a **public** post, use `···` →
+*Embed this post*, and take the long number out of the URN:
+
+```
+https://www.linkedin.com/embed/feed/update/urn:li:share:7123456789012345678
+                                                        ^^^^^^^^^^^^^^^^^^^ this is the Post ID
+```
+
+Paste that number into the **Post ID** field. Only public posts can be embedded; a post limited to
+connections renders as an empty box.
+
+These are iframes that load LinkedIn's own scripts and tracking, which makes them by far the
+heaviest thing on the site. They are lazy-loaded and confined to `/posts/` for that reason — think
+twice before putting them on the home page.
 
 ## Why this CMS and not another
 
@@ -105,7 +150,24 @@ trailing slash. The editor is then live at **https://ali-maghami.github.io/admin
 Only accounts with write access to this repo can log in — GitHub enforces that itself, since the
 CMS acts purely through the API as the signed-in user.
 
-### Troubleshooting a fresh deploy
+### Troubleshooting
+
+**Login opens a popup that 404s on the worker.** The OAuth app's *Authorization callback URL* is
+missing its path. The worker serves only `/auth`, `/oauth/authorize`, `/callback` and
+`/oauth/redirect` — the bare origin returns 404, so a callback registered without `/callback`
+sends the code nowhere. The value must match GitHub's record exactly.
+
+**Login fails with "OAuth app client ID or secret is not configured."** The credentials exist but
+the deployed version predates them. Adding a variable in the Cloudflare dashboard creates a *new
+version*; it is not live until it is deployed. Check **Deployments** and confirm the active
+version is the newest one.
+
+**Origin checking silently stops.** `ALLOWED_DOMAINS` is a plain-text variable, and the worker
+repo's `wrangler.toml` has no `[vars]` block, so a git-triggered rebuild can drop it. The two
+secrets survive; this one does not. Re-add it if logins keep working but the domain restriction
+appears to have gone.
+
+**A fresh deploy answers with a TLS error rather than an HTTP status.**
 
 A brand-new `*.workers.dev` subdomain resolves in DNS before its TLS certificate finishes
 provisioning. In that window the host answers with a TLS handshake failure
@@ -131,16 +193,23 @@ The field list in `config.yml` mirrors `src/content.config.ts`. **If you change 
 other.** They are not automatically linked, and a drift shows up as a PR that fails `astro check`
 rather than as a broken site — which is the failure mode you want, but still a failure.
 
-Two subtleties worth knowing before editing either file:
+Subtleties worth knowing before editing either file:
 
 - **`heroImage` uses relative paths.** Astro's `image()` helper resolves it relative to the
   markdown file, not the site root, so the collection sets `media_folder: '../../assets/work'`
   rather than a `/public`-rooted path. Images live in [`src/assets/work/`](../src/assets/work/)
   so that Astro can optimise them; anything in `public/` would be served unprocessed.
-- **Cleared optional fields arrive as `''`, not as absent.** `repoUrl` and `liveUrl` are therefore
-  wrapped in a `z.preprocess` that maps blank to `undefined`. Without it, an editor who types a URL
-  and then deletes it produces `repoUrl: ''`, which fails `.url()` and breaks the build — on a PR
-  the CMS itself opened. Keep that wrapper if you add further optional URL fields.
+- **Cleared optional fields arrive as `''`, not as absent.** Every optional URL field is therefore
+  built from the shared `optionalUrl` helper, a `z.preprocess` that maps blank to `undefined`.
+  Without it, an editor who types a URL and then deletes it produces `repoUrl: ''`, which fails
+  `.url()` and breaks the build — on a PR the CMS itself opened. Use `optionalUrl` for any further
+  optional URL field rather than `z.string().url().optional()`.
+- **The home and about entries must exist.** Both pages render from a single-entry collection and
+  throw a clear build error if the file is missing. Delete them and the site stops building; that
+  is deliberate, since the alternative is a page that silently renders blank.
+- **A deleted entry can survive a rebuild.** Astro caches the content layer in
+  `node_modules/.astro`, which `rm -rf dist` does not clear. If a removed entry keeps appearing,
+  delete `node_modules/.astro` and `.astro` before rebuilding.
 
 ## Upgrading
 

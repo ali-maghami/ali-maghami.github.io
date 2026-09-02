@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
 import ContentCard from '../components/ContentCard.astro';
@@ -15,7 +15,18 @@ const projects = (await getCollection('projects'))
 	})
 	.slice(0, 6);
 
-const focusAreas = ['Computer Vision', 'Robotics', 'Machine Learning', 'Industrial AI'];
+const [home] = await getCollection('home');
+
+if (!home) {
+	throw new Error(
+		'The home collection is empty. Expected src/content/home/index.md — the hero renders from it.',
+	);
+}
+
+const { heading, focusAreas } = home.data;
+// The lede carries a link and emphasis, so it is markdown rather than a plain
+// string and Astro renders it here.
+const { Content: HeroLede } = await render(home);
 ---
 
 <!doctype html>
@@ -30,16 +41,10 @@ const focusAreas = ['Computer Vision', 'Robotics', 'Machine Learning', 'Industri
 				<Header />
 				<section class="hero">
 					<div class="hero-inner">
-						<h1>Turning AI into industrial reality.</h1>
-						<p class="lede">
-							I'm <strong>Ali Maghami</strong>, an engineer and researcher at <a
-								href="https://www.hatch.com"
-								target="_blank"
-								rel="noopener noreferrer">Hatch Ltd.</a
-							>, where I work on vision solutions for manufacturing and mining. Previously I built
-							robotics perception systems at TetraGen Robotics and conducted research at the
-							University of Manitoba and the National Research Council Canada.
-						</p>
+						<h1>{heading}</h1>
+						<div class="lede">
+							<HeroLede />
+						</div>
 						<ul class="focus-list">
 							{focusAreas.map((area) => <li>{area}</li>)}
 						</ul>

@@ -1,3 +1,42 @@
+export interface NavItem {
+	href: string;
+	label: string;
+}
+
 export function getNavHref(path: string): string {
 	return path;
+}
+
+/**
+ * Every optional section, in the order it should appear in the navigation.
+ * `key` matches the counts gathered from the content collections.
+ */
+const OPTIONAL_SECTIONS: { key: string; href: string; label: string }[] = [
+	{ key: 'projects', href: '/projects/', label: 'Projects' },
+	{ key: 'blog', href: '/blog/', label: 'Blog' },
+	{ key: 'papers', href: '/papers/', label: 'Papers' },
+	{ key: 'posts', href: '/posts/', label: 'Posts' },
+];
+
+/**
+ * Builds the main navigation, hiding sections that have no published entries.
+ *
+ * A portfolio linking to an empty page looks broken, and several of these
+ * collections start empty by design — they fill up as entries are added through
+ * the CMS. This stays pure (counts in, items out) so it can be tested without
+ * the content layer, which is also why it lives here rather than in sections.ts.
+ */
+export function buildNavItems(counts: Record<string, number>): NavItem[] {
+	return [
+		{ href: '/', label: 'Home' },
+		...OPTIONAL_SECTIONS.filter((section) => (counts[section.key] ?? 0) > 0).map(
+			({ href, label }) => ({ href, label }),
+		),
+		{ href: '/about/', label: 'About' },
+	];
+}
+
+/** Drafts are editable in the CMS but never built into the site. */
+export function isPublished(entry: { data: { draft?: boolean } }): boolean {
+	return entry.data.draft !== true;
 }

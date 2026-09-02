@@ -1,0 +1,131 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+
+type Props = CollectionEntry<'blog'>['data'];
+
+const { title, description, pubDate, updatedDate, tags, heroImage } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={`${title} | Blog`} description={description} />
+	</head>
+
+	<body>
+		<Header />
+		<main>
+			<article>
+				<div class="wrap-narrow article-head">
+					<div class="meta-row">
+						<FormattedDate date={pubDate} />
+						{
+							updatedDate && (
+								<span class="updated">
+									Updated <FormattedDate date={updatedDate} />
+								</span>
+							)
+						}
+					</div>
+
+					<h1>{title}</h1>
+					{description && <p class="standfirst">{description}</p>}
+
+					{
+						tags && tags.length > 0 && (
+							<div class="tags">
+								{tags.map((tag: string) => (
+									<span class="tag">{tag}</span>
+								))}
+							</div>
+						)
+					}
+				</div>
+
+				{
+					heroImage && (
+						<div class="wrap-narrow hero">
+							<Image src={heroImage} alt="" width={1200} height={675} />
+						</div>
+					)
+				}
+
+				<div class="wrap-narrow prose">
+					<slot />
+				</div>
+			</article>
+		</main>
+		<Footer />
+
+		<style>
+			.article-head {
+				padding: 3rem 1.25rem 2rem;
+			}
+
+			.meta-row {
+				display: flex;
+				align-items: center;
+				flex-wrap: wrap;
+				gap: 0.75rem;
+				margin-bottom: 1rem;
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				color: var(--color-ink-muted);
+			}
+
+			.updated {
+				font-style: italic;
+			}
+
+			.article-head h1 {
+				margin: 0;
+				font-size: 2.5rem;
+				line-height: 1.15;
+				letter-spacing: -0.025em;
+			}
+
+			.standfirst {
+				margin: 1rem 0 0;
+				font-size: 1.125rem;
+				font-weight: 300;
+				line-height: 1.55;
+				color: var(--color-ink-soft);
+			}
+
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				margin-top: 1.25rem;
+			}
+
+			.hero {
+				padding: 0 1.25rem 1rem;
+			}
+
+			.hero img {
+				width: 100%;
+				height: auto;
+				border-radius: 10px;
+				border: 1px solid var(--color-sand-200);
+			}
+
+			.prose {
+				padding-bottom: 3rem;
+			}
+
+			@media (max-width: 720px) {
+				.article-head {
+					padding: 2rem 1.25rem 1.5rem;
+				}
+				.article-head h1 {
+					font-size: 1.875rem;
+				}
+			}
+		</style>
+	</body>
+</html>

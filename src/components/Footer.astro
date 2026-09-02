@@ -1,18 +1,75 @@
 ---
-import { SITE_TITLE } from '../consts';
-import { getNavHref } from '../lib/nav';
+import { SITE_TITLE, SOCIAL } from '../consts';
+import { buildNavItems, getNavHref } from '../lib/nav';
+import { getSiteSections } from '../lib/sections';
 
 const today = new Date();
+const { counts, certificates: allCertificates } = await getSiteSections();
+const navItems = buildNavItems(counts);
+
+// Only the ones marked featured appear here — the footer is on every page, so
+// an unbounded list would grow into the page. The rest live on /certificates/.
+const featured = allCertificates.filter((c) => c.data.featured);
 ---
 
 <footer class="site-footer">
+	{
+		featured.length > 0 && (
+			<div class="cert-strip">
+				<div class="cert-inner">
+					<p class="cert-label">Certifications</p>
+					<ul class="cert-list">
+						{featured.map((cert) => (
+							<li class="cert">
+								{cert.data.url ? (
+									<a href={cert.data.url} target="_blank" rel="noopener noreferrer">
+										<span class="cert-name">{cert.data.name}</span>
+										<span class="cert-issuer">{cert.data.issuer}</span>
+									</a>
+								) : (
+									<span>
+										<span class="cert-name">{cert.data.name}</span>
+										<span class="cert-issuer">{cert.data.issuer}</span>
+									</span>
+								)}
+							</li>
+						))}
+					</ul>
+					{allCertificates.length > featured.length && (
+						<a class="cert-all" href={getNavHref('/certificates/')}>
+							All {allCertificates.length} &rarr;
+						</a>
+					)}
+				</div>
+			</div>
+		)
+	}
+
 	<div class="footer-inner">
 		<p class="copy">&copy; {today.getFullYear()} {SITE_TITLE}</p>
 
 		<nav class="footer-nav" aria-label="Footer">
-			<a href={getNavHref('/projects/')}>Projects</a>
-			<a href={getNavHref('/about/')}>About</a>
-			<a href="https://github.com/ali-maghami" target="_blank" rel="noopener noreferrer">GitHub</a>
+			{
+				navItems
+					.filter((item) => item.href !== '/')
+					.map((item) => <a href={getNavHref(item.href)}>{item.label}</a>)
+			}
+			{allCertificates.length > 0 && <a href={getNavHref('/certificates/')}>Certificates</a>}
+			{SOCIAL.github && (
+				<a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">
+					GitHub
+				</a>
+			)}
+			{SOCIAL.linkedin && (
+				<a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">
+					LinkedIn
+				</a>
+			)}
+			{SOCIAL.scholar && (
+				<a href={SOCIAL.scholar} target="_blank" rel="noopener noreferrer">
+					Scholar
+				</a>
+			)}
 		</nav>
 	</div>
 </footer>
@@ -23,7 +80,77 @@ const today = new Date();
 		/* body is a flex column, so this pins the footer to the bottom
 		   of short pages without collapsing the gap on long ones. */
 		margin-top: auto;
-		padding: 2rem 1.25rem 3rem;
+	}
+
+	.cert-strip {
+		border-bottom: 1px solid var(--color-sand-200);
+		background: var(--color-sand-100);
+		padding: 1.25rem;
+	}
+
+	.cert-inner {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 0.75rem 1.5rem;
+		max-width: 1160px;
+		margin-inline: auto;
+	}
+
+	.cert-label {
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--color-ink-muted);
+	}
+
+	.cert-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		flex: 1;
+	}
+
+	.cert a,
+	.cert > span {
+		display: flex;
+		flex-direction: column;
+		gap: 0.1rem;
+		text-decoration: none;
+		color: inherit;
+	}
+
+	.cert-name {
+		font-size: 0.8125rem;
+		font-weight: 500;
+		color: var(--color-ink);
+	}
+
+	.cert a:hover .cert-name {
+		text-decoration: underline;
+	}
+
+	.cert-issuer {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		color: var(--color-ink-muted);
+	}
+
+	.cert-all {
+		font-family: var(--font-mono);
+		font-size: 0.6875rem;
+		color: var(--color-ink-muted);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.cert-all:hover {
+		color: var(--color-ink);
 	}
 
 	.footer-inner {
@@ -34,6 +161,7 @@ const today = new Date();
 		gap: 1rem;
 		max-width: 1160px;
 		margin-inline: auto;
+		padding: 2rem 1.25rem 3rem;
 	}
 
 	.copy {
@@ -58,5 +186,11 @@ const today = new Date();
 
 	.footer-nav a:hover {
 		color: var(--color-ink);
+	}
+
+	@media (max-width: 720px) {
+		.cert-inner {
+			gap: 0.5rem 1rem;
+		}
 	}
 </style>

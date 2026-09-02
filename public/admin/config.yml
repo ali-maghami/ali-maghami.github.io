@@ -83,3 +83,272 @@ collections:
         }
       - { name: heroImage, label: Hero image, widget: image, required: false }
       - { name: body, label: Body, widget: markdown }
+
+  - name: blog
+    label: Blog
+    label_singular: Post
+    folder: src/content/blog
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: '{{slug}}'
+    summary: '{{title}}'
+    sortable_fields: [pubDate, title]
+    media_folder: '../../assets/work'
+    public_folder: '../../assets/work'
+    fields:
+      - { name: title, label: Title, widget: string, required: true }
+      - { name: description, label: Description, widget: text, required: true }
+      - {
+          name: pubDate,
+          label: Published,
+          widget: datetime,
+          required: true,
+          date_format: 'YYYY-MM-DD',
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          picker_utc: true,
+        }
+      - {
+          name: updatedDate,
+          label: Updated,
+          widget: datetime,
+          required: false,
+          date_format: 'YYYY-MM-DD',
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          picker_utc: true,
+        }
+      - { name: tags, label: Tags, widget: list, required: false, default: [] }
+      - {
+          name: draft,
+          label: Draft,
+          widget: boolean,
+          required: false,
+          default: false,
+          hint: 'Drafts stay editable here but are left out of the built site.',
+        }
+      - { name: heroImage, label: Hero image, widget: image, required: false }
+      - { name: body, label: Body, widget: markdown }
+
+  - name: papers
+    label: Papers
+    label_singular: Paper
+    folder: src/content/papers
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: '{{slug}}'
+    summary: '{{year}} — {{title}}'
+    sortable_fields: [year, title]
+    fields:
+      - { name: title, label: Title, widget: string, required: true }
+      - {
+          name: authors,
+          label: Authors,
+          widget: string,
+          required: true,
+          hint: 'As printed by the venue, in citation order. e.g. Maghami, A., Salehi, M., and Khoshdarregi, M.',
+        }
+      - {
+          name: venue,
+          label: Venue,
+          widget: string,
+          required: true,
+          hint: 'Journal, conference, or patent office.',
+        }
+      - { name: year, label: Year, widget: number, required: true, value_type: int, min: 1900 }
+      - name: kind
+        label: Type
+        widget: select
+        required: true
+        default: journal
+        options:
+          - { label: Journal article, value: journal }
+          - { label: Conference paper, value: conference }
+          - { label: Patent, value: patent }
+          - { label: Thesis, value: thesis }
+          - { label: Preprint, value: preprint }
+      - { name: abstract, label: Abstract, widget: text, required: false }
+      - {
+          name: doi,
+          label: DOI,
+          widget: string,
+          required: false,
+          hint: 'Just the identifier, e.g. 10.1016/j.cirpj.2021.08.005 — the link is built for you.',
+        }
+      - { name: url, label: Publisher link, widget: string, required: false }
+      - { name: pdfUrl, label: PDF link, widget: string, required: false }
+      - {
+          name: citations,
+          label: Citation count,
+          widget: number,
+          required: false,
+          value_type: int,
+          min: 0,
+          hint: 'Optional, and copied from Scholar by hand — nothing updates it automatically.',
+        }
+      - { name: featured, label: Featured, widget: boolean, required: false, default: false }
+      - { name: body, label: Notes, widget: markdown, required: false }
+
+  - name: certificates
+    label: Certificates
+    label_singular: Certificate
+    folder: src/content/certificates
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: '{{slug}}'
+    summary: '{{name}} — {{issuer}}'
+    sortable_fields: [issueDate, name]
+    fields:
+      - { name: name, label: Name, widget: string, required: true }
+      - { name: issuer, label: Issuer, widget: string, required: true }
+      - {
+          name: issueDate,
+          label: Issued,
+          widget: datetime,
+          required: true,
+          date_format: 'YYYY-MM-DD',
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          picker_utc: true,
+        }
+      - {
+          name: expiryDate,
+          label: Expires,
+          widget: datetime,
+          required: false,
+          date_format: 'YYYY-MM-DD',
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          picker_utc: true,
+        }
+      - { name: credentialId, label: Credential ID, widget: string, required: false }
+      - { name: url, label: Verification link, widget: string, required: false }
+      - {
+          name: featured,
+          label: Show in site footer,
+          widget: boolean,
+          required: false,
+          default: false,
+          hint: 'The footer appears on every page, so keep this to a handful. Everything still shows on the certificates page.',
+        }
+      - { name: body, label: Notes, widget: markdown, required: false }
+
+  - name: posts
+    label: LinkedIn Posts
+    label_singular: LinkedIn Post
+    folder: src/content/posts
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: '{{slug}}'
+    summary: '{{title}}'
+    sortable_fields: [pubDate, title]
+    fields:
+      - {
+          name: title,
+          label: Title,
+          widget: string,
+          required: true,
+          hint: 'Your own heading for it — LinkedIn posts have no title of their own.',
+        }
+      - {
+          name: postId,
+          label: Post ID,
+          widget: string,
+          required: true,
+          pattern: ['^[0-9]+$', 'Digits only, taken from the post URL'],
+          hint: 'The long number in the post URL. See docs/cms.md for where to find it.',
+        }
+      - {
+          name: pubDate,
+          label: Posted,
+          widget: datetime,
+          required: true,
+          date_format: 'YYYY-MM-DD',
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          picker_utc: true,
+        }
+      - { name: summary, label: Summary, widget: text, required: false }
+
+  # Single-file entries. A `files` collection edits one known path rather than a
+  # folder of many, which is how the pages that are content but not a list stay
+  # editable here.
+  - name: pages
+    label: Pages
+    files:
+      - name: home
+        label: Home page
+        file: src/content/home/index.md
+        format: yaml-frontmatter
+        fields:
+          - { name: heading, label: Heading, widget: string, required: true }
+          - {
+              name: focusAreas,
+              label: Focus areas,
+              widget: list,
+              required: false,
+              default: [],
+              hint: 'The short list under the intro.',
+            }
+          - {
+              name: body,
+              label: Intro,
+              widget: markdown,
+              required: true,
+              hint: 'Links and bold text work here.',
+            }
+
+      - name: about
+        label: About page
+        file: src/content/about/index.md
+        format: yaml-frontmatter
+        fields:
+          - { name: title, label: Title, widget: string, required: true }
+          - { name: eyebrow, label: Eyebrow, widget: string, required: false, default: About }
+          - { name: standfirst, label: Standfirst, widget: text, required: true }
+          - name: skills
+            label: Skills & interests
+            widget: list
+            required: false
+            default: []
+            fields:
+              - { name: area, label: Area, widget: string, required: true }
+              - { name: detail, label: Detail, widget: string, required: true }
+          - name: education
+            label: Education
+            widget: list
+            required: false
+            default: []
+            fields:
+              - { name: label, label: Qualification, widget: string, required: true }
+              - { name: detail, label: Institution and year, widget: string, required: true }
+          - { name: body, label: Body, widget: markdown }
+
+  - name: settings
+    label: Settings
+    files:
+      - name: site
+        label: Site and social links
+        file: src/data/settings.json
+        format: json
+        fields:
+          - { name: siteTitle, label: Site title, widget: string, required: true }
+          - { name: siteDescription, label: Site description, widget: text, required: true }
+          - name: social
+            label: Social links
+            widget: object
+            fields:
+              - {
+                  name: github,
+                  label: GitHub,
+                  widget: string,
+                  required: false,
+                  hint: 'Full URL. Leave blank to hide the icon.',
+                }
+              - { name: linkedin, label: LinkedIn, widget: string, required: false }
+              - { name: scholar, label: Google Scholar, widget: string, required: false }
+              - { name: email, label: Email, widget: string, required: false }
