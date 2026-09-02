@@ -309,8 +309,20 @@ collections:
         label: Home page
         file: src/content/home/index.md
         format: yaml-frontmatter
+        # Leading slash required: without one this is read as relative to the
+        # entry's folder and uploads land somewhere nothing serves. public/ is
+        # used rather than src/assets so the preview here actually resolves.
+        media_folder: '/public/portrait'
+        public_folder: '/portrait'
         fields:
           - { name: heading, label: Heading, widget: string, required: true }
+          - {
+              name: portrait,
+              label: Portrait,
+              widget: image,
+              required: false,
+              hint: 'Shown as a circle beside the heading. Square works best; it is cropped to a circle and rendered in greyscale so it suits every background colour. Leave empty for a text-only hero.',
+            }
           - {
               name: focusAreas,
               label: Focus areas,

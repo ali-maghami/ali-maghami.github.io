@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assertBadge } from './badges';
+import { assertBadge, assertPortrait } from './badges';
 
 describe('assertBadge', () => {
 	it('returns nothing for a certificate with no badge', () => {
@@ -21,5 +21,22 @@ describe('assertBadge', () => {
 	it('rejects the old src/assets form, which the CMS could never preview', () => {
 		expect(() => assertBadge('/src/assets/certificates/aws.png')).toThrow(/must start with/);
 		expect(() => assertBadge('../../assets/certificates/aws.png')).toThrow(/must start with/);
+	});
+});
+
+describe('assertPortrait', () => {
+	it('returns nothing when no portrait is set', () => {
+		// The hero renders as text alone until one is uploaded, so absent is a
+		// valid state rather than an error.
+		expect(assertPortrait(undefined)).toBeUndefined();
+		expect(assertPortrait('')).toBeUndefined();
+	});
+
+	it('rejects a path outside public/portrait', () => {
+		expect(() => assertPortrait('/badges/aws.png')).toThrow(/must start with \/portrait\//);
+	});
+
+	it('rejects a portrait that is not on disk', () => {
+		expect(() => assertPortrait('/portrait/nobody.jpg')).toThrow(/Portrait image not found/);
 	});
 });

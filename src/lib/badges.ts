@@ -15,25 +15,44 @@ import path from 'node:path';
 const PUBLIC_DIR = 'public';
 
 /**
- * Checks that a badge path names a file that will actually be served.
+ * Checks that a CMS-supplied public path names a file that will actually be
+ * served, and returns it unchanged.
  *
- * Nothing else validates this: a public path is just a string, so a typo would
- * ship a broken image icon with nothing to explain it. Since showing the badge
+ * Nothing else validates these: a public path is just a string, so a typo would
+ * ship a broken image icon with nothing to explain it. Since showing the image
  * is the entire point of the field, a miss fails the build instead.
+ *
+ * `prefix` is checked too, because the CMS writes it from the collection's
+ * public_folder — a value with the wrong prefix means that config drifted, and
+ * catching it here names the cause rather than leaving a blank.
  */
-export function assertBadge(badge: string | undefined): string | undefined {
-	if (!badge) return undefined;
+export function assertPublicImage(
+	value: string | undefined,
+	prefix: string,
+	label: string,
+): string | undefined {
+	if (!value) return undefined;
 
-	if (!badge.startsWith('/badges/')) {
+	if (!value.startsWith(prefix)) {
 		throw new Error(
-			`Badge path must start with /badges/ so it resolves to public/badges: ${badge}`,
+			`${label} path must start with ${prefix} so it resolves to public${prefix}: ${value}`,
 		);
 	}
 
-	const onDisk = path.join(process.cwd(), PUBLIC_DIR, badge);
+	const onDisk = path.join(process.cwd(), PUBLIC_DIR, value);
 	if (!existsSync(onDisk)) {
-		throw new Error(`Badge image not found: ${badge} (looked for ${onDisk})`);
+		throw new Error(`${label} image not found: ${value} (looked for ${onDisk})`);
 	}
 
-	return badge;
+	return value;
+}
+
+/** A certificate's issuer badge, in public/badges. */
+export function assertBadge(badge: string | undefined): string | undefined {
+	return assertPublicImage(badge, '/badges/', 'Badge');
+}
+
+/** The home page portrait, in public/portrait. */
+export function assertPortrait(portrait: string | undefined): string | undefined {
+	return assertPublicImage(portrait, '/portrait/', 'Portrait');
 }
