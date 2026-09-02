@@ -37,6 +37,8 @@ const portraitVars = portraitStyle({
 	borderWidth: home.data.portraitBorderWidth,
 	opacity: home.data.portraitOpacity,
 	filter: home.data.portraitFilter,
+	background: home.data.portraitBackground,
+	backgroundOpacity: home.data.portraitBackgroundOpacity,
 });
 // The lede carries a link and emphasis, so it is markdown rather than a plain
 // string and Astro renders it here.
@@ -147,6 +149,9 @@ const { Content: HeroLede } = await render(home);
 				width: var(--portrait-size, 250px);
 				height: var(--portrait-size, 250px);
 				border: var(--portrait-border, 3px) solid var(--color-sand-300);
+				/* Sits behind the photo and inside the ring, so it shows through
+				   wherever the image is transparent or softened at the edge. */
+				background: var(--portrait-bg, transparent);
 				border-radius: 50%;
 				display: grid;
 				place-items: center;

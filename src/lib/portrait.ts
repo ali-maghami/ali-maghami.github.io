@@ -19,6 +19,25 @@ export interface PortraitStyle {
 	borderWidth: number;
 	opacity: number;
 	filter: string;
+	background: string;
+	backgroundOpacity: number;
+}
+
+/**
+ * Turns a #RRGGBB colour and a percentage into a CSS colour.
+ *
+ * Composed here rather than letting the value through as written, because it
+ * lands in a style attribute — a malformed or hostile string would otherwise be
+ * CSS. Anything that is not six hex digits falls back to transparent, which
+ * shows nothing rather than something unintended.
+ */
+export function rgba(hex: string, opacityPercent: number): string {
+	const match = /^#([0-9a-f]{6})$/i.exec(hex.trim());
+	if (!match) return 'transparent';
+
+	const [r, g, b] = [0, 2, 4].map((i) => Number.parseInt(match[1].slice(i, i + 2), 16));
+	const alpha = Math.min(100, Math.max(0, opacityPercent)) / 100;
+	return `rgb(${r} ${g} ${b} / ${alpha})`;
 }
 
 /**
@@ -28,11 +47,19 @@ export interface PortraitStyle {
  * percentage because that is what reads sensibly in an editor, and converted
  * here rather than asking anyone to type 0.8.
  */
-export function portraitStyle({ size, borderWidth, opacity, filter }: PortraitStyle): string {
+export function portraitStyle({
+	size,
+	borderWidth,
+	opacity,
+	filter,
+	background,
+	backgroundOpacity,
+}: PortraitStyle): string {
 	return [
 		`--portrait-size:${size}px`,
 		`--portrait-border:${borderWidth}px`,
 		`--portrait-opacity:${opacity / 100}`,
 		`--portrait-filter:${FILTERS[filter] ?? FILTERS.grayscale}`,
+		`--portrait-bg:${rgba(background, backgroundOpacity)}`,
 	].join(';');
 }

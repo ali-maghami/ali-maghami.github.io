@@ -106,6 +106,15 @@ const home = defineCollection({
 		portraitFilter: z
 			.enum(['grayscale', 'soft-grayscale', 'sepia', 'contrast', 'none'])
 			.default('grayscale'),
+		// Fill behind the photo, inside the ring. Constrained to six hex digits
+		// because it becomes CSS; the opacity is separate so the colour can be
+		// dialled up or down without picking it again. Transparent by default,
+		// so nothing changes until it is set.
+		portraitBackground: z
+			.string()
+			.regex(/^#[0-9a-fA-F]{6}$/, 'Must be a hex colour like #FFFFFF')
+			.default('#FFFFFF'),
+		portraitBackgroundOpacity: z.number().int().min(0).max(100).default(0),
 	}),
 });
 

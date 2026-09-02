@@ -356,6 +356,26 @@ collections:
               default: 80,
               hint: 'Percent. Lower lets more of the background colour through.'
             }
+          - {
+              name: portraitBackground,
+              label: Portrait background colour,
+              widget: color,
+              required: false,
+              default: '#FFFFFF',
+              allowInput: true,
+              hint: 'Fill behind the photo, inside the ring. Only visible once the opacity below is above zero.',
+            }
+          - {
+              name: portraitBackgroundOpacity,
+              label: Portrait background opacity,
+              widget: number,
+              required: false,
+              value_type: int,
+              min: 0,
+              max: 100,
+              default: 0,
+              hint: 'Percent. 0 leaves the background colour off entirely.',
+            }
           - name: portraitFilter
             label: Portrait filter
             widget: select
