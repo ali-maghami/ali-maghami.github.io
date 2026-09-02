@@ -1,12 +1,23 @@
 name: Build Checks
 
-# Also runs on `main` directly, because CMS saves commit there without opening a
-# pull request — without this, a save that breaks the schema would be caught
-# only by the deploy failing, with nothing naming the cause. This run does the
-# same lint, tests and build, so the failure says what is actually wrong.
+# On `main` this exists for code that arrives without a pull request. It is
+# skipped for content-only pushes, which a CMS save produces: everything unique
+# to this workflow is `astro check` and the unit tests, and neither can be
+# broken by markdown. The build itself is not lost either — deploy.yml runs the
+# same build, and a bad entry fails it there with the same schema error.
+#
+# A push is skipped only when every changed file matches, so a save that also
+# touches code still runs the full set.
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'src/content/**'
+      - 'src/data/**'
+      - 'src/assets/**'
+      - 'public/badges/**'
+      - 'docs/**'
+      - '**.md'
   pull_request:
     branches: [main]
   workflow_dispatch:
