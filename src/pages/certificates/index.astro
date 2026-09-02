@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
+import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
@@ -28,6 +29,7 @@ const now = new Date();
 		/>
 	</head>
 	<body>
+		<Aurora />
 		<Header />
 		<main class="wrap">
 			<header class="page-header">
@@ -48,8 +50,8 @@ const now = new Date();
 											class="cert-badge"
 											src={cert.data.badge}
 											alt=""
-											width={125}
-											height={125}
+											width={250}
+											height={250}
 											loading="lazy"
 										/>
 									)}
@@ -136,12 +138,13 @@ const now = new Date();
 				border-bottom: 1px solid var(--color-sand-200);
 			}
 
-			/* Supplied at 125x125, shown at 56 so it sits beside the name rather
-			   than dominating the row. The intrinsic size stays in the markup so
-			   it remains sharp on dense screens. */
+			/* Shown at the badge's native 125px. Twice that is requested from the
+			   image pipeline so it stays sharp on dense screens; Astro will not
+			   upscale past the source, so a smaller upload simply gets what it
+			   has. */
 			.cert-badge {
-				width: 56px;
-				height: 56px;
+				width: 125px;
+				height: 125px;
 				object-fit: contain;
 				flex-shrink: 0;
 			}

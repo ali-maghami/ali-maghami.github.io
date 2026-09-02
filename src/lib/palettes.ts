@@ -18,34 +18,34 @@ export interface Palette {
 
 export const PALETTES: Palette[] = [
 	{
-		name: 'paper',
-		surface: '#f6f7ee',
-		accents: ['#c4d7d9', '#fdc987', '#dedfbd', '#d78a67'],
+		name: 'bloom',
+		surface: '#fdf7fb',
+		accents: ['#f2a0d0', '#b795f0', '#8fb8f5', '#f9c9e4'],
 	},
 	{
-		name: 'mist',
-		surface: '#eef3f7',
-		accents: ['#c4d7d9', '#b4bdcb', '#dedfbd', '#60a0b3'],
+		name: 'dusk',
+		surface: '#faf6fd',
+		accents: ['#c0abfd', '#f0a6fb', '#9fb0fc', '#fbc8e8'],
 	},
 	{
-		name: 'blush',
-		surface: '#faf1ee',
-		accents: ['#d78a67', '#fdc987', '#dedfbd', '#ce6d53'],
+		name: 'lagoon',
+		surface: '#f2fbfd',
+		accents: ['#6ecbfb', '#5fe3f2', '#9db0fb', '#8ef0dd'],
 	},
 	{
-		name: 'lilac',
-		surface: '#f2f1f9',
-		accents: ['#b4bdcb', '#c4d7d9', '#dedfbd', '#6b73d1'],
+		name: 'meadow',
+		surface: '#f5fcf4',
+		accents: ['#79e9a4', '#b8ee5f', '#6ecbfb', '#fbe07a'],
 	},
 	{
-		name: 'sage',
-		surface: '#eff5ef',
-		accents: ['#dedfbd', '#c4d7d9', '#fdc987', '#60a0b3'],
+		name: 'citrus',
+		surface: '#fffaf2',
+		accents: ['#fcb265', '#fb9d9d', '#fbcf47', '#fb9fb0'],
 	},
 	{
-		name: 'sand',
-		surface: '#f8f4e8',
-		accents: ['#fdc987', '#d78a67', '#dedfbd', '#c4d7d9'],
+		name: 'coral',
+		surface: '#fff6f5',
+		accents: ['#fb9dab', '#fcb265', '#f79ad2', '#fdd0a4'],
 	},
 ];
 
