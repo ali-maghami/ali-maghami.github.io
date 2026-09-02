@@ -2,6 +2,10 @@
 /*
  * Soft, slowly drifting colour wash sitting behind the hero — a CSS
  * stand-in for the animated gradient canvas on githubnext.com.
+ *
+ * The four blob colours come from --accent-1..4, which BackgroundPalette
+ * sets per page load. The theme tokens remain as fallbacks so this still
+ * renders correctly with JavaScript disabled.
  */
 ---
 
@@ -39,7 +43,7 @@
 		min-height: 320px;
 		top: -14%;
 		left: 4%;
-		background: var(--color-sky);
+		background: var(--accent-1, var(--color-sky));
 		animation: drift-1 26s ease-in-out infinite alternate;
 	}
 
@@ -50,7 +54,7 @@
 		min-height: 260px;
 		top: 6%;
 		right: 6%;
-		background: var(--color-banana);
+		background: var(--accent-2, var(--color-banana));
 		opacity: 0.3;
 		animation: drift-2 32s ease-in-out infinite alternate;
 	}
@@ -62,7 +66,7 @@
 		min-height: 240px;
 		bottom: -18%;
 		left: 28%;
-		background: var(--color-mint);
+		background: var(--accent-3, var(--color-mint));
 		opacity: 0.5;
 		animation: drift-3 24s ease-in-out infinite alternate;
 	}
@@ -74,7 +78,7 @@
 		min-height: 200px;
 		top: 34%;
 		left: 46%;
-		background: var(--color-copper-warm);
+		background: var(--accent-4, var(--color-copper-warm));
 		opacity: 0.22;
 		animation: drift-2 29s ease-in-out infinite alternate-reverse;
 	}
