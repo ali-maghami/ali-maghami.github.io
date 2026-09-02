@@ -33,10 +33,16 @@ jobs:
       - name: Check links
         uses: lycheeverse/lychee-action@v2
         with:
+          # Self-referencing absolute URLs (canonical, og:url) point at the
+          # deployed site, so a PR adding a page always 404s on its own new
+          # URLs and could never pass. Internal navigation is relative and
+          # still checked locally via --root-dir; this only skips refetching
+          # production copies of the pages being built here.
           args: >-
             --no-progress
             --accept 200,206,301,302,303,307,308,429
             --max-retries 2
+            --exclude '^https://maghamis\.github\.io'
             --root-dir "${{ github.workspace }}/dist"
             './dist/**/*.html'
           fail: true
