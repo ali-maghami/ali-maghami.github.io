@@ -1,6 +1,12 @@
 ---
-heading: 'Turning AI into industrial reality.'
-focusAreas: ['Computer Vision', 'Robotics', 'Machine Learning', 'Industrial AI']
+heading: Turning AI into industrial reality.
+focusAreas:
+  - Machine Learning
+  - Computer Vision
+  - Robotics
+  - Industrial AI
 ---
 
-I'm **Ali Maghami**, an engineer and researcher at [Hatch Ltd.](https://www.hatch.com), where I work on vision solutions for manufacturing and mining. Previously I built robotics perception systems at TetraGen Robotics and conducted research at the University of Manitoba and the National Research Council Canada.
+I’m **Ali Maghami**, an engineer and researcher specializing in machine vision, AI, and robotics. I build intelligent systems that connect perception and automation to solve real-world problems—from early concepts and prototypes to reliable deployment in the field.
+
+Here, I share what I’m learning about AI, robotics, technical leadership, and turning emerging technologies into practical solutions.
