@@ -1,52 +1,197 @@
 ---
+import { Image } from 'astro:assets';
 import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+const education = [
+	{ label: 'PhD, Mechanical Engineering', detail: 'University of Manitoba, 2023' },
+	{ label: 'MSc, Mechanical Engineering', detail: 'Ferdowsi University of Mashhad, 2012' },
+	{ label: 'BSc, Mechanical Engineering', detail: 'Ferdowsi University of Mashhad, 2010' },
+	{ label: 'PMP Certification', detail: 'Project Management Professional' },
+];
+
+const skills = [
+	{ area: 'Computer Vision', detail: '2D/3D imaging, camera calibration, stereo vision' },
+	{ area: 'Machine Learning', detail: 'Deep learning, PyTorch, synthetic data, training workflows' },
+	{ area: 'Robotics', detail: 'Robot guidance, perception systems, collaborative robots' },
+	{ area: 'Software', detail: 'Python, C++, OpenCV, Open3D, cloud deployment' },
+	{ area: 'Leadership', detail: 'Team coordination, technical mentorship, project planning' },
+];
 ---
 
-<Layout
-	title="About"
-	description="About Ali Maghami"
-	pubDate={new Date('September 01 2026')}
-	heroImage={AboutHeroImage}
->
-	<p>
-		I'm Ali Maghami, a software engineer and researcher interested in computer vision, robotics, and applied AI for industrial automation. I currently work at Hatch Ltd. in Ontario, Canada, where I help teams develop vision and AI solutions for manufacturing and mining applications.
-	</p>
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="About | Ali Maghami" description="About Ali Maghami" />
+	</head>
 
-	<h2>Background</h2>
-	<p>
-		I completed my PhD in Mechanical Engineering at the University of Manitoba, where I focused on vision-guided robotics and machine learning. Before that, I worked at TetraGen Robotics on perception systems for automation, and I've also contributed to research at the National Research Council Canada.
-	</p>
+	<body>
+		<Header />
+		<main>
+			<div class="wrap-narrow article-head">
+				<p class="eyebrow">About</p>
+				<h1>Ali Maghami</h1>
+				<p class="standfirst">
+					A software engineer and researcher interested in computer vision, robotics, and applied AI
+					for industrial automation. I currently work at Hatch Ltd. in Ontario, Canada, where I help
+					teams develop vision and AI solutions for manufacturing and mining applications.
+				</p>
+			</div>
 
-	<h2>What I Work On</h2>
-	<p>
-		My work involves computer vision, robotics, machine learning, calibration, and systems integration. I'm interested in taking research ideas and turning them into practical solutions that work in real manufacturing environments. Recent projects have included large-scale vision systems, deep learning for inspection, and robot calibration methods.
-	</p>
+			<div class="hero-image">
+				<Image width={1020} height={510} src={AboutHeroImage} alt="" />
+			</div>
 
-	<h2>Skills & Interests</h2>
-	<ul>
-		<li>Computer Vision: 2D/3D imaging, camera calibration, stereo vision</li>
-		<li>Machine Learning: Deep learning, PyTorch, synthetic data, training workflows</li>
-		<li>Robotics: Robot guidance, perception systems, collaborative robots</li>
-		<li>Software: Python, C++, OpenCV, Open3D, cloud deployment</li>
-		<li>Leadership: Team coordination, technical mentorship, project planning</li>
-	</ul>
+			<div class="wrap-narrow prose">
+				<h2>Background</h2>
+				<p>
+					I completed my PhD in Mechanical Engineering at the University of Manitoba, where I focused
+					on vision-guided robotics and machine learning. Before that, I worked at TetraGen Robotics
+					on perception systems for automation, and I've also contributed to research at the National
+					Research Council Canada.
+				</p>
 
-	<h2>Education</h2>
-	<ul>
-		<li>PhD in Mechanical Engineering (University of Manitoba, 2023)</li>
-		<li>MSc in Mechanical Engineering (Ferdowsi University of Mashhad, 2012)</li>
-		<li>BSc in Mechanical Engineering (Ferdowsi University of Mashhad, 2010)</li>
-		<li>PMP Certification (Project Management Professional)</li>
-	</ul>
+				<h2>What I Work On</h2>
+				<p>
+					My work involves computer vision, robotics, machine learning, calibration, and systems
+					integration. I'm interested in taking research ideas and turning them into practical
+					solutions that work in real manufacturing environments. Recent projects have included
+					large-scale vision systems, deep learning for inspection, and robot calibration methods.
+				</p>
 
-	<h2>Publications & Patents</h2>
-	<p>
-		I've published research in peer-reviewed journals on topics like robot calibration, vision-guided drilling, and inspection automation. I also hold patents related to vision systems for industrial applications. You can find my recent publications in the blog section.
-	</p>
+				<h2>Skills &amp; Interests</h2>
+				<dl class="fact-list">
+					{
+						skills.map((skill) => (
+							<div class="fact">
+								<dt>{skill.area}</dt>
+								<dd>{skill.detail}</dd>
+							</div>
+						))
+					}
+				</dl>
 
-	<h2>Beyond Work</h2>
-	<p>
-		I enjoy learning new technologies, exploring how AI and robotics can improve manufacturing processes, and collaborating with teams on technical challenges. I'm always interested in connecting with others working on similar problems.
-	</p>
-</Layout>
+				<h2>Education</h2>
+				<dl class="fact-list">
+					{
+						education.map((item) => (
+							<div class="fact">
+								<dt>{item.label}</dt>
+								<dd>{item.detail}</dd>
+							</div>
+						))
+					}
+				</dl>
+
+				<h2>Publications &amp; Patents</h2>
+				<p>
+					I've published research in peer-reviewed journals on topics like robot calibration,
+					vision-guided drilling, and inspection automation. I also hold patents related to vision
+					systems for industrial applications. You can find my recent publications in the blog
+					section.
+				</p>
+
+				<h2>Beyond Work</h2>
+				<p>
+					I enjoy learning new technologies, exploring how AI and robotics can improve manufacturing
+					processes, and collaborating with teams on technical challenges. I'm always interested in
+					connecting with others working on similar problems.
+				</p>
+			</div>
+		</main>
+		<Footer />
+
+		<style>
+			.article-head {
+				padding: 3rem 1.25rem 2rem;
+			}
+
+			.eyebrow {
+				margin: 0 0 0.75rem;
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			.article-head h1 {
+				margin: 0;
+				font-size: 2.5rem;
+				line-height: 1.15;
+				letter-spacing: -0.025em;
+			}
+
+			.standfirst {
+				margin: 1rem 0 0;
+				font-size: 1.125rem;
+				font-weight: 300;
+				line-height: 1.55;
+				color: var(--color-ink-soft);
+			}
+
+			.hero-image {
+				max-width: 1020px;
+				margin: 0 auto 3rem;
+				padding-inline: 1.25rem;
+			}
+
+			.hero-image :global(img) {
+				display: block;
+				width: 100%;
+				height: auto;
+				border-radius: 16px;
+				border: 1px solid var(--color-sand-200);
+				box-shadow: 0 8px 30px rgb(48 48 38 / 8%);
+			}
+
+			.prose {
+				padding-bottom: 2rem;
+			}
+
+			/* Two-column term/detail rows, split by hairlines. */
+			.fact-list {
+				margin: 0 0 1.5rem;
+				border-top: 1px solid var(--color-sand-200);
+			}
+
+			.fact {
+				display: grid;
+				grid-template-columns: minmax(0, 12rem) 1fr;
+				gap: 1rem;
+				padding: 0.75rem 0;
+				border-bottom: 1px solid var(--color-sand-200);
+			}
+
+			.fact dt {
+				font-size: 0.9375rem;
+				font-weight: 600;
+				color: var(--color-ink);
+			}
+
+			.fact dd {
+				margin: 0;
+				font-size: 0.9375rem;
+				color: var(--color-ink-muted);
+			}
+
+			@media (max-width: 720px) {
+				.article-head {
+					padding: 2rem 1.25rem 1.5rem;
+				}
+				.article-head h1 {
+					font-size: 1.875rem;
+				}
+				.hero-image {
+					margin-bottom: 2rem;
+				}
+				.fact {
+					grid-template-columns: 1fr;
+					gap: 0.15rem;
+				}
+			}
+		</style>
+	</body>
+</html>

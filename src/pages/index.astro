@@ -1,177 +1,365 @@
 ---
 import { getCollection } from 'astro:content';
-import { getNavHref } from '../lib/nav';
+import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
+import ContentCard from '../components/ContentCard.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getNavHref } from '../lib/nav';
 
-const projects = (await getCollection('projects')).slice(0, 4);
+const projects = (await getCollection('projects'))
+	.sort((a, b) => {
+		if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+		return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+	})
+	.slice(0, 4);
+
 const posts = (await getCollection('blog'))
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 3);
+	.slice(0, 4);
+
+const focusAreas = ['Computer Vision', 'Robotics', 'Machine Learning', 'Industrial AI'];
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			.hero {
-				padding: 2rem 0 3rem 0;
-				border-bottom: 1px solid rgb(var(--gray-light));
-				margin-bottom: 2.5rem;
-			}
-			.hero h1 {
-				font-size: 2.5rem;
-				margin-bottom: 0.75rem;
-			}
-			.hero p {
-				font-size: 1.15rem;
-				color: rgb(var(--gray-dark));
-				line-height: 1.6;
-			}
-			.cta-buttons {
-				display: flex;
-				gap: 1rem;
-				margin-top: 1.5rem;
-			}
-			.btn {
-				display: inline-block;
-				padding: 0.6rem 1.2rem;
-				border-radius: 8px;
-				text-decoration: none;
-				font-weight: 600;
-				font-size: 0.95rem;
-				border: 1px solid rgb(var(--gray));
-				color: rgb(var(--gray-dark));
-			}
-			.btn-primary {
-				background-color: var(--accent);
-				color: white;
-				border-color: var(--accent);
-			}
-			.btn-primary:hover {
-				background-color: var(--accent-dark);
-			}
-			.section {
-				margin-bottom: 3rem;
-			}
-			.section-header {
-				display: flex;
-				justify-content: space-between;
-				align-items: baseline;
-				margin-bottom: 1.25rem;
-			}
-			.section-header h2 {
-				margin: 0;
-				font-size: 1.5rem;
-			}
-			.section-header a {
-				color: var(--accent);
-				font-size: 0.9rem;
-				text-decoration: none;
-			}
-			.project-list {
-				display: grid;
-				grid-template-columns: 1fr;
-				gap: 1rem;
-			}
-			.project-item {
-				background: white;
-				border: 1px solid #e2e8f0;
-				border-radius: 8px;
-				padding: 1.25rem;
-				transition: border-color 0.2s ease;
-			}
-			.project-item:hover {
-				border-color: var(--accent);
-			}
-			.project-item h3 {
-				margin: 0 0 0.4rem 0;
-				font-size: 1.15rem;
-			}
-			.project-item h3 a {
-				color: rgb(var(--black));
-				text-decoration: none;
-			}
-			.badge {
-				display: inline-block;
-				padding: 0.15rem 0.5rem;
-				border-radius: 9999px;
-				font-size: 0.7rem;
-				font-weight: 600;
-				text-transform: uppercase;
-				margin-left: 0.5rem;
-			}
-			.badge-personal {
-				background-color: #e0f2fe;
-				color: #0369a1;
-			}
-			.badge-previous {
-				background-color: #f3e8ff;
-				color: #6b21a8;
-			}
-		</style>
 	</head>
 	<body>
-		<Header />
-		<main>
-			<div class="hero">
-				<h1>Ali Maghami</h1>
-				<p style="font-size: 1rem; margin-bottom: 0.5rem; color: rgb(var(--gray-dark));">
-					Computer Vision | Robotics | Machine Learning
-				</p>
-				<p>
-					I'm interested in developing computer vision and AI systems for industrial automation. I currently work at Hatch Ltd., where I work on vision solutions for manufacturing and mining. Previously, I worked on robotics perception systems at TetraGen Robotics and conducted research at the University of Manitoba and National Research Council Canada.
-				</p>
+		<div class="hero-shell">
+			<Aurora />
+			<div class="hero-content">
+				<Header />
+				<section class="hero">
+					<div class="hero-inner">
+						<h1>I build computer vision and AI systems for industrial automation.</h1>
+						<p class="lede">
+							I'm <strong>Ali Maghami</strong>, an engineer and researcher at <a
+								href="https://www.hatch.com"
+								target="_blank"
+								rel="noopener noreferrer">Hatch Ltd.</a
+							>, where I work on vision solutions for manufacturing and mining. Previously I built
+							robotics perception systems at TetraGen Robotics and conducted research at the
+							University of Manitoba and the National Research Council Canada.
+						</p>
+						<ul class="focus-list">
+							{focusAreas.map((area) => <li>{area}</li>)}
+						</ul>
+					</div>
+				</section>
+			</div>
+		</div>
+
+		<main class="wrap">
+			<div class="tab-switcher" role="tablist" aria-label="Choose a feed" data-tabs>
+				<span class="tab-indicator" data-tab-indicator aria-hidden="true"></span>
+				<button
+					type="button"
+					role="tab"
+					id="tab-projects"
+					aria-controls="panel-projects"
+					aria-selected="true"
+					class="tab active"
+					data-tab="projects">Projects</button
+				>
+				<button
+					type="button"
+					role="tab"
+					id="tab-posts"
+					aria-controls="panel-posts"
+					aria-selected="false"
+					class="tab"
+					data-tab="posts">Blog</button
+				>
 			</div>
 
-			<section class="section">
-				<div class="section-header">
-					<h2>Featured Projects</h2>
-					<a href={getNavHref('/projects')}>View all &rarr;</a>
-				</div>
-				<div class="project-list">
-					{
-						projects.map((proj) => (
-							<div class="project-item">
-								<h3>
-									<a href={getNavHref(`/projects/${proj.id}/`)}>{proj.data.title}</a>
-									<span class={`badge ${proj.data.type === 'personal' ? 'badge-personal' : 'badge-previous'}`}>
-										{proj.data.type === 'personal' ? 'Personal' : 'Previous'}
-									</span>
-								</h3>
-								<p style="margin: 0; font-size: 0.9rem; color: rgb(var(--gray-dark));">
-									{proj.data.description}
-								</p>
-							</div>
-						))
-					}
-				</div>
-			</section>
+			<div class="feed">
+				<section
+					id="panel-projects"
+					role="tabpanel"
+					aria-labelledby="tab-projects"
+					class="feed-column"
+					data-panel="projects"
+				>
+					<div class="section-head">
+						<h2>Projects</h2>
+						<a class="view-all" href={getNavHref('/projects/')}>View all &rarr;</a>
+					</div>
+					<div class="stack">
+						{
+							projects.map((proj, index) => (
+								<ContentCard
+									href={getNavHref(`/projects/${proj.id}/`)}
+									title={proj.data.title}
+									description={proj.data.description}
+									date={proj.data.pubDate}
+									badge={proj.data.type === 'personal' ? 'Personal Project' : 'Previous Work'}
+									badgeVariant={proj.data.type}
+									tags={proj.data.tags}
+									featured={index === 0}
+								/>
+							))
+						}
+					</div>
+				</section>
 
-			<section class="section">
-				<div class="section-header">
-					<h2>Recent Writings</h2>
-					<a href={getNavHref('/blog')}>View all &rarr;</a>
-				</div>
-				<div class="project-list">
-					{
-						posts.map((post) => (
-							<div class="project-item">
-								<h3>
-									<a href={getNavHref(`/blog/${post.id}/`)}>{post.data.title}</a>
-								</h3>
-								<p style="margin: 0; font-size: 0.9rem; color: rgb(var(--gray-dark));">
-									{post.data.description}
-								</p>
-							</div>
-						))
-					}
-				</div>
-			</section>
+				<section
+					id="panel-posts"
+					role="tabpanel"
+					aria-labelledby="tab-posts"
+					class="feed-column feed-column-divided"
+					data-panel="posts"
+				>
+					<div class="section-head">
+						<h2>Blog</h2>
+						<a class="view-all" href={getNavHref('/blog/')}>View all &rarr;</a>
+					</div>
+					<div class="stack">
+						{
+							/* Only the lead post carries a banner, so the two feed
+							   columns stay close in height. */
+							posts.map((post, index) => (
+								<ContentCard
+									href={getNavHref(`/blog/${post.id}/`)}
+									title={post.data.title}
+									description={post.data.description}
+									date={post.data.pubDate}
+									image={index === 0 ? post.data.heroImage : undefined}
+									featured={index === 0}
+								/>
+							))
+						}
+					</div>
+				</section>
+			</div>
 		</main>
 		<Footer />
+
+		<style>
+			.hero-shell {
+				position: relative;
+				overflow: hidden;
+			}
+
+			.hero-content {
+				position: relative;
+				z-index: 10;
+			}
+
+			.hero {
+				padding: 3.5rem 1.25rem 4.5rem;
+				text-align: center;
+			}
+
+			.hero-inner {
+				max-width: 660px;
+				margin-inline: auto;
+			}
+
+			.hero h1 {
+				margin: 0 0 1.25rem;
+				font-size: 2.5rem;
+				line-height: 1.15;
+				letter-spacing: -0.025em;
+			}
+
+			.lede {
+				margin: 0;
+				font-size: 1.125rem;
+				font-weight: 300;
+				line-height: 1.55;
+				color: var(--color-ink-soft);
+			}
+
+			.lede strong {
+				font-weight: 600;
+				color: var(--color-ink);
+			}
+
+			.lede a {
+				font-weight: 500;
+				text-decoration: none;
+			}
+
+			.lede a:hover {
+				text-decoration: underline;
+			}
+
+			.focus-list {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.5rem;
+				list-style: none;
+				margin: 1.75rem 0 0;
+				padding: 0;
+			}
+
+			.focus-list li {
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				color: var(--color-ink-soft);
+				background: rgb(255 255 255 / 55%);
+				border: 1px solid rgb(255 255 255 / 50%);
+				border-radius: 999px;
+				padding: 0.35rem 0.75rem;
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+			}
+
+			/* Two-column feed, mirroring the split layout on githubnext.com. */
+			.feed {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 3.5rem;
+				align-items: start;
+			}
+
+			.feed-column-divided {
+				border-left: 1px solid var(--color-sand-200);
+				padding-left: 3.5rem;
+				margin-left: -1.75rem;
+			}
+
+			.stack {
+				display: flex;
+				flex-direction: column;
+				gap: 1rem;
+			}
+
+			/* Mobile tab switcher — one column at a time. */
+			.tab-switcher {
+				display: none;
+				position: relative;
+				margin: 0 auto 1.5rem;
+				padding: 0.25rem;
+				width: fit-content;
+				border-radius: 999px;
+				background: rgb(255 255 255 / 55%);
+				border: 1px solid rgb(255 255 255 / 45%);
+				box-shadow: 0 1px 3px rgb(48 48 38 / 6%);
+				backdrop-filter: blur(20px);
+				-webkit-backdrop-filter: blur(20px);
+			}
+
+			.tab {
+				position: relative;
+				z-index: 1;
+				width: 110px;
+				padding: 0.5rem 0.75rem;
+				border: none;
+				background: transparent;
+				border-radius: 999px;
+				font-family: inherit;
+				font-size: 0.875rem;
+				font-weight: 500;
+				color: var(--color-ink-muted);
+				cursor: pointer;
+				transition: color 0.2s ease;
+			}
+
+			.tab.active {
+				color: var(--color-paper);
+			}
+
+			.tab-indicator {
+				position: absolute;
+				top: 0.25rem;
+				left: 0.25rem;
+				height: calc(100% - 0.5rem);
+				width: 110px;
+				border-radius: 999px;
+				background: var(--color-ink);
+				transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+			}
+
+			@media (max-width: 900px) {
+				.feed {
+					gap: 2rem;
+				}
+				.feed-column-divided {
+					padding-left: 2rem;
+					margin-left: -1rem;
+				}
+			}
+
+			@media (max-width: 800px) {
+				.hero {
+					padding: 2.5rem 1.25rem 3rem;
+				}
+				.hero h1 {
+					font-size: 1.875rem;
+				}
+				.lede {
+					font-size: 1rem;
+				}
+				.tab-switcher {
+					display: flex;
+				}
+				.feed {
+					grid-template-columns: 1fr;
+				}
+				.feed-column-divided {
+					border-left: none;
+					padding-left: 0;
+					margin-left: 0;
+				}
+				.feed-column .section-head {
+					display: none;
+				}
+				.feed-column[hidden] {
+					display: none;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				.tab-indicator {
+					transition: none;
+				}
+			}
+		</style>
+
+		<script>
+			function setUpFeedTabs() {
+				const switcher = document.querySelector<HTMLElement>('[data-tabs]');
+				const indicator = document.querySelector<HTMLElement>('[data-tab-indicator]');
+				if (!switcher || !indicator) return;
+
+				const tabs = Array.from(switcher.querySelectorAll<HTMLButtonElement>('[data-tab]'));
+				const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-panel]'));
+				const isMobile = () => window.matchMedia('(max-width: 800px)').matches;
+
+				const select = (name: string) => {
+					tabs.forEach((tab) => {
+						const on = tab.dataset.tab === name;
+						tab.classList.toggle('active', on);
+						tab.setAttribute('aria-selected', String(on));
+					});
+					panels.forEach((panel) => {
+						panel.hidden = isMobile() && panel.dataset.panel !== name;
+					});
+					const activeTab = tabs.find((tab) => tab.dataset.tab === name);
+					if (activeTab) {
+						indicator.style.width = `${activeTab.offsetWidth}px`;
+						indicator.style.transform = `translateX(${activeTab.offsetLeft - 4}px)`;
+					}
+				};
+
+				tabs.forEach((tab) => {
+					tab.addEventListener('click', () => select(tab.dataset.tab ?? 'projects'));
+				});
+
+				const current = () =>
+					tabs.find((tab) => tab.classList.contains('active'))?.dataset.tab ?? 'projects';
+
+				select(current());
+				window.addEventListener('resize', () => select(current()));
+			}
+
+			setUpFeedTabs();
+			document.addEventListener('astro:page-load', setUpFeedTabs);
+		</script>
 	</body>
 </html>
