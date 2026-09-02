@@ -40,50 +40,79 @@ Browser (/admin) ──▶ GitHub OAuth ──▶ Cloudflare Worker ──▶ to
 
 ## Setup
 
-Three steps, roughly twenty minutes. Steps 1 and 2 need your GitHub and Cloudflare logins, so they
-cannot be automated from inside the repo.
+This is already wired up — the section is here so it can be rebuilt or handed over.
 
-### 1. Create a GitHub OAuth App
+Deploy the worker **first**. Its URL is needed by the OAuth app's callback, whereas the worker
+does not need anything from the app until step 3, so this order avoids going back to edit a
+placeholder.
+
+### 1. Deploy the auth worker
+
+Deploy [`sveltia-cms-auth`](https://github.com/sveltia/sveltia-cms-auth) to Cloudflare Workers —
+its README has a one-click deploy button. Accept the prefilled `pnpm run deploy` deploy command
+and leave the build command empty.
+
+Leave **Protect with Cloudflare Access** off. The endpoint has to be publicly reachable, because
+GitHub redirects the browser to it mid-login; putting Access in front breaks the flow.
+
+Note the resulting URL. Ours is `https://sveltia-cms-auth.seyedali-maghami.workers.dev`.
+
+### 2. Register a GitHub OAuth App
 
 GitHub → **Settings** → **Developer settings** → **OAuth Apps** → **New OAuth App**.
 
 | Field | Value |
 |---|---|
-| Application name | anything, e.g. `Portfolio CMS` |
+| Application name | `ali-maghami.github.io` |
 | Homepage URL | `https://ali-maghami.github.io` |
-| Authorization callback URL | `https://<your-worker>.workers.dev/callback` |
+| Authorization callback URL | the worker URL + `/callback` |
 
-You will not know the worker subdomain until step 2 — create the app with a placeholder, then come
-back and correct the callback URL. Save the **Client ID** and generate a **Client Secret**.
+The worker serves the callback at either `/callback` or `/oauth/redirect`, and starts the flow at
+`/auth` or `/oauth/authorize`. The callback URL must match what GitHub has on file *exactly*, or
+login fails with a redirect URI mismatch.
 
-### 2. Deploy the auth worker
+Two checkboxes on that form matter:
 
-Deploy [`sveltia-cms-auth`](https://github.com/sveltia/sveltia-cms-auth) to Cloudflare Workers
-(the repo has a one-click deploy button). Then set these as Worker **environment variables** —
-mark both as encrypted/secret:
+- **Allow wildcard matching** — leave off. It would let tokens be delivered to subdomains you do
+  not control.
+- **Expire user access tokens** — **leave off**, even though GitHub enables it by default. The
+  worker implements only `grant_type: 'authorization_code'`; it has no `refresh_token` or
+  `expires_in` handling anywhere. With expiry on, GitHub issues an 8-hour token plus a refresh
+  token that nothing in this stack can redeem, so you are silently signed out of `/admin/` every
+  8 hours. The cost of leaving it off is a non-expiring token, scoped to your own repos and held
+  in your own browser on a single-user CMS.
 
-| Variable | Value |
-|---|---|
-| `GITHUB_CLIENT_ID` | from step 1 |
-| `GITHUB_CLIENT_SECRET` | from step 1 |
-| `ALLOWED_DOMAINS` | `ali-maghami.github.io` |
+Save the **Client ID** and generate a **Client Secret**.
 
-`ALLOWED_DOMAINS` matters: without it the worker will broker auth for any site that points at it.
+### 3. Give the worker its credentials
 
-### 3. Point the config at the worker
+Cloudflare → **Workers & Pages** → `sveltia-cms-auth` → **Settings** → **Variables and Secrets**:
 
-In [`public/admin/config.yml`](../public/admin/config.yml), replace the placeholder:
+| Variable | Value | Type |
+|---|---|---|
+| `GITHUB_CLIENT_ID` | from step 2 | Secret |
+| `GITHUB_CLIENT_SECRET` | from step 2 | Secret |
+| `ALLOWED_DOMAINS` | `ali-maghami.github.io` | Text |
 
-```yaml
-backend:
-  base_url: https://REPLACE-WITH-YOUR-WORKER.workers.dev
-```
+`ALLOWED_DOMAINS` is not optional in practice. Without it the worker will broker GitHub logins for
+any site that points at it, using your OAuth app.
 
-Commit that on a branch and merge it as usual. The editor is then live at
-**https://ali-maghami.github.io/admin/**.
+### 4. Point the CMS at the worker
 
-Only accounts with write access to this repo can log in — GitHub itself enforces that, since the
+`base_url` in [`public/admin/config.yml`](../public/admin/config.yml) holds the worker URL, with no
+trailing slash. The editor is then live at **https://ali-maghami.github.io/admin/**.
+
+Only accounts with write access to this repo can log in — GitHub enforces that itself, since the
 CMS acts purely through the API as the signed-in user.
+
+### Troubleshooting a fresh deploy
+
+A brand-new `*.workers.dev` subdomain resolves in DNS before its TLS certificate finishes
+provisioning. In that window the host answers with a TLS handshake failure
+(`ERR_SSL_SSL/TLS_ALERT_HANDSHAKE_FAILURE`, or `schannel: SEC_E_ILLEGAL_MESSAGE` from curl on
+Windows) rather than an HTTP status. That is not a misconfiguration — it clears on its own,
+typically within half an hour. Confirm the deploy is otherwise healthy by checking that the
+hostname resolves to a Cloudflare address.
 
 ## How editing works day to day
 
