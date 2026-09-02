@@ -1,8 +1,10 @@
 name: Link Check
 
+# Weekly and on demand, not per pull request. The social profiles now in the
+# header and footer are all hosts that refuse crawlers, so every run failed on
+# links that are perfectly fine in a browser — a red cross that meant nothing,
+# on every pull request. Weekly still catches a genuinely dead link, just later.
 on:
-  pull_request:
-    branches: [main]
   schedule:
     - cron: '0 6 * * 1'
   workflow_dispatch:
@@ -54,6 +56,7 @@ jobs:
             --max-retries 2
             --exclude '^https://ali-maghami\.github\.io'
             --exclude '^https://(www\.)?linkedin\.com'
+            --exclude '^https://scholar\.google\.'
             --root-dir "${{ github.workspace }}/dist"
             './dist/**/*.html'
           fail: true
