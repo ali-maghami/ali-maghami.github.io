@@ -8,8 +8,8 @@ portraitBackground: '#FFFFFF'
 portraitBackgroundOpacity: 25
 portraitFilter: none
 focusAreas:
-  - Computer Vision
   - AI & Physical AI
+  - Computer Vision
   - Robotics
   - Systems Architecture
   - Technical Leadership
