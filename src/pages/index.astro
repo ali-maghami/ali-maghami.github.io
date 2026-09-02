@@ -34,7 +34,7 @@ const focusAreas = ['Computer Vision', 'Robotics', 'Machine Learning', 'Industri
 				<Header />
 				<section class="hero">
 					<div class="hero-inner">
-						<h1>I build computer vision and AI systems for industrial automation.</h1>
+						<h1>Turning AI into industrial reality.</h1>
 						<p class="lede">
 							I'm <strong>Ali Maghami</strong>, an engineer and researcher at <a
 								href="https://www.hatch.com"
@@ -98,6 +98,7 @@ const focusAreas = ['Computer Vision', 'Robotics', 'Machine Learning', 'Industri
 									badge={proj.data.type === 'personal' ? 'Personal Project' : 'Previous Work'}
 									badgeVariant={proj.data.type}
 									tags={proj.data.tags}
+									image={proj.data.heroImage}
 									featured={index === 0}
 								/>
 							))
@@ -118,15 +119,13 @@ const focusAreas = ['Computer Vision', 'Robotics', 'Machine Learning', 'Industri
 					</div>
 					<div class="stack">
 						{
-							/* Only the lead post carries a banner, so the two feed
-							   columns stay close in height. */
 							posts.map((post, index) => (
 								<ContentCard
 									href={getNavHref(`/blog/${post.id}/`)}
 									title={post.data.title}
 									description={post.data.description}
 									date={post.data.pubDate}
-									image={index === 0 ? post.data.heroImage : undefined}
+									image={post.data.heroImage}
 									featured={index === 0}
 								/>
 							))
@@ -215,6 +214,12 @@ const focusAreas = ['Computer Vision', 'Robotics', 'Machine Learning', 'Industri
 				grid-template-columns: 1fr 1fr;
 				gap: 3.5rem;
 				align-items: start;
+			}
+
+			/* Banners are wide for a half-width column; keep them shallow so a
+			   card with one doesn't tower over a card without. */
+			.feed :global(.card-media) {
+				aspect-ratio: 2.2 / 1;
 			}
 
 			.feed-column-divided {
