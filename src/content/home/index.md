@@ -9,8 +9,8 @@ portraitBackgroundOpacity: 60
 portraitFilter: none
 focusAreas:
   - Computer Vision
+  - AI & Physical AI
   - Robotics
-  - Physical AI
   - Systems Architecture
   - Technical Leadership
 ---
