@@ -1,8 +1,10 @@
 name: Link Check
 
+# Weekly and on demand, not per pull request. The social profiles now in the
+# header and footer are all hosts that refuse crawlers, so every run failed on
+# links that are perfectly fine in a browser — a red cross that meant nothing,
+# on every pull request. Weekly still catches a genuinely dead link, just later.
 on:
-  pull_request:
-    branches: [main]
   schedule:
     - cron: '0 6 * * 1'
   workflow_dispatch:
@@ -33,16 +35,28 @@ jobs:
       - name: Check links
         uses: lycheeverse/lychee-action@v2
         with:
+          # Two exclusions, for different reasons.
+          #
           # Self-referencing absolute URLs (canonical, og:url) point at the
           # deployed site, so a PR adding a page always 404s on its own new
           # URLs and could never pass. Internal navigation is relative and
           # still checked locally via --root-dir; this only skips refetching
           # production copies of the pages being built here.
+          #
+          # LinkedIn answers automated requests with 999, a status of its own
+          # invention, whether or not the page exists. Checking it therefore
+          # proves nothing: a live profile and a deleted one look identical,
+          # so this is excluded rather than added to --accept, which would
+          # have dressed up "we cannot tell" as a pass. The profile link is in
+          # the header and footer of every page, so it failed the run 16 times
+          # over from the moment it was added in the CMS.
           args: >-
             --no-progress
             --accept 200,206,301,302,303,307,308,429
             --max-retries 2
             --exclude '^https://ali-maghami\.github\.io'
+            --exclude '^https://(www\.)?linkedin\.com'
+            --exclude '^https://scholar\.google\.'
             --root-dir "${{ github.workspace }}/dist"
             './dist/**/*.html'
           fail: true
