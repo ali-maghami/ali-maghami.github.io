@@ -35,7 +35,6 @@ jobs:
         with:
           args: >-
             --no-progress
-            --exclude-mail
             --accept 200,206,301,302,303,307,308,429
             --max-retries 2
             './dist/**/*.html'
