@@ -207,7 +207,11 @@ collections:
     # blank. public/ is served verbatim at the path recorded below, so the
     # preview resolves. The trade is that Astro does not optimise these, which
     # is why the committed files are kept small.
-    media_folder: 'public/badges'
+    # The leading slash is required. A collection-level media_folder without
+    # one is read as relative to this collection's folder, which sent the CMS
+    # looking in src/content/certificates/public/badges and left every badge
+    # preview blank. public_folder is the URL the browser fetches.
+    media_folder: '/public/badges'
     public_folder: '/badges'
     fields:
       - { name: name, label: Name, widget: string, required: true }

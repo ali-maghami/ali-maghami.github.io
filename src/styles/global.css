@@ -15,10 +15,13 @@
 	--color-sand-200: #e4e6d6;
 	--color-sand-300: #d3d6c2;
 
-	/* Text */
-	--color-ink: #303026;
-	--color-ink-soft: #55564c;
-	--color-ink-muted: #75766d;
+	/* Text. GitHub's foreground scale rather than the warm olive it started
+	   with: body copy reads darker against the brighter surfaces, and the
+	   three steps stay clearly separated so headings, prose and metadata
+	   still rank against each other. */
+	--color-ink: #24292e;
+	--color-ink-soft: #3d444d;
+	--color-ink-muted: #57606a;
 
 	/* Accents */
 	--color-copper: #ce6d53;
@@ -296,7 +299,10 @@ main {
 /* ----------------------------------------------------------------- prose */
 
 .prose {
-	color: var(--color-ink-soft);
+	/* Running body copy sits at the full ink weight, not the softened step —
+	   the softer tone is for ledes, card descriptions and metadata, which
+	   should rank below the text someone is actually reading. */
+	color: var(--color-ink);
 	font-size: 1.0625rem;
 	line-height: 1.75;
 }
