@@ -6,6 +6,7 @@ import ContentCard from '../components/ContentCard.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { assertPortrait } from '../lib/badges';
 import { getNavHref } from '../lib/nav';
 
 const projects = (await getCollection('projects'))
@@ -24,6 +25,9 @@ if (!home) {
 }
 
 const { heading, focusAreas } = home.data;
+// Checked rather than trusted: a public path is only a string, so a stale one
+// would render a broken image in the most prominent place on the site.
+const portrait = assertPortrait(home.data.portrait);
 // The lede carries a link and emphasis, so it is markdown rather than a plain
 // string and Astro renders it here.
 const { Content: HeroLede } = await render(home);
@@ -40,14 +44,23 @@ const { Content: HeroLede } = await render(home);
 			<div class="hero-content">
 				<Header />
 				<section class="hero">
-					<div class="hero-inner">
-						<h1>{heading}</h1>
-						<div class="lede">
-							<HeroLede />
+					<div class:list={['hero-inner', { 'has-portrait': portrait }]}>
+						{
+							portrait && (
+								<div class="portrait">
+									<img src={portrait} alt={`Portrait of ${SITE_TITLE}`} width="320" height="320" />
+								</div>
+							)
+						}
+						<div class="hero-text">
+							<h1>{heading}</h1>
+							<div class="lede">
+								<HeroLede />
+							</div>
+							<ul class="focus-list">
+								{focusAreas.map((area) => <li>{area}</li>)}
+							</ul>
 						</div>
-						<ul class="focus-list">
-							{focusAreas.map((area) => <li>{area}</li>)}
-						</ul>
 					</div>
 				</section>
 			</div>
@@ -92,12 +105,49 @@ const { Content: HeroLede } = await render(home);
 
 			.hero {
 				padding: 3.5rem 1.25rem 4.5rem;
-				text-align: center;
 			}
 
 			.hero-inner {
 				max-width: 660px;
 				margin-inline: auto;
+				text-align: left;
+			}
+
+			/* With a portrait the hero becomes two columns; the text keeps its
+			   own measure so the line length stays readable rather than
+			   stretching to fill whatever the image leaves over. */
+			.hero-inner.has-portrait {
+				display: flex;
+				align-items: center;
+				gap: 2.5rem;
+				max-width: 900px;
+			}
+
+			.hero-text {
+				min-width: 0;
+			}
+
+			.portrait {
+				flex-shrink: 0;
+				width: 160px;
+				height: 160px;
+			}
+
+			.portrait img {
+				width: 100%;
+				height: 100%;
+				border-radius: 50%;
+				object-fit: cover;
+				/* Desaturated on purpose: the wash behind it is a different
+				   colour on every load, and full-strength skin tones clash with
+				   most of them. Grey sits with all six. */
+				filter: grayscale(1);
+				opacity: 0.92;
+				border: 1px solid var(--color-sand-200);
+				/* Softens the cut-out edge so the circle belongs to the wash
+				   instead of being stamped on top of it. */
+				mask-image: radial-gradient(circle, black 62%, transparent 98%);
+				-webkit-mask-image: radial-gradient(circle, black 62%, transparent 98%);
 			}
 
 			.hero h1 {
@@ -132,7 +182,6 @@ const { Content: HeroLede } = await render(home);
 			.focus-list {
 				display: flex;
 				flex-wrap: wrap;
-				justify-content: center;
 				gap: 0.5rem;
 				list-style: none;
 				margin: 1.75rem 0 0;
@@ -161,6 +210,17 @@ const { Content: HeroLede } = await render(home);
 			@media (max-width: 800px) {
 				.hero {
 					padding: 2.5rem 1.25rem 3rem;
+				}
+				/* Stacked rather than side by side: at this width a 160px circle
+				   leaves the heading too narrow to set well. */
+				.hero-inner.has-portrait {
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 1.5rem;
+				}
+				.portrait {
+					width: 116px;
+					height: 116px;
 				}
 				.hero h1 {
 					font-size: 1.875rem;

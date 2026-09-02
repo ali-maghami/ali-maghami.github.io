@@ -92,6 +92,11 @@ const home = defineCollection({
 	schema: z.object({
 		heading: z.string(),
 		focusAreas: z.array(z.string()).default([]),
+		// Portrait beside the hero, as a public path like /portrait/ali.jpg.
+		// Public rather than an image() import so the CMS can preview it — the
+		// same reason certificate badges live there. Optional: with no portrait
+		// the hero simply renders as text.
+		portrait: optional(z.string()),
 	}),
 });
 
