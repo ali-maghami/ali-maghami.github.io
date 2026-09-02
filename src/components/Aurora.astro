@@ -83,13 +83,16 @@
 		animation: drift-3 24s ease-in-out infinite alternate;
 	}
 
+	/* Reaches up behind the nav pill rather than starting below it, so the
+	   masthead sits in colour instead of on bare surface. It already spans the
+	   pill horizontally, so only the top edge moves. */
 	.blob-4 {
-		width: 24vw;
-		height: 24vw;
-		min-width: 200px;
-		min-height: 200px;
-		top: 18%;
-		left: 40%;
+		width: 28vw;
+		height: 28vw;
+		min-width: 240px;
+		min-height: 240px;
+		top: -8%;
+		left: 38%;
 		background: var(--accent-4, var(--color-copper-warm));
 		opacity: 0.6;
 		animation: drift-2 29s ease-in-out infinite alternate-reverse;
