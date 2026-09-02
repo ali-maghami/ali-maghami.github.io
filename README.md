@@ -1,4 +1,4 @@
-# maghamis - Personal Website & Portfolio
+# Ali Maghami - Personal Website & Portfolio
 
 A modern, fast, and content-driven personal website built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
 
@@ -22,7 +22,7 @@ A modern, fast, and content-driven personal website built with [Astro](https://a
   type: 'personal' # or 'previous'
   pubDate: 2026-09-01
   tags: ['Astro', 'TypeScript', 'TailwindCSS']
-  repoUrl: 'https://github.com/maghamis/...'
+  repoUrl: 'https://github.com/ali-maghami/...'
   liveUrl: 'https://...'
   ---
   ```
