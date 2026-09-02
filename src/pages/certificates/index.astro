@@ -1,12 +1,19 @@
 ---
-import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 
-const certificates = (await getCollection('certificates')).sort(
+const entries = (await getCollection('certificates')).sort(
 	(a, b) => b.data.issueDate.valueOf() - a.data.issueDate.valueOf(),
+);
+
+// The CMS offers a Notes field on every certificate, so render it. Rendering is
+// async, so it is resolved up front rather than inside the template.
+const certificates = await Promise.all(
+	entries.map(async (entry) => ({ ...entry, Notes: (await render(entry)).Content })),
 );
 
 const now = new Date();
@@ -36,6 +43,16 @@ const now = new Date();
 							const expired = cert.data.expiryDate && cert.data.expiryDate < now;
 							return (
 								<li class="cert-row">
+									{cert.data.badge && (
+										<Image
+											class="cert-badge"
+											src={cert.data.badge}
+											alt=""
+											width={125}
+											height={125}
+											loading="lazy"
+										/>
+									)}
 									<div class="cert-main">
 										<h2 class="cert-name">
 											{cert.data.url ? (
@@ -50,6 +67,9 @@ const now = new Date();
 										{cert.data.credentialId && (
 											<p class="cert-id">ID: {cert.data.credentialId}</p>
 										)}
+										<div class="cert-notes">
+											<cert.Notes />
+										</div>
 									</div>
 									<div class="cert-dates">
 										<FormattedDate date={cert.data.issueDate} />
@@ -109,12 +129,35 @@ const now = new Date();
 
 			.cert-row {
 				display: flex;
-				align-items: baseline;
-				justify-content: space-between;
+				align-items: center;
+				gap: 0.5rem 1.25rem;
 				flex-wrap: wrap;
-				gap: 0.5rem 1.5rem;
 				padding: 1.15rem 0;
 				border-bottom: 1px solid var(--color-sand-200);
+			}
+
+			/* Supplied at 125x125, shown at 56 so it sits beside the name rather
+			   than dominating the row. The intrinsic size stays in the markup so
+			   it remains sharp on dense screens. */
+			.cert-badge {
+				width: 56px;
+				height: 56px;
+				object-fit: contain;
+				flex-shrink: 0;
+			}
+
+			.cert-main {
+				flex: 1;
+				min-width: 12rem;
+			}
+
+			.cert-notes {
+				font-size: 0.875rem;
+				color: var(--color-ink-muted);
+			}
+
+			.cert-notes :global(p) {
+				margin: 0.35rem 0 0;
 			}
 
 			.cert-name {

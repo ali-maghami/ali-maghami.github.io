@@ -58,17 +58,22 @@ const papers = defineCollection({
 
 const certificates = defineCollection({
 	loader: glob({ base: './src/content/certificates', pattern: '**/*.{md,mdx}' }),
-	schema: z.object({
-		name: z.string(),
-		issuer: z.string(),
-		issueDate: z.coerce.date(),
-		expiryDate: optional(z.coerce.date()),
-		credentialId: optional(z.string()),
-		url: optionalUrl,
-		// Only featured certificates go in the site footer; the rest live on the
-		// certificates page. Without this the footer grows without limit.
-		featured: z.boolean().default(false),
-	}),
+	schema: ({ image }) =>
+		z.object({
+			name: z.string(),
+			issuer: z.string(),
+			issueDate: z.coerce.date(),
+			expiryDate: optional(z.coerce.date()),
+			credentialId: optional(z.string()),
+			url: optionalUrl,
+			// Issuer badge artwork, supplied at 125x125 and rendered small — see
+			// certificates/index.astro and Footer.astro — so it reads as a mark
+			// rather than as an image.
+			badge: optional(image()),
+			// Only featured certificates go in the site footer; the rest live on
+			// the certificates page. Without this the footer grows without limit.
+			featured: z.boolean().default(false),
+		}),
 });
 
 const posts = defineCollection({

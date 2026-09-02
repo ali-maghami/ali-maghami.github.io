@@ -6,5 +6,7 @@ import settings from './data/settings.json';
 export const SITE_TITLE = settings.siteTitle;
 export const SITE_DESCRIPTION = settings.siteDescription;
 export const SOCIAL = settings.social;
+/** Which page sections show the certificate badge strip in the footer. */
+export const FOOTER_BADGE_PAGES: string[] = settings.footerBadges?.pages ?? [];
 
 export default settings;
