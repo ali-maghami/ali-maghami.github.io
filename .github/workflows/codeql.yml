@@ -12,11 +12,14 @@ on:
     # only touched markdown finds nothing. A push is skipped only when every
     # changed file matches, so the moment a save also touches code this runs.
     # The weekly scan covers anything these filters let through.
+    # Keep in step with the same list in pr-checks.yml — including any new CMS
+    # media folder, or an upload to it makes the push look like a code change.
     paths-ignore:
       - 'src/content/**'
       - 'src/data/**'
       - 'src/assets/**'
       - 'public/badges/**'
+      - 'public/portrait/**'
       - 'docs/**'
       - '**.md'
   schedule:

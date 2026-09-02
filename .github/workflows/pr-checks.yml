@@ -11,11 +11,16 @@ name: Build Checks
 on:
   push:
     branches: [main]
+    # Everything the CMS writes. The media folders have to be listed one by one
+    # because a pattern cannot exclude public/admin, which is configuration
+    # rather than content — so ADD ANY NEW CMS MEDIA FOLDER HERE, or a save
+    # that uploads to it stops counting as content-only and runs the lot.
     paths-ignore:
       - 'src/content/**'
       - 'src/data/**'
       - 'src/assets/**'
       - 'public/badges/**'
+      - 'public/portrait/**'
       - 'docs/**'
       - '**.md'
   pull_request:
