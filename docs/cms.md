@@ -179,13 +179,22 @@ hostname resolves to a Cloudflare address.
 ## How editing works day to day
 
 1. Open `/admin/` and sign in with GitHub.
-2. Create or edit a project. Fields map 1:1 to the frontmatter schema.
-3. Save as a draft — this opens a branch and a PR. CI runs against it.
-4. Review the PR (a real diff of the markdown), then merge.
-5. [`deploy.yml`](../.github/workflows/deploy.yml) publishes the site.
+2. Create or edit an entry. Fields map 1:1 to the frontmatter schema.
+3. Save. That commits straight to `main` — there is no second step.
+4. [`deploy.yml`](../.github/workflows/deploy.yml) publishes the site, roughly 40 seconds later.
 
-Nothing about this bypasses the normal pipeline. A CMS edit and a hand-written commit are
-indistinguishable by the time they reach `main`.
+Saving *is* publishing. There is no draft state and no pull request per entry, which is the
+point: the review stage cost a branch, a pull request and a merge for every certificate.
+
+What still stands between a mistake and a broken site is that `deploy.yml` publishes only a
+successful build. An entry that breaks the schema fails the build, nothing is deployed, and the
+live site stays on its last good version until the entry is fixed. `pr-checks.yml` also runs on
+`main`, so the failure arrives with a message naming the field rather than as a silent
+non-deployment.
+
+This only works while `main` does not require a pull request for every change. Restore that rule
+and the CMS's push is refused, so saving fails outright — the ruleset and `publish_mode` have to
+agree. See [branch-protection.md](./branch-protection.md).
 
 ## Keeping the config and the schema in sync
 
