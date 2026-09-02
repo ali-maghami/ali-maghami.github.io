@@ -127,10 +127,19 @@ const { Content: HeroLede } = await render(home);
 				min-width: 0;
 			}
 
+			/* The ring lives on the wrapper, not on the image. The image is
+			   masked to a soft edge, and a mask fades a border along with
+			   everything else it touches — so a thicker ring drawn on the image
+			   would simply disappear at its outer edge. Kept apart, the ring
+			   stays crisp while the photo still melts into the wash inside it. */
 			.portrait {
 				flex-shrink: 0;
-				width: 160px;
-				height: 160px;
+				width: 250px;
+				height: 250px;
+				border: 3px solid var(--color-sand-300);
+				border-radius: 50%;
+				display: grid;
+				place-items: center;
 			}
 
 			.portrait img {
@@ -142,12 +151,12 @@ const { Content: HeroLede } = await render(home);
 				   colour on every load, and full-strength skin tones clash with
 				   most of them. Grey sits with all six. */
 				filter: grayscale(1);
-				opacity: 0.92;
-				border: 1px solid var(--color-sand-200);
+				opacity: 0.8;
 				/* Softens the cut-out edge so the circle belongs to the wash
-				   instead of being stamped on top of it. */
-				mask-image: radial-gradient(circle, black 62%, transparent 98%);
-				-webkit-mask-image: radial-gradient(circle, black 62%, transparent 98%);
+				   instead of being stamped on top of it. Held just inside the
+				   ring so the two do not fight. */
+				mask-image: radial-gradient(circle, black 76%, transparent 100%);
+				-webkit-mask-image: radial-gradient(circle, black 76%, transparent 100%);
 			}
 
 			.hero h1 {
@@ -211,7 +220,7 @@ const { Content: HeroLede } = await render(home);
 				.hero {
 					padding: 2.5rem 1.25rem 3rem;
 				}
-				/* Stacked rather than side by side: at this width a 160px circle
+				/* Stacked rather than side by side: at this width a 250px circle
 				   leaves the heading too narrow to set well. */
 				.hero-inner.has-portrait {
 					flex-direction: column;
@@ -219,8 +228,9 @@ const { Content: HeroLede } = await render(home);
 					gap: 1.5rem;
 				}
 				.portrait {
-					width: 116px;
-					height: 116px;
+					width: 150px;
+					height: 150px;
+					border-width: 2px;
 				}
 				.hero h1 {
 					font-size: 1.875rem;
