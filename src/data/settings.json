@@ -10,8 +10,7 @@
   "footerBadges": {
     "pages": [
       "home",
-      "about",
-      "certificates"
+      "about"
     ]
   }
 }
