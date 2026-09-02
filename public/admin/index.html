@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- The editor is a private tool, not a page anyone should find via search. -->
+		<meta name="robots" content="noindex, nofollow" />
+		<title>Content Manager</title>
+	</head>
+	<body>
+		<!--
+			Sveltia CMS reads ./config.yml, talks to the GitHub API directly, and
+			commits to a branch. Pinned deliberately: this is a 0.x package loaded
+			from a CDN into a public page, so an unpinned URL would let an upstream
+			release change what runs here without review. Bump it on purpose.
+		-->
+		<script src="https://unpkg.com/@sveltia/cms@0.205.0/dist/sveltia-cms.js" type="module"></script>
+	</body>
+</html>
