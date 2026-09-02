@@ -1,6 +1,4 @@
 ---
-import { Image } from 'astro:assets';
-import AboutHeroImage from '../assets/work/bin-picking-6dof-inference.jpg';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
@@ -38,10 +36,6 @@ const skills = [
 					for industrial automation. I currently work at Hatch Ltd. in Ontario, Canada, where I help
 					teams develop vision and AI solutions for manufacturing and mining applications.
 				</p>
-			</div>
-
-			<div class="hero-image">
-				<Image width={1020} height={510} src={AboutHeroImage} alt="" />
 			</div>
 
 			<div class="wrap-narrow prose">
@@ -89,7 +83,7 @@ const skills = [
 				<p>
 					I've published research in peer-reviewed journals on topics like robot calibration,
 					vision-guided drilling, and inspection automation. I also hold patents related to vision
-					systems for industrial applications. You can find my recent publications in the blog
+					systems for industrial applications. You can find my recent publications in the projects
 					section.
 				</p>
 
@@ -105,7 +99,7 @@ const skills = [
 
 		<style>
 			.article-head {
-				padding: 3rem 1.25rem 2rem;
+				padding: 3rem 1.25rem 3rem;
 			}
 
 			.eyebrow {
@@ -130,21 +124,6 @@ const skills = [
 				font-weight: 300;
 				line-height: 1.55;
 				color: var(--color-ink-soft);
-			}
-
-			.hero-image {
-				max-width: 1020px;
-				margin: 0 auto 3rem;
-				padding-inline: 1.25rem;
-			}
-
-			.hero-image :global(img) {
-				display: block;
-				width: 100%;
-				height: auto;
-				border-radius: 16px;
-				border: 1px solid var(--color-sand-200);
-				box-shadow: 0 8px 30px rgb(48 48 38 / 8%);
 			}
 
 			.prose {
@@ -183,9 +162,6 @@ const skills = [
 				}
 				.article-head h1 {
 					font-size: 1.875rem;
-				}
-				.hero-image {
-					margin-bottom: 2rem;
 				}
 				.fact {
 					grid-template-columns: 1fr;

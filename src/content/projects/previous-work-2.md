@@ -5,7 +5,6 @@ type: 'previous'
 pubDate: 2023-12-01
 tags: ['Computer Vision', 'Robotics', 'Deep Learning', 'Aerospace', 'Research']
 featured: false
-heroImage: '../../assets/work/laser-profiler-path-interpolation.png'
 ---
 
 ## Overview
@@ -19,12 +18,9 @@ Conducted research on vision-based guidance systems for precision robotic drilli
 - Created automated multi-light imaging workflows with deep learning for defect detection in composites
 - Published peer-reviewed research demonstrating practical applicability to manufacturing
 
-![Crosshair laser profiler: laser lines detected inside a moving window on the image, and the corresponding camera and laser-plane frames.](../../assets/work/laser-profiler-line-detection.png)
-
 A crosshair laser profiler recovers the surface geometry ahead of the tool. Laser lines are tracked inside a moving window on each frame, transformed from the camera frame into the laser-plane frame, and interpolated into a 3D spline that the robot path is corrected against online.
 
 ## Technologies
 
 OpenCV, PyTorch, Semantic Segmentation, ROS, KUKA Robot Control, Laser Profiling
-
 

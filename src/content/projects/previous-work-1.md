@@ -5,7 +5,6 @@ type: 'previous'
 pubDate: 2021-10-15
 tags: ['Computer Vision', 'Calibration', 'GUI Design', 'Python', 'OpenCV']
 featured: true
-heroImage: '../../assets/work/multi-camera-tracking-environment.png'
 ---
 
 ## Overview
@@ -22,5 +21,4 @@ Developed calibration software that provides practical tools for camera, robot, 
 ## Technologies
 
 Python, PyQt5, OpenCV, Intel RealSense, Universal Robots, KUKA
-
 

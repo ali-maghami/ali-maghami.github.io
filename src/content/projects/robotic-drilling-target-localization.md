@@ -1,8 +1,10 @@
 ---
 title: 'Vision-Based Target Localization and Online Error Correction for High-Precision Robotic Drilling'
 description: 'Research on precision robotic drilling for aerospace composite manufacturing'
-pubDate: 'May 20 2024'
-heroImage: '../../assets/work/multi-camera-calibration-laser-tracker.png'
+type: 'previous'
+pubDate: 2024-05-20
+tags: ['Computer Vision', 'Robotics', 'Aerospace', 'Real-Time Systems', 'Research']
+featured: false
 ---
 
 ## Research
@@ -20,5 +22,4 @@ We developed camera systems and algorithms to detect tool position in real-time 
 ## Results
 
 The system demonstrated sub-millimeter accuracy on composite structures and was validated across multiple drilling scenarios, showing promise for automated precision manufacturing.
-
 
