@@ -5,7 +5,7 @@ portraitSize: 250
 portraitBorderWidth: 0
 portraitOpacity: 100
 portraitBackground: '#FFFFFF'
-portraitBackgroundOpacity: 6
+portraitBackgroundOpacity: 0
 portraitFilter: none
 focusAreas:
   - Computer Vision
