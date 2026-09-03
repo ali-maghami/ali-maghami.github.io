@@ -1,20 +1,18 @@
 import { rgba } from './portrait';
 
 /**
- * The wash on a project card: a small pool of colour in its top right corner,
- * with a second hue emerging from beneath it and falling off quickly.
+ * The wash on a project card.
+ *
+ * Two overlapping radial gradients, both anchored just off the top right
+ * corner. The first is wide and shallow and sits on top; the second is
+ * narrower and taller and shows through where the first has faded, so the two
+ * colours blend into a third where they overlap rather than meeting at an
+ * edge. The geometry is fixed — only the colours come from the CMS.
  *
  * Composed here rather than interpolated into the template, for the same
  * reason the portrait colours are: this lands in a style attribute, so an
  * unparseable value has to become nothing rather than reach the page as CSS.
  * `rgba` already returns `transparent` for anything that is not six hex digits.
- *
- * Kept small on purpose. A wash that reaches the lower left puts the title and
- * description on saturated colour instead of on paper, and two gradients of
- * similar size read as one symmetrical blur rather than as two colours. The
- * inner one is the tighter of the two and sits on top; the outer starts its
- * colour where the inner is already fading, so it appears as a band around it
- * rather than as a second wash of its own.
  */
 export function cardGradient(from: string, to = ''): string {
 	const start = rgba(from, 100);
@@ -25,12 +23,10 @@ export function cardGradient(from: string, to = ''): string {
 	const parsed = to ? rgba(to, 100) : '';
 	const second = parsed === 'transparent' ? '' : parsed;
 
-	const inner = `radial-gradient(52% 48% at 100% 0%, ${start} 0%, transparent 62%)`;
-	if (!second) return inner;
+	const top = `radial-gradient(174% 71% at 106% 6%, ${start} 0%, transparent 70%)`;
+	if (!second) return top;
 
-	// Listed second, so it paints beneath the inner pool. Its colour begins at
-	// 30% — under the inner one — and is gone by 60%, which is the quick fade
-	// out from behind rather than a wash spreading across the card.
-	const outer = `radial-gradient(74% 66% at 100% 0%, ${second} 30%, transparent 60%)`;
-	return `${inner}, ${outer}`;
+	// Listed second, so it paints beneath the first and reads through it.
+	const under = `radial-gradient(63% 90% at 95% 10%, ${second} 6%, transparent 60%)`;
+	return `${top}, ${under}`;
 }
