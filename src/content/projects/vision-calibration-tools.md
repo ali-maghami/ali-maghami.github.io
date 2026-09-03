@@ -15,7 +15,7 @@ liveUrl: ''
 heroImage: ''
 label: Project
 cardColor: '#c8b432'
-cardColorAlt: '#a14b12'
+cardColorAlt: '#1297a1'
 ---
 
 ## Overview
