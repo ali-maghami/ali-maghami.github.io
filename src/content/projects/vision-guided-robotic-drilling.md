@@ -4,6 +4,8 @@ description: 'Research on precision robotic drilling with online error correctio
 type: 'previous'
 pubDate: 2023-12-01
 tags: ['Computer Vision', 'Robotics', 'Deep Learning', 'Aerospace', 'Research']
+cardColor: '#E4C4EE'
+cardColorAlt: '#F3DFF6'
 featured: false
 ---
 

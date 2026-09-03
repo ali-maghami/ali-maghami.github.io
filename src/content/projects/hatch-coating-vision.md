@@ -4,6 +4,8 @@ description: 'Vision method for localization and shape estimation of reflective 
 type: 'previous'
 pubDate: 2024-12-01
 tags: ['Computer Vision', 'Metrology', 'Patents', 'Industrial AI', 'Real-Time Systems']
+cardColor: '#8FC4F0'
+cardColorAlt: '#CFE6FA'
 featured: true
 ---
 

@@ -4,6 +4,8 @@ description: 'Machine learning approach for calibrating dual-arm robotic systems
 type: 'previous'
 pubDate: 2022-08-15
 tags: ['Deep Learning', 'Robotics', 'Aerospace', 'Research', 'Machine Learning']
+cardColor: '#C9B8F2'
+cardColorAlt: '#E3D6F7'
 featured: false
 ---
 

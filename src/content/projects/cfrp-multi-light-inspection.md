@@ -4,6 +4,8 @@ description: 'Deep learning for detecting defects in aerospace composite structu
 type: 'previous'
 pubDate: 2021-08-10
 tags: ['Computer Vision', 'Deep Learning', 'Inspection', 'Aerospace', 'Research']
+cardColor: '#9FE0D8'
+cardColorAlt: '#DCEFC8'
 featured: false
 ---
 

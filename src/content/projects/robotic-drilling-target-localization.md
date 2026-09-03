@@ -4,6 +4,8 @@ description: 'Research on precision robotic drilling for aerospace composite man
 type: 'previous'
 pubDate: 2024-05-20
 tags: ['Computer Vision', 'Robotics', 'Aerospace', 'Real-Time Systems', 'Research']
+cardColor: '#F2B6A8'
+cardColorAlt: '#FAD9CE'
 featured: false
 ---
 

@@ -4,6 +4,8 @@ description: 'End-to-end 3D perception pipeline for automated bin picking using 
 type: 'previous'
 pubDate: 2022-03-15
 tags: ['Deep Learning', 'Robotics', 'Synthetic Data', 'Computer Vision', 'Point Cloud Processing']
+cardColor: '#A8DFC1'
+cardColorAlt: '#DCF0D8'
 featured: false
 ---
 

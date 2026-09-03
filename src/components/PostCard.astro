@@ -1,0 +1,105 @@
+---
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+	href: string;
+	kind: string;
+	title: string;
+	description?: string;
+	date: Date;
+	avatar?: string;
+}
+
+const { href, kind, title, description, date, avatar } = Astro.props;
+---
+
+<article class="post-card">
+	<a class="post-link" href={href}>
+		<div class="post-meta">
+			<svg class="post-icon" viewBox="0 0 16 16" aria-hidden="true" width="13" height="13">
+				<rect x="1.5" y="2.5" width="13" height="11" rx="2" fill="none" stroke="currentColor" />
+				<path d="M4.5 6.5h7M4.5 9.5h4" stroke="currentColor" stroke-linecap="round" />
+			</svg>
+			<span class="post-kind">{kind}</span>
+			<FormattedDate date={date} />
+			{avatar && <img class="post-avatar" src={avatar} alt="" width="44" height="44" loading="lazy" />}
+		</div>
+
+		<h3 class="post-title">{title}</h3>
+		{description && <p class="post-hook">{description}</p>}
+	</a>
+</article>
+
+<style>
+	.post-card {
+		background: var(--color-paper);
+		border: 1px solid var(--color-sand-200);
+		border-radius: 10px;
+		box-shadow: var(--shadow-card);
+		transition:
+			box-shadow 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+	.post-card:hover {
+		box-shadow: var(--shadow-card-hover);
+		border-color: var(--color-sand-300);
+	}
+
+	.post-link {
+		display: block;
+		padding: 1.15rem 1.25rem 1.35rem;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	/* The label, the date and the avatar share one row; the avatar is pushed to
+	   the far edge so the two text items stay grouped at the left. */
+	.post-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--color-ink-muted);
+	}
+
+	.post-icon {
+		flex-shrink: 0;
+		opacity: 0.75;
+	}
+
+	.post-kind {
+		color: var(--color-ink-soft);
+	}
+
+	.post-avatar {
+		margin-left: auto;
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 1px solid var(--color-sand-200);
+	}
+
+	.post-title {
+		margin: 0.85rem 0 0;
+		font-size: 1.1875rem;
+		font-weight: 600;
+		line-height: 1.3;
+		letter-spacing: -0.015em;
+		color: var(--color-ink);
+	}
+
+	.post-link:hover .post-title {
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.post-hook {
+		margin: 0.5rem 0 0;
+		font-size: 0.875rem;
+		line-height: 1.55;
+		color: var(--color-ink-soft);
+	}
+</style>

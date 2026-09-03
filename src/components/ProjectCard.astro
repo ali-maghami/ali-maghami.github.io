@@ -1,0 +1,143 @@
+---
+import FormattedDate from './FormattedDate.astro';
+import { cardGradient } from '../lib/cards';
+
+interface Props {
+	href: string;
+	label: string;
+	title: string;
+	description?: string;
+	date: Date;
+	cardColor: string;
+	cardColorAlt?: string;
+	avatar?: string;
+}
+
+const { href, label, title, description, date, cardColor, cardColorAlt, avatar } = Astro.props;
+
+// Stored per project rather than derived from the page palette, so a card keeps
+// the same colour on every visit.
+const wash = cardGradient(cardColor, cardColorAlt);
+---
+
+<article class="project-card" style={`--card-wash:${wash}`}>
+	<a class="project-link" href={href}>
+		<div class="project-meta">
+			<FormattedDate date={date} precision="monthYear" />
+			<span class="project-label">{label}</span>
+		</div>
+
+		<div class="project-body">
+			<h3 class="project-title">{title}</h3>
+			{description && <p class="project-desc">{description}</p>}
+			{
+				avatar && (
+					<div class="project-people">
+						<img src={avatar} alt="" width="52" height="52" loading="lazy" />
+					</div>
+				)
+			}
+		</div>
+	</a>
+</article>
+
+<style>
+	.project-card {
+		position: relative;
+		border: 1px solid var(--color-sand-200);
+		border-radius: 12px;
+		/* The wash sits over the card's own surface, so the faded corner lands
+		   on paper rather than on whatever the page background happens to be. */
+		background: var(--card-wash, none), var(--color-paper);
+		box-shadow: var(--shadow-card);
+		overflow: hidden;
+		transition:
+			box-shadow 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+	.project-card:hover {
+		box-shadow: var(--shadow-card-hover);
+		border-color: var(--color-sand-300);
+	}
+
+	.project-link {
+		display: flex;
+		flex-direction: column;
+		/* Tall enough that the wash has room to fall off across the card, which
+		   is the whole point of anchoring it in the corner. */
+		min-height: 290px;
+		padding: 1.15rem 1.35rem 1.35rem;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.project-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		color: var(--color-ink-muted);
+	}
+
+	/* The bubble the label sits in — translucent white so it reads on any wash
+	   colour without needing a variant per colour. */
+	.project-label {
+		background: rgb(255 255 255 / 65%);
+		border: 1px solid rgb(255 255 255 / 70%);
+		border-radius: 999px;
+		padding: 0.25rem 0.65rem;
+		color: var(--color-ink-soft);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+	}
+
+	/* Pushed to the bottom, leaving the wash uninterrupted at the top. */
+	.project-body {
+		margin-top: auto;
+		padding-top: 2.5rem;
+	}
+
+	.project-title {
+		margin: 0;
+		font-size: 1.5rem;
+		font-weight: 600;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+		color: var(--color-ink);
+	}
+
+	.project-link:hover .project-title {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.project-desc {
+		margin: 0.6rem 0 0;
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		color: var(--color-ink-soft);
+	}
+
+	.project-people {
+		margin-top: 1rem;
+	}
+
+	.project-people img {
+		width: 26px;
+		height: 26px;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 2px solid var(--color-paper);
+	}
+
+	@media (max-width: 720px) {
+		.project-link {
+			min-height: 240px;
+		}
+		.project-title {
+			font-size: 1.3125rem;
+		}
+	}
+</style>

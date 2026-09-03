@@ -1,17 +1,25 @@
 ---
 interface Props {
 	date: Date;
+	/**
+	 * `full` is day, month and year. `monthYear` drops the day, for things
+	 * dated to a month rather than a moment — a project's timeframe, say.
+	 */
+	precision?: 'full' | 'monthYear';
 }
 
-const { date } = Astro.props;
+const { date, precision = 'full' } = Astro.props;
+
+const options: Intl.DateTimeFormatOptions =
+	precision === 'monthYear'
+		? { year: 'numeric', month: 'short' }
+		: { year: 'numeric', month: 'long', day: 'numeric' };
 ---
 
 <time datetime={date.toISOString()}>
 	{
 		date.toLocaleDateString('en-us', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
+			...options,
 			// Date-only frontmatter parses as UTC midnight; formatting in local
 			// time would render the previous day west of Greenwich.
 			timeZone: 'UTC',
