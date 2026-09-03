@@ -30,7 +30,7 @@ describe('buildNavItems', () => {
 
 	it('keeps a stable order as sections fill up', () => {
 		const labels = buildNavItems({ projects: 9, blog: 2, papers: 3, posts: 1 }).map((i) => i.label);
-		expect(labels).toEqual(['Home', 'Projects', 'Posts', 'Papers', 'LinkedIn', 'About']);
+		expect(labels).toEqual(['Home', 'Posts', 'Projects', 'Papers', 'LinkedIn', 'About']);
 	});
 });
 
