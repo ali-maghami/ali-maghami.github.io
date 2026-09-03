@@ -10,10 +10,10 @@ url: ''
 pdf: /pdf/Thesis.pdf
 citations: null
 tags:
-  - Computer Vision
   - Deep Learning
+  - Computer Vision
   - Physical AI
-  - Autonomous Systems
   - Robotics
+  - Autonomous Systems
 featured: false
 ---
