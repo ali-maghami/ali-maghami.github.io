@@ -2,7 +2,8 @@
 title: Vision-Based Robotic Drilling for Aerospace Manufacturing
 description: Research on precision robotic drilling with online error correction using machine vision.
 stage: research-prototype
-category: active
+contributors: []
+category: archived
 pubDate: 2023-12-01
 tags:
   - Computer Vision
@@ -10,12 +11,12 @@ tags:
   - Deep Learning
   - Aerospace
   - Research
-featured: false
 repoUrl: ''
 liveUrl: ''
 heroImage: ''
 cardColor: '#ca5858'
 cardColorAlt: '#c471d1'
+featured: false
 ---
 
 ## Overview
