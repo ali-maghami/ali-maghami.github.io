@@ -43,18 +43,19 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 				</p>
 
 				{
-					papers.length > 0 && (
+					/*
+					 * The publication count is gone: the list below it is the
+					 * count, and stating it turns a small number into a claim.
+					 * The citation total stays, since nothing else on the page
+					 * says it — and the block now hangs on that alone, or it
+					 * would render an empty list once the count went.
+					 */
+					totalCitations > 0 && (
 						<dl class="stats">
 							<div>
-								<dt>Publications</dt>
-								<dd>{papers.length}</dd>
+								<dt>Citations</dt>
+								<dd>{totalCitations}</dd>
 							</div>
-							{totalCitations > 0 && (
-								<div>
-									<dt>Citations</dt>
-									<dd>{totalCitations}</dd>
-								</div>
-							)}
 						</dl>
 					)
 				}
