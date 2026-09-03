@@ -42,7 +42,7 @@ The result is a non-contact machine-vision system that can measure a moving refl
 
 ***
 
-![Multi-light inspection of a curved reflective surface](/media/reflective-surface-vision-animation-1.mp4)
+<video src="/media/reflective-surface-vision-animation-1.mp4" controls playsinline preload="metadata" aria-label="Multi-light inspection of a curved reflective surface"></video>
 
 _`Synchronized 3D Reconstruction of a Reflective Surface`_
 

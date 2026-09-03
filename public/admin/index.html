@@ -17,9 +17,8 @@
 		<script src="https://unpkg.com/@sveltia/cms@0.205.0/dist/sveltia-cms.js" type="module"></script>
 
 		<!--
-			A Video block for the body editor. The built-in components cover
-			images and code, so a body could otherwise only hold a video by
-			typing the HTML by hand — the media button filters to images.
+			A Video block for the body editor, defined in video-block.js so its
+			round trip between fields and HTML can be unit tested.
 
 			Module scripts run in document order after parsing, so the bundle
 			above has already set window.CMS by the time this evaluates; the
@@ -27,36 +26,17 @@
 			expected path.
 		-->
 		<script type="module">
-			const registerVideoBlock = (CMS) => {
-				CMS.registerEditorComponent({
-					id: 'video',
-					label: 'Video',
-					icon: 'movie',
-					fields: [
-						{
-							name: 'src',
-							label: 'Video file',
-							widget: 'file',
-							accept: 'video/mp4',
-							hint: 'MP4. Readers get play, pause and volume, so it does not start on its own.',
-						},
-					],
-					// Must match what toBlock writes, or an existing video in a
-					// body is not recognised when the entry is reopened.
-					pattern: /<video src="([^"]+?)" controls playsinline><\/video>/,
-					fromBlock: (match) => ({ src: decodeURI(match[1]) }),
-					toBlock: (data) => `<video src="${data.src}" controls playsinline></video>`,
-					toPreview: (data) => `<video src="${data.src}" controls playsinline></video>`,
-				});
-			};
+			import { videoComponent } from './video-block.js';
+
+			const register = (CMS) => CMS.registerEditorComponent(videoComponent);
 
 			if (window.CMS) {
-				registerVideoBlock(window.CMS);
+				register(window.CMS);
 			} else {
 				const timer = setInterval(() => {
 					if (!window.CMS) return;
 					clearInterval(timer);
-					registerVideoBlock(window.CMS);
+					register(window.CMS);
 				}, 50);
 				setTimeout(() => clearInterval(timer), 10000);
 			}

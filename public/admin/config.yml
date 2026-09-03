@@ -125,7 +125,7 @@ collections:
           # body goes to public/ instead, where it is served as uploaded.
           media_folder: '/public/media',
           public_folder: '/media',
-          hint: "Options for an image or video go in its Alt text box, before a colon — 'hero: The coating rig' spans the full page width, 'loop hero' loops a video across it. Width: text (default) or hero. Video: viewer (default), once, loop. Anything after the colon stays the description.",
+          hint: "Use the Video button for a clip — it has its own playback and width choices. For an image, put 'hero' at the start of its Alt text to span the full page width, and anything after a colon stays the description: 'hero: The coating rig'.",
         }
 
   - name: projects
@@ -255,7 +255,7 @@ collections:
           # body goes to public/ instead, where it is served as uploaded.
           media_folder: '/public/media',
           public_folder: '/media',
-          hint: "Options for an image or video go in its Alt text box, before a colon — 'hero: The coating rig' spans the full page width, 'loop hero' loops a video across it. Width: text (default) or hero. Video: viewer (default), once, loop. Anything after the colon stays the description.",
+          hint: "Use the Video button for a clip — it has its own playback and width choices. For an image, put 'hero' at the start of its Alt text to span the full page width, and anything after a colon stays the description: 'hero: The coating rig'.",
         }
 
   - name: papers
