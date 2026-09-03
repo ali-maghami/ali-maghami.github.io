@@ -181,13 +181,6 @@ hr {
 	padding-inline: 1.25rem;
 }
 
-/* The listing pages carry nothing but cards, so they get a wider measure than
-   the rest of the site: the same three columns, each about a fifth wider. Prose
-   pages keep the narrower one, where a long line would be harder to read. */
-.wrap-wide {
-	max-width: 1400px;
-}
-
 .wrap-narrow {
 	width: 100%;
 	max-width: 720px;
