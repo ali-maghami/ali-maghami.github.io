@@ -4,10 +4,15 @@ authors: Ali Maghami, Meshkat Salehi
 venue: Procedia CIRP
 year: 2021
 kind: journal
-abstract: Chatter stability in machining flexible parts depends directly on the structural dynamics of the workpiece. This paper proposes a novel two-stage framework that combines finite element (FE) and data-driven deep learning techniques to rapidly predict the varying dynamics of workpieces during machining. An automated framework is developed to create a large training dataset of CAD models with gradually-changing geometries. A deep 3D Convolutional Neural Network (3D-CNN) is developed to “learn” the variations in dynamic parameters as a function of geometry. The current model has been successfully implemented for prediction of natural frequencies of workpieces during turning operations. The proposed framework can be used as a computationally efficient tool in online process monitoring and automated correction applications.
+abstract: Machining changes a workpiece’s geometry and vibration behaviour throughout production. In this research, we combined finite-element simulations with a 3D neural network to predict these changes in milliseconds. This could help machines detect vibration risks and adjust their operating parameters in real time, enabling smarter and more autonomous manufacturing.
 doi: 10.1016/j.procir.2021.11.295
 url: https://www.sciencedirect.com/science/article/pii/S2212827121011938
-pdfUrl: ''
+pdf: /pdf/Procedia CIRP.pdf
 citations: null
-featured: true
+tags:
+  - Deep Learning
+  - Digital Twins
+  - Predictive Modelling
+featured: false
+pdfUrl: ''
 ---
