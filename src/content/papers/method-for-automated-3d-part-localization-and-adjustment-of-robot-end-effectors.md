@@ -1,7 +1,7 @@
 ---
 title: Method for automated 3d part localization and adjustment of robot end-effectors
 authors: Yousef ALBORZI, Ali MAGHAMI, Bhavin DHARIA, Michael NEWMAN
-venue: '-'
+venue: WIPO (PCT)
 year: 2022
 kind: patent
 abstract: This patent uses 3D computer vision and point clouds to locate parts and automatically guide a robot to the correct position. It enables flexible industrial automation without CAD models or complex offline programming.
