@@ -394,6 +394,25 @@ main {
 	color: var(--color-paper);
 }
 
+/* ----------------------------------------------------- external links */
+
+/* The marker on a link that leaves the site. Defined globally because it is
+   applied in two places: by the ExternalLink component, and by the build-time
+   rehype plugin that rewrites off-site links in markdown bodies, whose output
+   no scoped stylesheet can reach. */
+.ext {
+	/* Smaller and lighter than the label: a marker, not a second word. */
+	margin-left: 0.15em;
+	font-size: 0.85em;
+	line-height: 1;
+	vertical-align: 0.05em;
+	opacity: 0.7;
+}
+
+a:hover .ext {
+	opacity: 1;
+}
+
 /* ------------------------------------------------------------------ a11y */
 
 .sr-only {

@@ -6,10 +6,18 @@ import { defineConfig, fontProviders } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 
+import { rehypeExternalLinks } from './src/lib/external-links';
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://ali-maghami.github.io',
   integrations: [mdx(), sitemap()],
+
+  // Links written in a body are plain markdown, with no way to say whether they
+  // leave the site. This decides from the address instead.
+  markdown: {
+    rehypePlugins: [rehypeExternalLinks],
+  },
 
   fonts: [
       {
