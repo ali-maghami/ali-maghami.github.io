@@ -298,8 +298,12 @@ const makers = [
 				gap: 0.55rem;
 			}
 
+			/* :global on the stand-in because it is a child component and
+			   carries its own scope id — a scoped selector matches the owner's
+			   <img> and silently leaves the SVG unsized, which renders it at
+			   its intrinsic size rather than at 28px. */
 			.maker img,
-			.maker .avatar {
+			.maker :global(.avatar) {
 				width: 28px;
 				height: 28px;
 				flex-shrink: 0;
@@ -307,6 +311,13 @@ const makers = [
 				object-fit: cover;
 				border: 2px solid var(--color-paper);
 				box-shadow: 0 0 0 1px var(--color-sand-300);
+			}
+
+			/* The portrait is a line drawing on transparency, so without a
+			   backing the page wash shows through the paper it was drawn on.
+			   Only the photograph needs it: the stand-in draws its own disc. */
+			.maker img {
+				background: var(--color-paper);
 			}
 
 			.tags {
