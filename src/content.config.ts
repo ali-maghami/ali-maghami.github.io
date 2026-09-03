@@ -19,13 +19,15 @@ const projects = defineCollection({
 			// Whether it is still live work. Drives the two sections on the
 			// projects page.
 			category: z.enum(['active', 'archived']).default('active'),
+			// Anyone else who worked on it. The site owner is always first and
+			// is not listed here, so their name does not have to be retyped on
+			// every project.
+			contributors: z.array(z.string()).default([]),
 			pubDate: z.coerce.date(),
 			tags: z.array(z.string()).default([]),
 			repoUrl: optionalUrl,
 			liveUrl: optionalUrl,
 			heroImage: optional(image()),
-			// The pill above the title on the home page card.
-			label: z.string().default('Project'),
 			// The card's wash, fading from its top right corner. Set per project
 			// and stored, so a card keeps its colour between visits rather than
 			// changing with the page palette.

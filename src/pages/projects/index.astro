@@ -59,7 +59,7 @@ const sections = ['active', 'archived'].map((category) => ({
 									{projects.map((project) => (
 										<ProjectCard
 											href={getNavHref(`/projects/${project.id}/`)}
-											label={project.data.label}
+											stage={project.data.stage}
 											title={project.data.title}
 											description={project.data.description}
 											date={project.data.pubDate}

@@ -142,6 +142,14 @@ collections:
           - { label: Piloted, value: piloted }
           - { label: Completed, value: completed }
           - { label: Product, value: product }
+      - {
+          name: contributors,
+          label: Other contributors,
+          widget: list,
+          required: false,
+          default: [],
+          hint: 'Anyone else who worked on it, one name per entry. Your own name is added first automatically.',
+        }
       - name: category
         label: Category
         widget: select
@@ -177,14 +185,6 @@ collections:
           pattern: ['^https?://.+', 'Must be a full URL starting with http:// or https://'],
         }
       - { name: heroImage, label: Hero image, widget: image, required: false }
-      - {
-          name: label,
-          label: Card label,
-          widget: string,
-          required: false,
-          default: Project,
-          hint: 'The pill above the title on the home page card.',
-        }
       - {
           name: cardColor,
           label: Card colour,
