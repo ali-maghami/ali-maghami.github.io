@@ -81,16 +81,16 @@ const wash = cardGradient(cardColor, cardColorAlt);
 		color: var(--color-ink-muted);
 	}
 
-	/* The bubble the label sits in — translucent white so it reads on any wash
-	   colour without needing a variant per colour. */
+	/* The bubble the label sits in. Now that the wash is confined to the
+	   corner, the label usually sits on paper rather than on colour, so a
+	   translucent white fill was invisible. A neutral tint with a hairline
+	   reads on both — and matches the tag chips used elsewhere. */
 	.project-label {
-		background: rgb(255 255 255 / 65%);
-		border: 1px solid rgb(255 255 255 / 70%);
+		background: var(--color-sand-100);
+		border: 1px solid var(--color-sand-200);
 		border-radius: 999px;
 		padding: 0.25rem 0.65rem;
 		color: var(--color-ink-soft);
-		backdrop-filter: blur(8px);
-		-webkit-backdrop-filter: blur(8px);
 	}
 
 	/* Pushed to the bottom, leaving the wash uninterrupted at the top. */
@@ -129,7 +129,6 @@ const wash = cardGradient(cardColor, cardColorAlt);
 		height: 26px;
 		border-radius: 50%;
 		object-fit: cover;
-		border: 2px solid var(--color-paper);
 	}
 
 	@media (max-width: 720px) {

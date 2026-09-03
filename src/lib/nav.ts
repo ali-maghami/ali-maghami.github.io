@@ -13,9 +13,11 @@ export function getNavHref(path: string): string {
  */
 const OPTIONAL_SECTIONS: { key: string; href: string; label: string }[] = [
 	{ key: 'projects', href: '/projects/', label: 'Projects' },
-	{ key: 'blog', href: '/blog/', label: 'Blog' },
+	{ key: 'blog', href: '/blog/', label: 'Posts' },
 	{ key: 'papers', href: '/papers/', label: 'Papers' },
-	{ key: 'posts', href: '/posts/', label: 'Posts' },
+	// Named for its source rather than "Posts", which now belongs to the
+	// writing above it — two sections cannot share a label.
+	{ key: 'posts', href: '/posts/', label: 'LinkedIn' },
 ];
 
 /**
