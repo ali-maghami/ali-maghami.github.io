@@ -14,8 +14,8 @@ repoUrl: ''
 liveUrl: ''
 heroImage: ''
 label: Project
-cardColor: '#c8b432'
-cardColorAlt: '#1297a1'
+cardColor: '#173cab'
+cardColorAlt: '#7cdfe4'
 ---
 
 ## Overview
