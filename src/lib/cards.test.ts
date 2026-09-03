@@ -4,15 +4,34 @@ import { cardGradient } from './cards';
 describe('cardGradient', () => {
 	it('fades a single colour out from the top right', () => {
 		expect(cardGradient('#BFE3E0')).toBe(
-			'radial-gradient(135% 135% at 100% 0%, rgb(191 227 224 / 1) 0%, transparent 72%)',
+			'radial-gradient(52% 48% at 100% 0%, rgb(191 227 224 / 1) 0%, transparent 62%)',
 		);
 	});
 
-	it('passes through a second colour when one is given', () => {
+	it('shows the second colour as a band emerging from under the first', () => {
+		// Two layers, not one blending through the other, and the outer one
+		// starts its colour where the inner is already fading.
 		const css = cardGradient('#7DD3FC', '#DCEFC8');
+		expect(css.split('), radial-gradient')).toHaveLength(2);
 		expect(css).toContain('rgb(125 211 252 / 1) 0%');
-		expect(css).toContain('rgb(220 239 200 / 1) 45%');
-		expect(css).toContain('transparent 85%');
+		expect(css).toContain('rgb(220 239 200 / 1) 30%');
+	});
+
+	it('keeps both pools clear of the lower left, where the title sits', () => {
+		// Every stop is gone well before the far corner; a wash that reached it
+		// would put the title and description on colour instead of on paper.
+		const css = cardGradient('#7DD3FC', '#DCEFC8');
+		for (const [, pct] of css.matchAll(/transparent (\d+)%/g)) {
+			expect(Number(pct)).toBeLessThanOrEqual(70);
+		}
+		for (const [, w] of css.matchAll(/radial-gradient\((\d+)%/g)) {
+			expect(Number(w)).toBeLessThan(80);
+		}
+	});
+
+	it('paints the first colour over the second where they overlap', () => {
+		const css = cardGradient('#7DD3FC', '#DCEFC8');
+		expect(css.indexOf('125 211 252')).toBeLessThan(css.indexOf('220 239 200'));
 	});
 
 	it('treats an empty second colour as absent', () => {

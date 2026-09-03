@@ -117,7 +117,7 @@ collections:
       - { name: body, label: Body, widget: markdown }
 
   - name: blog
-    label: Blog
+    label: Posts
     label_singular: Post
     folder: src/content/blog
     create: true
@@ -296,7 +296,7 @@ collections:
       - { name: body, label: Notes, widget: markdown, required: false }
 
   - name: posts
-    label: LinkedIn Posts
+    label: LinkedIn
     label_singular: LinkedIn Post
     folder: src/content/posts
     create: true
@@ -513,8 +513,8 @@ collections:
                 options:
                   - { label: Home, value: home }
                   - { label: Projects, value: projects }
-                  - { label: Blog, value: blog }
+                  - { label: Posts, value: blog }
                   - { label: Papers, value: papers }
-                  - { label: LinkedIn Posts, value: posts }
+                  - { label: LinkedIn, value: posts }
                   - { label: Certificates, value: certificates }
                   - { label: About, value: about }
