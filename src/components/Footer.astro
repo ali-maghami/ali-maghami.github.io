@@ -111,6 +111,7 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 
 	.cert-label {
 		margin: 0 0 0.9rem;
+		text-align: center;
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
 		letter-spacing: 0.08em;
@@ -119,10 +120,13 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 	}
 
 	/* Tiles rather than a row: the badge stacks over its name, so a column is
-	   only as wide as the badge plus a little, and many fit across one page. */
+	   only as wide as the badge plus a little, and many fit across one page.
+	   Fixed tracks rather than 1fr, so a handful of badges sit centred as a
+	   group instead of being stretched across the full width. */
 	.cert-list {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+		grid-template-columns: repeat(auto-fit, 124px);
+		justify-content: center;
 		gap: 1.5rem 1rem;
 		margin: 0 0 1rem;
 		padding: 0;
@@ -161,7 +165,8 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 	}
 
 	.cert-all {
-		display: inline-block;
+		display: block;
+		text-align: center;
 		font-family: var(--font-mono);
 		font-size: 0.6875rem;
 		color: var(--color-ink-muted);
@@ -214,7 +219,7 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 
 	@media (max-width: 720px) {
 		.cert-list {
-			grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+			grid-template-columns: repeat(auto-fit, 96px);
 			gap: 1.25rem 0.75rem;
 		}
 
