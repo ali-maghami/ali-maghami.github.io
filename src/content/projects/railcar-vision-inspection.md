@@ -4,6 +4,8 @@ description: 'Large-scale vision platform integrating 40+ cameras for real-time 
 type: 'previous'
 pubDate: 2024-06-15
 tags: ['Computer Vision', '3D Imaging', 'Python', 'Azure', 'Edge Computing']
+cardColor: '#FBD08A'
+cardColorAlt: '#FBE7B8'
 featured: true
 ---
 

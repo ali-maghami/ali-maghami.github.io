@@ -4,6 +4,8 @@ description: 'GUI-based software suite for camera, robot, and hand-eye calibrati
 type: 'previous'
 pubDate: 2021-10-15
 tags: ['Computer Vision', 'Calibration', 'GUI Design', 'Python', 'OpenCV']
+cardColor: '#B6CFF2'
+cardColorAlt: '#DCE8FA'
 featured: true
 ---
 

@@ -2,12 +2,13 @@
 import { getCollection, render } from 'astro:content';
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
-import ContentCard from '../components/ContentCard.astro';
+import PostCard from '../components/PostCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { assertPortrait } from '../lib/badges';
-import { getNavHref } from '../lib/nav';
+import { getNavHref, isPublished } from '../lib/nav';
 import { portraitStyle } from '../lib/portrait';
 
 const projects = (await getCollection('projects'))
@@ -15,7 +16,12 @@ const projects = (await getCollection('projects'))
 		if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
 		return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
 	})
-	.slice(0, 6);
+	.slice(0, 4);
+
+const posts = (await getCollection('blog'))
+	.filter(isPublished)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 5);
 
 const [home] = await getCollection('home');
 
@@ -79,28 +85,58 @@ const { Content: HeroLede } = await render(home);
 		</div>
 
 		<main class="wrap">
-			<section>
-				<div class="section-head">
-					<h2>Projects</h2>
-					<a class="view-all" href={getNavHref('/projects/')}>View all &rarr;</a>
-				</div>
-				<div class="grid">
-					{
-						projects.map((proj) => (
-							<ContentCard
-								href={getNavHref(`/projects/${proj.id}/`)}
-								title={proj.data.title}
-								description={proj.data.description}
-								date={proj.data.pubDate}
-								badge={proj.data.type === 'personal' ? 'Personal Project' : 'Previous Work'}
-								badgeVariant={proj.data.type}
-								tags={proj.data.tags}
-								image={proj.data.heroImage}
-							/>
-						))
-					}
-				</div>
-			</section>
+			<div class="rule" aria-hidden="true"></div>
+
+			{/* One column until there is something to put in the other. */}
+			<div class:list={['columns', { paired: posts.length > 0 }]}>
+				{
+					posts.length > 0 && (
+						<section class="column">
+							<div class="column-head">
+								<h2>Posts</h2>
+								<a class="view-all" href={getNavHref('/blog/')}>
+									View all &rarr;
+								</a>
+							</div>
+							<div class="stack">
+								{posts.map((post) => (
+									<PostCard
+										href={getNavHref(`/blog/${post.id}/`)}
+										kind={post.data.kind}
+										title={post.data.title}
+										description={post.data.description}
+										date={post.data.pubDate}
+										avatar={portrait}
+									/>
+								))}
+							</div>
+						</section>
+					)
+				}
+
+				<section class="column">
+					<div class="column-head">
+						<h2>Projects</h2>
+						<a class="view-all" href={getNavHref('/projects/')}>View all &rarr;</a>
+					</div>
+					<div class="stack">
+						{
+							projects.map((proj) => (
+								<ProjectCard
+									href={getNavHref(`/projects/${proj.id}/`)}
+									label={proj.data.label}
+									title={proj.data.title}
+									description={proj.data.description}
+									date={proj.data.pubDate}
+									cardColor={proj.data.cardColor}
+									cardColorAlt={proj.data.cardColorAlt}
+									avatar={portrait}
+								/>
+							))
+						}
+					</div>
+				</section>
+			</div>
 		</main>
 		<Footer />
 
@@ -224,11 +260,95 @@ const { Content: HeroLede } = await render(home);
 				-webkit-backdrop-filter: blur(12px);
 			}
 
-			.grid {
+			/* The hairline above the columns, with the small square end caps
+			   from the reference. */
+			.rule {
+				position: relative;
+				height: 1px;
+				background: var(--color-sand-200);
+				margin: 0 0 2.75rem;
+			}
+
+			.rule::before,
+			.rule::after {
+				content: '';
+				position: absolute;
+				top: -3px;
+				width: 7px;
+				height: 7px;
+				border: 1px solid var(--color-sand-300);
+				background: var(--color-paper);
+			}
+
+			.rule::before {
+				left: 0;
+			}
+
+			.rule::after {
+				right: 0;
+			}
+
+			.columns {
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+				gap: 3rem;
+			}
+
+			/* Two columns only when both have something in them. The divider is
+			   a border rather than an element so it spans exactly the taller
+			   column without needing a height. */
+			.columns.paired {
+				grid-template-columns: 1fr 1fr;
+				gap: 0;
+			}
+
+			.columns.paired .column + .column {
+				border-left: 1px solid var(--color-sand-200);
+				padding-left: 3rem;
+			}
+
+			.columns.paired .column:first-child {
+				padding-right: 3rem;
+			}
+
+			.column-head {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 1rem;
+				margin-bottom: 1.5rem;
+			}
+
+			.column-head h2 {
+				margin: 0;
+				font-size: 1.125rem;
+				font-weight: 600;
+				letter-spacing: -0.01em;
+			}
+
+			.view-all {
+				font-size: 0.8125rem;
+				white-space: nowrap;
+			}
+
+			.stack {
+				display: grid;
 				gap: 1.25rem;
-				align-items: start;
+				align-content: start;
+			}
+
+			@media (max-width: 900px) {
+				/* Stacked: side by side, neither column has room for a card. */
+				.columns.paired {
+					grid-template-columns: 1fr;
+					gap: 3rem;
+				}
+				.columns.paired .column + .column {
+					border-left: none;
+					padding-left: 0;
+				}
+				.columns.paired .column:first-child {
+					padding-right: 0;
+				}
 			}
 
 			@media (max-width: 800px) {

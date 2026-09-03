@@ -88,6 +88,32 @@ collections:
           pattern: ['^https?://.+', 'Must be a full URL starting with http:// or https://'],
         }
       - { name: heroImage, label: Hero image, widget: image, required: false }
+      - {
+          name: label,
+          label: Card label,
+          widget: string,
+          required: false,
+          default: Project,
+          hint: 'The pill above the title on the home page card.',
+        }
+      - {
+          name: cardColor,
+          label: Card colour,
+          widget: color,
+          required: false,
+          default: '#BFE3E0',
+          allowInput: true,
+          hint: 'Fades out from the top right corner of the card. Stored per project, so it stays the same on every visit.',
+        }
+      - {
+          name: cardColorAlt,
+          label: Card second colour,
+          widget: color,
+          required: false,
+          default: '',
+          allowInput: true,
+          hint: 'Optional. The fade passes through this on its way out, which gives the card two hues instead of one.',
+        }
       - { name: body, label: Body, widget: markdown }
 
   - name: blog
@@ -105,6 +131,14 @@ collections:
     fields:
       - { name: title, label: Title, widget: string, required: true }
       - { name: description, label: Description, widget: text, required: true }
+      - {
+          name: kind,
+          label: Kind,
+          widget: string,
+          required: false,
+          default: Post,
+          hint: 'The small label on the card, e.g. Post or Little ideas.',
+        }
       - {
           name: pubDate,
           label: Published,

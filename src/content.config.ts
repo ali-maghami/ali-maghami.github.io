@@ -18,6 +18,19 @@ const projects = defineCollection({
 			liveUrl: optionalUrl,
 			featured: z.boolean().default(false),
 			heroImage: optional(image()),
+			// The pill above the title on the home page card.
+			label: z.string().default('Project'),
+			// The card's wash, fading from its top right corner. Set per project
+			// and stored, so a card keeps its colour between visits rather than
+			// changing with the page palette.
+			cardColor: z
+				.string()
+				.regex(/^#[0-9a-fA-F]{6}$/, 'Must be a hex colour like #7DD3FC')
+				.default('#BFE3E0'),
+			cardColorAlt: z
+				.string()
+				.regex(/^(#[0-9a-fA-F]{6})?$/, 'Must be a hex colour like #DCEFC8, or empty')
+				.default(''),
 		}),
 });
 
@@ -30,6 +43,10 @@ const blog = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: optional(z.coerce.date()),
 			tags: z.array(z.string()).default([]),
+			// The small label on the card, e.g. Post or Little ideas. Free text
+			// rather than a fixed list so a new kind of writing does not need a
+			// code change to appear.
+			kind: z.string().default('Post'),
 			// Drafts stay out of the built site but remain editable in the CMS,
 			// so a half-written post can be saved without publishing it.
 			draft: z.boolean().default(false),
