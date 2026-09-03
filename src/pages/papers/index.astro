@@ -6,12 +6,9 @@ import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import { SOCIAL } from '../../consts';
 
+// Newest first. Not grouped under year headings any more: each card carries its
+// own year, so a heading above it would say the same thing twice.
 const papers = (await getCollection('papers')).sort((a, b) => b.data.year - a.data.year);
-
-// Grouped by year, newest first — the shape a publication list is normally read in.
-const byYear = [...new Set(papers.map((p) => p.data.year))]
-	.sort((a, b) => b - a)
-	.map((year) => ({ year, entries: papers.filter((p) => p.data.year === year) }));
 
 const KIND_LABELS: Record<string, string> = {
 	journal: 'Journal',
@@ -73,56 +70,57 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 			</header>
 
 			{
-				byYear.length > 0 ? (
-					byYear.map(({ year, entries }) => (
-						<section class="year-group">
-							<h2 class="year">{year}</h2>
-							<ol class="paper-list">
-								{entries.map((paper) => (
-									<li class="paper">
-										<h3 class="paper-title">
-											{paper.data.url ? (
-												<a href={paper.data.url} target="_blank" rel="noopener noreferrer">
-													{paper.data.title}
-												</a>
-											) : (
-												paper.data.title
-											)}
-										</h3>
-										<p class="authors">{paper.data.authors}</p>
-										<p class="venue">
-											<span class="kind">{KIND_LABELS[paper.data.kind] ?? paper.data.kind}</span>
-											<span>{paper.data.venue}</span>
-										</p>
-										{paper.data.abstract && <p class="abstract">{paper.data.abstract}</p>}
-										<p class="paper-meta">
-											{paper.data.doi && (
-												<a
-													href={`https://doi.org/${paper.data.doi}`}
-													target="_blank"
-													rel="noopener noreferrer"
-												>
-													DOI: {paper.data.doi}
-												</a>
-											)}
-											{paper.data.pdfUrl && (
-												<a href={paper.data.pdfUrl} target="_blank" rel="noopener noreferrer">
-													PDF
-												</a>
-											)}
-											{typeof paper.data.citations === 'number' && paper.data.citations > 0 && (
-												<span class="citations">Cited by {paper.data.citations}</span>
-											)}
-										</p>
-									</li>
-								))}
-							</ol>
-						</section>
-					))
+				papers.length > 0 ? (
+					<ol class="paper-list">
+						{papers.map((paper) => (
+							<li class="paper">
+								<div class="paper-tags">
+									<span class="year-badge">{paper.data.year}</span>
+									<span class="kind">{KIND_LABELS[paper.data.kind] ?? paper.data.kind}</span>
+								</div>
+
+								<h2 class="paper-title">
+									{paper.data.url ? (
+										<a href={paper.data.url} target="_blank" rel="noopener noreferrer">
+											{paper.data.title}
+										</a>
+									) : (
+										paper.data.title
+									)}
+								</h2>
+
+								<p class="authors">{paper.data.authors}</p>
+								<p class="venue">{paper.data.venue}</p>
+
+								{paper.data.abstract && <p class="abstract">{paper.data.abstract}</p>}
+
+								<p class="paper-meta">
+									{paper.data.doi && (
+										<a
+											href={`https://doi.org/${paper.data.doi}`}
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											DOI: {paper.data.doi}
+										</a>
+									)}
+									{paper.data.pdfUrl && (
+										<a href={paper.data.pdfUrl} target="_blank" rel="noopener noreferrer">
+											PDF
+										</a>
+									)}
+									{typeof paper.data.citations === 'number' && paper.data.citations > 0 && (
+										<span class="citations">Cited by {paper.data.citations}</span>
+									)}
+								</p>
+							</li>
+						))}
+					</ol>
 				) : (
 					<p class="empty">No publications listed yet.</p>
 				)
 			}
+
 		</main>
 		<Footer />
 
@@ -190,26 +188,63 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 				color: var(--color-ink);
 			}
 
-			.year-group {
-				margin-bottom: 2.5rem;
-			}
-
-			.year {
-				margin: 0 0 1rem;
-				padding-bottom: 0.5rem;
-				border-bottom: 1px solid var(--color-sand-200);
-				font-family: var(--font-mono);
-				font-size: 0.875rem;
-				font-weight: 500;
-				color: var(--color-ink-muted);
-			}
-
 			.paper-list {
 				list-style: none;
-				margin: 0;
+				margin: 0 0 3rem;
 				padding: 0;
 				display: grid;
-				gap: 1.75rem;
+				gap: 1.25rem;
+			}
+
+			/* A card each, matching the projects and posts listings. */
+			.paper {
+				background: var(--color-paper);
+				border: 1px solid var(--color-sand-200);
+				border-radius: 10px;
+				box-shadow: var(--shadow-card);
+				padding: 1.25rem 1.4rem 1.35rem;
+				transition:
+					box-shadow 0.2s ease,
+					border-color 0.2s ease;
+			}
+
+			.paper:hover {
+				box-shadow: var(--shadow-card-hover);
+				border-color: var(--color-sand-300);
+			}
+
+			.paper-tags {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				margin-bottom: 0.75rem;
+			}
+
+			/* The year leads, so the reader places the work before reading what
+			   kind of thing it is. Both are bubbles; the year is the stronger of
+			   the two because it is the one that orders the list. */
+			.year-badge,
+			.kind {
+				font-family: var(--font-mono);
+				font-size: 0.6875rem;
+				letter-spacing: 0.04em;
+				border-radius: 999px;
+				padding: 0.2rem 0.6rem;
+				white-space: nowrap;
+			}
+
+			.year-badge {
+				color: var(--color-ink);
+				background: var(--color-sand-200);
+				border: 1px solid var(--color-sand-300);
+				font-weight: 500;
+			}
+
+			.kind {
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+				background: var(--color-sand-100);
+				border: 1px solid var(--color-sand-200);
 			}
 
 			.paper-title {
@@ -236,27 +271,10 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 			}
 
 			.venue {
-				display: flex;
-				align-items: baseline;
-				flex-wrap: wrap;
-				gap: 0.6rem;
 				margin: 0;
 				font-size: 0.875rem;
 				font-style: italic;
 				color: var(--color-ink-muted);
-			}
-
-			.kind {
-				font-family: var(--font-mono);
-				font-style: normal;
-				font-size: 0.6875rem;
-				letter-spacing: 0.04em;
-				text-transform: uppercase;
-				color: var(--color-ink-muted);
-				background: var(--color-sand-100);
-				border: 1px solid var(--color-sand-200);
-				border-radius: 999px;
-				padding: 0.1rem 0.5rem;
 			}
 
 			.abstract {
@@ -270,7 +288,7 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 				display: flex;
 				flex-wrap: wrap;
 				gap: 1rem;
-				margin: 0.6rem 0 0;
+				margin: 0.75rem 0 0;
 				font-family: var(--font-mono);
 				font-size: 0.75rem;
 				color: var(--color-ink-muted);
