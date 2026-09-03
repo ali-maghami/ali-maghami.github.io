@@ -40,6 +40,10 @@ The result is a non-contact machine-vision system that can measure a moving refl
 3. **Observe from several angles.** Two or more synchronized cameras capture the reflected features at the same instant. Synchronization matters because the surface is moving.
 4. **Reconstruct the geometry.** Corresponding features are matched across the camera views and triangulated into 3D points. Those points form a live model of the surface and its edges.
 
+---
+
+![](../../assets/work/reflective-surface-vision-animation.gif)
+
 ***
 
 ## A reference frame that updates itself
