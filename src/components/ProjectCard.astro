@@ -1,10 +1,11 @@
 ---
 import FormattedDate from './FormattedDate.astro';
 import { cardGradient } from '../lib/cards';
+import { stageLabel } from '../lib/projects';
 
 interface Props {
 	href: string;
-	label: string;
+	stage: string;
 	title: string;
 	description?: string;
 	date: Date;
@@ -13,7 +14,7 @@ interface Props {
 	avatar?: string;
 }
 
-const { href, label, title, description, date, cardColor, cardColorAlt, avatar } = Astro.props;
+const { href, stage, title, description, date, cardColor, cardColorAlt, avatar } = Astro.props;
 
 // Stored per project rather than derived from the page palette, so a card keeps
 // the same colour on every visit.
@@ -24,7 +25,7 @@ const wash = cardGradient(cardColor, cardColorAlt);
 	<a class="project-link" href={href}>
 		<div class="project-meta">
 			<FormattedDate date={date} precision="monthYear" />
-			<span class="project-label">{label}</span>
+			<span class="project-label">{stageLabel(stage)}</span>
 		</div>
 
 		<div class="project-body">

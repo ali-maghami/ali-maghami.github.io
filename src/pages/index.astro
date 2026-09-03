@@ -125,7 +125,7 @@ const { Content: HeroLede } = await render(home);
 							projects.map((proj) => (
 								<ProjectCard
 									href={getNavHref(`/projects/${proj.id}/`)}
-									label={proj.data.label}
+									stage={proj.data.stage}
 									title={proj.data.title}
 									description={proj.data.description}
 									date={proj.data.pubDate}

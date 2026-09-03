@@ -14,7 +14,6 @@ featured: true
 repoUrl: ''
 liveUrl: ''
 heroImage: ''
-label: Project
 cardColor: '#173cab'
 cardColorAlt: '#7cdfe4'
 ---

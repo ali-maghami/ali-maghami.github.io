@@ -12,7 +12,12 @@ import { stageLabel } from '../lib/projects';
 
 type Props = CollectionEntry<'projects'>['data'];
 
-const { title, description, pubDate, tags, repoUrl, liveUrl, stage, heroImage } = Astro.props;
+const { title, description, pubDate, tags, repoUrl, liveUrl, stage, contributors, heroImage } =
+	Astro.props;
+
+// The site owner leads, then anyone else credited on the entry — so their own
+// name is not retyped on every project.
+const makers = [SITE_TITLE, ...contributors];
 
 // The contributor photo lives on the home entry, as it does on the cards.
 const [home] = await getCollection('home');
@@ -53,7 +58,7 @@ const portrait = assertPortrait(home?.data.portrait);
 							<dt>Who made it?</dt>
 							<dd class="maker">
 								{portrait && <img src={portrait} alt="" width="52" height="52" loading="lazy" />}
-								<span>{SITE_TITLE}</span>
+								<span>{makers.join(', ')}</span>
 							</dd>
 						</div>
 					</dl>
