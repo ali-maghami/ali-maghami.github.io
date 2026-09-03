@@ -5,8 +5,12 @@ import BaseHead from '../../components/BaseHead.astro';
 import PostCard from '../../components/PostCard.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import { assertHeroMedia } from '../../lib/badges';
+import { assertHeroMedia, assertPortrait } from '../../lib/badges';
 import { getNavHref, isPublished } from '../../lib/nav';
+
+// The contributor avatar lives on the home entry, where the portrait is set.
+const [home] = await getCollection('home');
+const portrait = assertPortrait(home?.data.portrait);
 
 const posts = (await getCollection('blog'))
 	.filter(isPublished)
@@ -44,6 +48,7 @@ const posts = (await getCollection('blog'))
 								title={post.data.title}
 								description={post.data.description}
 								date={post.data.pubDate}
+								avatar={portrait}
 								heroImage={assertHeroMedia(post.data.heroImage)}
 								heroVideo={assertHeroMedia(post.data.heroVideo)}
 							/>
