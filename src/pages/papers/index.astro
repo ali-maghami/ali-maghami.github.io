@@ -5,6 +5,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import { SOCIAL } from '../../consts';
+import { assertPaperPdf } from '../../lib/badges';
 
 // Newest first. Not grouped under year headings any more: each card carries its
 // own year, so a heading above it would say the same thing twice.
@@ -92,9 +93,37 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 								<p class="authors">{paper.data.authors}</p>
 								<p class="venue">{paper.data.venue}</p>
 
+								{paper.data.tags.length > 0 && (
+									<div class="tags">
+										{paper.data.tags.map((tag: string) => (
+											<span class="tag">{tag}</span>
+										))}
+									</div>
+								)}
+
 								{paper.data.abstract && <p class="abstract">{paper.data.abstract}</p>}
 
 								<p class="paper-meta">
+									{assertPaperPdf(paper.data.pdf) && (
+										<a class="pdf-link" href={paper.data.pdf} target="_blank" rel="noopener noreferrer">
+											<svg viewBox="0 0 16 16" aria-hidden="true" width="13" height="13">
+												<path
+													d="M4 1.5h5L12.5 5v9.5H4z"
+													fill="none"
+													stroke="currentColor"
+													stroke-linejoin="round"
+												/>
+												<path d="M9 1.5V5h3.5" fill="none" stroke="currentColor" stroke-linejoin="round" />
+												<path
+													d="M5.8 11.6V8.9h1a.85.85 0 0 1 0 1.7h-1M8.9 11.6V8.9h.6a1.35 1.35 0 0 1 0 2.7h-.6Z"
+													fill="none"
+													stroke="currentColor"
+													stroke-linecap="round"
+												/>
+											</svg>
+											PDF
+										</a>
+									)}
 									{paper.data.doi && (
 										<a
 											href={`https://doi.org/${paper.data.doi}`}
@@ -102,11 +131,6 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 											rel="noopener noreferrer"
 										>
 											DOI: {paper.data.doi}
-										</a>
-									)}
-									{paper.data.pdfUrl && (
-										<a href={paper.data.pdfUrl} target="_blank" rel="noopener noreferrer">
-											PDF
 										</a>
 									)}
 									{typeof paper.data.citations === 'number' && paper.data.citations > 0 && (
@@ -277,6 +301,20 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 				color: var(--color-ink-muted);
 			}
 
+			/* Rounded rather than the square chips used elsewhere, to sit with the
+			   year and kind bubbles above them on the same card. */
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.4rem;
+				margin-top: 0.7rem;
+			}
+
+			.tags :global(.tag) {
+				border-radius: 999px;
+				padding: 0.2rem 0.6rem;
+			}
+
 			.abstract {
 				margin: 0.6rem 0 0;
 				font-size: 0.9375rem;
@@ -302,6 +340,15 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 
 			.paper-meta a:hover {
 				color: var(--color-ink);
+			}
+
+			/* The PDF is the one link that hands over the paper itself, so it
+			   carries an icon and reads a shade darker than the DOI beside it. */
+			.pdf-link {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.35rem;
+				color: var(--color-ink-soft);
 			}
 
 			.empty {

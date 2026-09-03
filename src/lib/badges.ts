@@ -67,3 +67,13 @@ export function assertPortrait(portrait: string | undefined): string | undefined
 export function assertHeroMedia(media: string | undefined): string | undefined {
 	return assertPublicImage(media, '/hero/', 'Hero media');
 }
+
+/**
+ * A paper's uploaded PDF, in public/pdf.
+ *
+ * Not public/papers: that would be served at /papers/, which is already the
+ * publications page — one path answering to two things is worth avoiding.
+ */
+export function assertPaperPdf(pdf: string | undefined): string | undefined {
+	return assertPublicImage(pdf, '/pdf/', 'Paper PDF');
+}

@@ -192,6 +192,12 @@ collections:
     label: Papers
     label_singular: Paper
     folder: src/content/papers
+    # Uploaded PDFs. The leading slash is required on a collection-level media
+    # folder, or it is read as relative to this collection's folder. Named pdf
+    # rather than papers: public/papers would be served at /papers/, which is
+    # already this section's page.
+    media_folder: '/public/pdf'
+    public_folder: '/pdf'
     create: true
     extension: md
     format: yaml-frontmatter
@@ -235,7 +241,14 @@ collections:
           hint: 'Just the identifier, e.g. 10.1016/j.cirpj.2021.08.005 — the link is built for you.',
         }
       - { name: url, label: Publisher link, widget: string, required: false }
-      - { name: pdfUrl, label: PDF link, widget: string, required: false }
+      - {
+          name: pdf,
+          label: PDF,
+          widget: file,
+          required: false,
+          accept: 'application/pdf',
+          hint: 'Upload the paper itself. It appears on the card as a PDF link.',
+        }
       - {
           name: citations,
           label: Citation count,
@@ -244,6 +257,14 @@ collections:
           value_type: int,
           min: 0,
           hint: 'Optional, and copied from Scholar by hand — nothing updates it automatically.',
+        }
+      - {
+          name: tags,
+          label: Tags,
+          widget: list,
+          required: false,
+          default: [],
+          hint: 'Shown as bubbles on the card, e.g. Crashworthiness or Finite Element Analysis.',
         }
       - { name: featured, label: Featured, widget: boolean, required: false, default: false }
       - { name: body, label: Notes, widget: markdown, required: false }

@@ -69,8 +69,12 @@ const papers = defineCollection({
 		abstract: optional(z.string()),
 		doi: optional(z.string()),
 		url: optionalUrl,
-		pdfUrl: optionalUrl,
+		// The paper itself, uploaded through the CMS and served from public/pdf.
+		// This replaced pdfUrl, which pointed at a PDF hosted elsewhere and was
+		// never used — `url` already covers the publisher's page.
+		pdf: optional(z.string()),
 		citations: optional(z.number().int().nonnegative()),
+		tags: z.array(z.string()).default([]),
 		featured: z.boolean().default(false),
 	}),
 });
