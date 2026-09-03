@@ -1,15 +1,22 @@
 ---
 import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
+import { type CollectionEntry, getCollection } from 'astro:content';
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
+import { SITE_TITLE } from '../consts';
+import { assertPortrait } from '../lib/badges';
+import { stageLabel } from '../lib/projects';
 
 type Props = CollectionEntry<'projects'>['data'];
 
-const { title, description, pubDate, tags, repoUrl, liveUrl, type, heroImage } = Astro.props;
+const { title, description, pubDate, tags, repoUrl, liveUrl, stage, heroImage } = Astro.props;
+
+// The contributor photo lives on the home entry, as it does on the cards.
+const [home] = await getCollection('home');
+const portrait = assertPortrait(home?.data.portrait);
 ---
 
 <html lang="en">
@@ -23,15 +30,33 @@ const { title, description, pubDate, tags, repoUrl, liveUrl, type, heroImage } =
 		<main>
 			<article>
 				<div class="wrap-narrow article-head">
-					<div class="meta-row">
-						<FormattedDate date={pubDate} />
-						<span class:list={['badge', `badge-${type}`]}>
-							{type === 'personal' ? 'Personal Project' : 'Previous Work'}
-						</span>
-					</div>
-
 					<h1>{title}</h1>
 					{description && <p class="standfirst">{description}</p>}
+
+					{/* The facts about the work, each under the question it answers. */}
+					<dl class="facts">
+						<div class="fact">
+							<dt>Stage</dt>
+							<dd>
+								<span class="stage">{stageLabel(stage)}</span>
+							</dd>
+						</div>
+
+						<div class="fact">
+							<dt>Published</dt>
+							<dd>
+								<FormattedDate date={pubDate} precision="monthYear" />
+							</dd>
+						</div>
+
+						<div class="fact">
+							<dt>Who made it?</dt>
+							<dd class="maker">
+								{portrait && <img src={portrait} alt="" width="52" height="52" loading="lazy" />}
+								<span>{SITE_TITLE}</span>
+							</dd>
+						</div>
+					</dl>
 
 					{
 						tags && tags.length > 0 && (
@@ -99,6 +124,64 @@ const { title, description, pubDate, tags, repoUrl, liveUrl, type, heroImage } =
 				font-weight: 300;
 				line-height: 1.55;
 				color: var(--color-ink-soft);
+			}
+
+			/* Columns while there is room, stacking on a phone. Each fact sits
+			   under the label that says what it is, as on the reference. */
+			.facts {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+				gap: 1.75rem 2.5rem;
+				margin: 2.5rem 0 0;
+			}
+
+			.fact dt {
+				margin-bottom: 0.5rem;
+				font-family: var(--font-mono);
+				font-size: 0.6875rem;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			.fact dd {
+				margin: 0;
+				font-size: 0.9375rem;
+				color: var(--color-ink);
+			}
+
+			.fact :global(time) {
+				font-size: 0.9375rem;
+				color: var(--color-ink);
+			}
+
+			/* A pill, like the label on the project's card. */
+			.stage {
+				display: inline-block;
+				font-family: var(--font-mono);
+				font-size: 0.6875rem;
+				letter-spacing: 0.04em;
+				text-transform: uppercase;
+				color: var(--color-ink-soft);
+				background: var(--color-sand-100);
+				border: 1px solid var(--color-sand-200);
+				border-radius: 999px;
+				padding: 0.25rem 0.65rem;
+			}
+
+			.maker {
+				display: flex;
+				align-items: center;
+				gap: 0.55rem;
+			}
+
+			.maker img {
+				width: 28px;
+				height: 28px;
+				border-radius: 50%;
+				object-fit: cover;
+				border: 2px solid var(--color-paper);
+				box-shadow: 0 0 0 1px var(--color-sand-300);
 			}
 
 			.tags {

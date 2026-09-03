@@ -1,7 +1,8 @@
 ---
 title: Calibration Tools for Computer Vision Systems
 description: GUI-based software suite for camera, robot, and hand-eye calibration workflows.
-type: previous
+stage: research-prototype
+category: active
 pubDate: 2021-10-15
 tags:
   - Computer Vision

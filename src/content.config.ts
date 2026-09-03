@@ -11,7 +11,14 @@ const projects = defineCollection({
 		z.object({
 			title: z.string(),
 			description: z.string(),
-			type: z.enum(['personal', 'previous']),
+			// How far the work got. Replaces the old personal/previous split,
+			// which described where a project came from rather than what it is.
+			stage: z
+				.enum(['napkin-sketch', 'research-prototype', 'piloted', 'completed', 'product'])
+				.default('research-prototype'),
+			// Whether it is still live work. Drives the two sections on the
+			// projects page.
+			category: z.enum(['active', 'archived']).default('active'),
 			pubDate: z.coerce.date(),
 			tags: z.array(z.string()).default([]),
 			repoUrl: optionalUrl,

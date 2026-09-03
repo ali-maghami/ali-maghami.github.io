@@ -130,14 +130,27 @@ collections:
           required: true,
           hint: 'One or two sentences. Shown on the project cards and in search results.',
         }
-      - name: type
-        label: Type
+      - name: stage
+        label: Stage
         widget: select
         required: true
-        default: previous
+        default: research-prototype
+        hint: 'How far the work got. Shown on the project page.'
         options:
-          - { label: Personal project, value: personal }
-          - { label: Previous work, value: previous }
+          - { label: Napkin Sketch, value: napkin-sketch }
+          - { label: Research Prototype, value: research-prototype }
+          - { label: Piloted, value: piloted }
+          - { label: Completed, value: completed }
+          - { label: Product, value: product }
+      - name: category
+        label: Category
+        widget: select
+        required: true
+        default: active
+        hint: 'Which section of the projects page it appears under. Active is listed above Archived.'
+        options:
+          - { label: Active project, value: active }
+          - { label: Archived project, value: archived }
       - {
           name: pubDate,
           label: Date,

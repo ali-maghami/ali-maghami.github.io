@@ -1,7 +1,8 @@
 ---
 title: 'Robotic Bin Picking with Synthetic Data & Deep Learning'
 description: 'End-to-end 3D perception pipeline for automated bin picking using synthetic data and deep learning.'
-type: 'previous'
+stage: research-prototype
+category: active
 pubDate: 2022-03-15
 tags: ['Deep Learning', 'Robotics', 'Synthetic Data', 'Computer Vision', 'Point Cloud Processing']
 cardColor: '#A8DFC1'

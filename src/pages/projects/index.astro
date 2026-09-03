@@ -7,6 +7,7 @@ import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import { assertPortrait } from '../../lib/badges';
 import { getNavHref } from '../../lib/nav';
+import { categoryLabel } from '../../lib/projects';
 
 const [home] = await getCollection('home');
 const portrait = assertPortrait(home?.data.portrait);
@@ -15,8 +16,13 @@ const allProjects = (await getCollection('projects')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
-const personalProjects = allProjects.filter((p) => p.data.type === 'personal');
-const previousProjects = allProjects.filter((p) => p.data.type === 'previous');
+// Active first, then archived. Listed rather than derived from the data so the
+// order is fixed: archived work should not lead the page just because it
+// happens to be the newer of the two groups on a given day.
+const sections = ['active', 'archived'].map((category) => ({
+	category,
+	projects: allProjects.filter((p) => p.data.category === category),
+}));
 ---
 
 <!doctype html>
@@ -41,54 +47,33 @@ const previousProjects = allProjects.filter((p) => p.data.type === 'previous');
 			</header>
 
 			{
-				personalProjects.length > 0 && (
-					<section class="collection">
-						<div class="section-head">
-							<h2>Personal Projects</h2>
-							<span class="count">{personalProjects.length}</span>
-						</div>
-						<div class="grid">
-							{personalProjects.map((project) => (
-								<ProjectCard
-									href={getNavHref(`/projects/${project.id}/`)}
-									label={project.data.label}
-									title={project.data.title}
-									description={project.data.description}
-									date={project.data.pubDate}
-									cardColor={project.data.cardColor}
-									cardColorAlt={project.data.cardColorAlt}
-									avatar={portrait}
-								/>
-							))}
-						</div>
-					</section>
+				sections.map(
+					({ category, projects }) =>
+						projects.length > 0 && (
+							<section class="collection">
+								<div class="section-head">
+									<h2>{categoryLabel(category)}</h2>
+									<span class="count">{projects.length}</span>
+								</div>
+								<div class="grid">
+									{projects.map((project) => (
+										<ProjectCard
+											href={getNavHref(`/projects/${project.id}/`)}
+											label={project.data.label}
+											title={project.data.title}
+											description={project.data.description}
+											date={project.data.pubDate}
+											cardColor={project.data.cardColor}
+											cardColorAlt={project.data.cardColorAlt}
+											avatar={portrait}
+										/>
+									))}
+								</div>
+							</section>
+						),
 				)
 			}
 
-			{
-				previousProjects.length > 0 && (
-					<section class="collection">
-						<div class="section-head">
-							<h2>Previous Work</h2>
-							<span class="count">{previousProjects.length}</span>
-						</div>
-						<div class="grid">
-							{previousProjects.map((project) => (
-								<ProjectCard
-									href={getNavHref(`/projects/${project.id}/`)}
-									label={project.data.label}
-									title={project.data.title}
-									description={project.data.description}
-									date={project.data.pubDate}
-									cardColor={project.data.cardColor}
-									cardColorAlt={project.data.cardColorAlt}
-									avatar={portrait}
-								/>
-							))}
-						</div>
-					</section>
-				)
-			}
 		</main>
 		<Footer />
 
