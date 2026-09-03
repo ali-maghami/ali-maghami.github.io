@@ -1,7 +1,7 @@
 ---
 title: Ali Maghami
 eyebrow: About
-standfirst: Building intelligent systems for the physical world
+standfirst: Where AI meets the physical world
 skills: []
 education: []
 ---
@@ -12,7 +12,7 @@ My main interest is **Physical AI**—systems that use cameras, sensors, machine
 
 I currently lead the development of vision and AI applications at Hatch in Ontario, Canada.
 
----
+***
 
 ## Background
 
