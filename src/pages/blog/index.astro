@@ -28,7 +28,7 @@ const posts = (await getCollection('blog'))
 	<body>
 		<Aurora />
 		<Header />
-		<main class="wrap wrap-wide">
+		<main class="wrap">
 			<header class="page-header">
 				<p class="eyebrow">Writing</p>
 				<h1>Posts</h1>
@@ -90,13 +90,13 @@ const posts = (await getCollection('blog'))
 				color: var(--color-ink-soft);
 			}
 
-			/* The floor rises with the page width, or auto-fill simply packs in a
-			   fourth column and the cards come out narrower than before. At
-			   1400px this holds three columns of about 440px — roughly a fifth
-			   wider than the 360px they were. */
+			/* Two per row, stated rather than inferred: auto-fill picks a count
+			   from whatever floor it is given, which is how widening the page
+			   once produced narrower cards. One column below 760px, where two
+			   would leave neither enough room. */
 			.grid {
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+				grid-template-columns: repeat(2, minmax(0, 1fr));
 				gap: 1.25rem;
 				align-items: start;
 				padding-bottom: 3rem;
@@ -105,6 +105,12 @@ const posts = (await getCollection('blog'))
 			.empty {
 				padding-bottom: 3rem;
 				color: var(--color-ink-muted);
+			}
+
+			@media (max-width: 760px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
 			}
 
 			@media (max-width: 720px) {
