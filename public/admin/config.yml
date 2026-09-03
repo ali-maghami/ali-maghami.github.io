@@ -37,7 +37,10 @@ collections:
     extension: md
     format: yaml-frontmatter
     slug: '{{slug}}'
-    summary: '{{title}}'
+    # 'utc' matters: these are date-only values, which parse as UTC midnight.
+    # Formatted in local time they would show the previous day west of
+    # Greenwich, so the list would disagree with the site.
+    summary: "{{pubDate | date('YYYY-MM-DD', 'utc')}} — {{title}}"
     sortable_fields: [pubDate, title]
     # Astro's image() helper resolves heroImage relative to the markdown file,
     # not to the site root, so these are relative paths rather than the usual
