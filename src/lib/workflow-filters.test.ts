@@ -19,21 +19,33 @@ const readWorkflow = (name: string) =>
 const ignoredOnPush = (name: string): string[] =>
 	readWorkflow(name).on.push['paths-ignore'] ?? [];
 
-/** Media folders the CMS is configured to upload into, as public/<dir>. */
+/**
+ * Media folders the CMS is configured to upload into, as public/<dir>.
+ *
+ * Walked rather than read at fixed depths: a media_folder can sit on a
+ * collection, on a file, or on a single field — the projects body field has
+ * its own, because the collection's folder is relative for Astro's image()
+ * helper and cannot serve a URL. A field-level folder read at collection depth
+ * would have been missed, which is the silent breakage this file exists to
+ * catch.
+ */
 const cmsMediaFolders = (): string[] => {
 	const config = parse(readFileSync(path.join(root, 'public', 'admin', 'config.yml'), 'utf8'));
 	const folders = new Set<string>();
 
-	const collect = (value: unknown) => {
-		if (typeof value === 'string' && value.startsWith('/public/')) {
-			folders.add(value.slice(1));
+	const walk = (node: unknown) => {
+		if (Array.isArray(node)) return node.forEach(walk);
+		if (!node || typeof node !== 'object') return;
+
+		for (const [key, value] of Object.entries(node)) {
+			if (key === 'media_folder' && typeof value === 'string' && value.startsWith('/public/')) {
+				folders.add(value.slice(1));
+			}
+			walk(value);
 		}
 	};
 
-	for (const collection of config.collections) {
-		collect(collection.media_folder);
-		for (const file of collection.files ?? []) collect(file.media_folder);
-	}
+	walk(config.collections);
 	return [...folders];
 };
 

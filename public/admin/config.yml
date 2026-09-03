@@ -101,7 +101,18 @@ collections:
           accept: 'video/mp4',
           hint: 'MP4 only, and keep it short and silent — it autoplays on a loop under the title. A few megabytes at most.',
         }
-      - { name: body, label: Body, widget: markdown }
+      - {
+          name: body,
+          label: Body,
+          widget: markdown,
+          # Body media needs a URL the browser can fetch. The collection folder
+          # above is relative because Astro's image() helper resolves heroImage
+          # against the markdown file — but that path is meaningless as a URL,
+          # so a raw <video src> built from it 404s. Anything inserted into a
+          # body goes to public/ instead, where it is served as uploaded.
+          media_folder: '/public/media',
+          public_folder: '/media',
+        }
 
   - name: projects
     label: Projects
@@ -219,7 +230,18 @@ collections:
           allowInput: true,
           hint: 'Optional. The fade passes through this on its way out, which gives the card two hues instead of one.',
         }
-      - { name: body, label: Body, widget: markdown }
+      - {
+          name: body,
+          label: Body,
+          widget: markdown,
+          # Body media needs a URL the browser can fetch. The collection folder
+          # above is relative because Astro's image() helper resolves heroImage
+          # against the markdown file — but that path is meaningless as a URL,
+          # so a raw <video src> built from it 404s. Anything inserted into a
+          # body goes to public/ instead, where it is served as uploaded.
+          media_folder: '/public/media',
+          public_folder: '/media',
+        }
 
   - name: papers
     label: Papers
