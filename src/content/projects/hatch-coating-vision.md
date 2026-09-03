@@ -14,7 +14,7 @@ tags:
   - Systems Architecture
 repoUrl: ''
 liveUrl: ''
-heroImage: ''
+heroImage: ../../assets/work/Gemini_Generated_Image_mnvwasmnvwasmnvw (1)-1.jpg
 cardColor: '#4f95cf'
 cardColorAlt: '#c066c2'
 featured: true
@@ -40,8 +40,6 @@ The result is a non-contact machine-vision system that can measure a moving refl
 2. **Let the surface reshape the pattern.** The reflective surface acts like a changing mirror. Its position and curvature alter where the lines appear, how they bend, and how far apart they look.
 3. **Observe from several angles.** Two or more synchronized cameras capture the reflected features at the same instant. Synchronization matters because the surface is moving.
 4. **Reconstruct the geometry.** Corresponding features are matched across the camera views and triangulated into 3D points. Those points form a live model of the surface and its edges.
-
-![Measuring Reflective Surfaces with Stereo Vision](../../assets/work/Gemini_Generated_Image_mnvwasmnvwasmnvw%20%281%29.jpg "Measuring Reflective Surfaces with Stereo Vision")
 
 ## A reference frame that updates itself
 
@@ -91,9 +89,6 @@ More broadly, the project brings together several areas I care about: computer v
 ## What comes next
 
 The next steps are longer-duration trials, improved measurement sensitivity, and tighter integration with automated control. The same principle may also extend to other reflective materials and applications where direct contact is undesirable or conventional sensing is difficult.
-
-
-
 
 **Patent:** [Vision method and system for coating processes and systems — WO2026039905A1](https://patents.google.com/patent/WO2026039905A1/en)
 
