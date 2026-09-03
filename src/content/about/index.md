@@ -22,6 +22,8 @@ Before joining Hatch, I co-founded TetraGen Robotics and led the development of 
 
 Today, my work combines technical leadership with hands-on engineering. I help teams move from an initial problem or research idea to a complete system—covering architecture, development, testing, deployment, commissioning, and long-term support.
 
+---
+
 ## What I Work On
 
 ### AI and Computer Vision
@@ -40,6 +42,8 @@ A successful AI system needs more than a good model. I work on the broader archi
 
 I lead multidisciplinary teams working across AI, software, robotics, automation, and engineering. My focus includes technical strategy, system architecture, mentoring, project planning, risk management, and helping teams make sound technical decisions.
 
+---
+
 ## Skills and Interests
 
 **Artificial Intelligence**
@@ -56,6 +60,8 @@ Python, C++, OpenCV, Open3D, PyTorch, ROS, Docker, Linux, Azure, AWS, edge–clo
 
 **Technical Leadership**
 Team development, mentoring, technical strategy, product roadmaps, system design, project delivery
+
+---
 
 ## Beyond Work
 
