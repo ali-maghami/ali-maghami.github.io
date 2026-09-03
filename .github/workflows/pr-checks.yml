@@ -27,6 +27,7 @@ on:
       - 'public/portrait/**'
       - 'public/hero/**'
       - 'public/pdf/**'
+      - 'public/media/**'
       - 'docs/**'
       - '**.md'
   workflow_dispatch:
