@@ -16,11 +16,10 @@ export interface SiteSections {
 let cached: Promise<SiteSections> | undefined;
 
 async function loadSections(): Promise<SiteSections> {
-	const [projects, blog, papers, posts, certificates] = await Promise.all([
+	const [projects, blog, papers, certificates] = await Promise.all([
 		getCollection('projects'),
 		getCollection('blog'),
 		getCollection('papers'),
-		getCollection('posts'),
 		getCollection('certificates'),
 	]);
 
@@ -29,7 +28,6 @@ async function loadSections(): Promise<SiteSections> {
 			projects: projects.length,
 			blog: blog.filter(isPublished).length,
 			papers: papers.length,
-			posts: posts.length,
 		},
 		certificates: certificates.sort(
 			(a, b) => b.data.issueDate.valueOf() - a.data.issueDate.valueOf(),

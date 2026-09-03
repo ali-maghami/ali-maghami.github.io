@@ -15,9 +15,6 @@ const OPTIONAL_SECTIONS: { key: string; href: string; label: string }[] = [
 	{ key: 'blog', href: '/blog/', label: 'Posts' },
 	{ key: 'projects', href: '/projects/', label: 'Projects' },
 	{ key: 'papers', href: '/papers/', label: 'Papers' },
-	// Named for its source rather than "Posts", which now belongs to the
-	// writing above it — two sections cannot share a label.
-	{ key: 'posts', href: '/posts/', label: 'LinkedIn' },
 ];
 
 /**

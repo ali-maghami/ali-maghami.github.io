@@ -17,7 +17,6 @@ same files through the GitHub API, and every save is a real commit.
 | Blog | `src/content/blog/` | `/blog/` |
 | Papers | `src/content/papers/` | `/papers/` |
 | Certificates | `src/content/certificates/` | `/certificates/` and the site footer |
-| LinkedIn Posts | `src/content/posts/` | `/posts/` |
 | Pages → Home page | `src/content/home/index.md` | the home page hero |
 | Pages → About page | `src/content/about/index.md` | `/about/` |
 | Settings → Site and social links | `src/data/settings.json` | title, description, header and footer links |
@@ -26,33 +25,12 @@ Three behaviours are worth knowing before you wonder whether something is broken
 
 - **Empty sections are hidden.** A section with no entries is dropped from the navigation rather
   than linking to an empty page — see `buildNavItems` in [`src/lib/nav.ts`](../src/lib/nav.ts).
-  Blog, Papers and LinkedIn Posts therefore stay invisible until you add the first entry, and
+  Blog and Papers therefore stay invisible until you add the first entry, and
   appear on their own once you do.
 - **Only *featured* certificates reach the footer.** The footer renders on every page, so an
   unbounded list would grow into the layout. Everything appears on `/certificates/` regardless.
 - **Blog drafts stay out of the built site.** A post with `draft: true` remains editable in the
   CMS and is not published, so a half-written post can be saved safely.
-
-## Adding a LinkedIn post
-
-There is no way to pull LinkedIn posts automatically. LinkedIn removed public RSS years ago, and
-their API needs partner approval that does not cover reading your own feed. Anything claiming
-otherwise is scraping, against their terms, and breaks often.
-
-What does work is LinkedIn's own embed, one post at a time. On a **public** post, use `···` →
-*Embed this post*, and take the long number out of the URN:
-
-```
-https://www.linkedin.com/embed/feed/update/urn:li:share:7123456789012345678
-                                                        ^^^^^^^^^^^^^^^^^^^ this is the Post ID
-```
-
-Paste that number into the **Post ID** field. Only public posts can be embedded; a post limited to
-connections renders as an empty box.
-
-These are iframes that load LinkedIn's own scripts and tracking, which makes them by far the
-heaviest thing on the site. They are lazy-loaded and confined to `/posts/` for that reason — think
-twice before putting them on the home page.
 
 ## Why this CMS and not another
 

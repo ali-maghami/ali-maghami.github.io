@@ -29,6 +29,80 @@ media_folder: src/assets/work
 public_folder: /src/assets/work
 
 collections:
+  - name: blog
+    label: Posts
+    label_singular: Post
+    folder: src/content/blog
+    create: true
+    extension: md
+    format: yaml-frontmatter
+    slug: '{{slug}}'
+    summary: '{{title}}'
+    sortable_fields: [pubDate, title]
+    # Hero media lives in public/ so the CMS can preview it, and the leading
+    # slash is required on a collection-level media_folder or it is read as
+    # relative to this collection's folder. Named hero rather than posts:
+    # public/posts would have collided with the /posts/ route this section
+    # once had; the name still says what the folder holds.
+    media_folder: '/public/hero'
+    public_folder: '/hero'
+    fields:
+      - { name: title, label: Title, widget: string, required: true }
+      - { name: description, label: Description, widget: text, required: true }
+      - {
+          name: kind,
+          label: Kind,
+          widget: string,
+          required: false,
+          default: Post,
+          hint: 'The small label on the card, e.g. Post or Little ideas.',
+        }
+      - {
+          name: pubDate,
+          label: Published,
+          widget: datetime,
+          required: true,
+          date_format: 'YYYY-MM-DD',
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          picker_utc: true,
+        }
+      - {
+          name: updatedDate,
+          label: Updated,
+          widget: datetime,
+          required: false,
+          date_format: 'YYYY-MM-DD',
+          time_format: false,
+          format: 'YYYY-MM-DD',
+          picker_utc: true,
+        }
+      - { name: tags, label: Tags, widget: list, required: false, default: [] }
+      - {
+          name: draft,
+          label: Draft,
+          widget: boolean,
+          required: false,
+          default: false,
+          hint: 'Drafts stay editable here but are left out of the built site.',
+        }
+      - {
+          name: heroImage,
+          label: Hero image,
+          widget: image,
+          required: false,
+          hint: 'Shown across the top of the card, above everything else. Around 1200px wide is plenty — it is served as uploaded, so a larger file is only a larger download.',
+        }
+      - {
+          name: heroVideo,
+          label: Hero video,
+          widget: file,
+          required: false,
+          accept: 'video/mp4',
+          hint: 'MP4 only, and keep it short and silent — it autoplays on a loop under the title. A few megabytes at most.',
+        }
+      - { name: body, label: Body, widget: markdown }
+
   - name: projects
     label: Projects
     label_singular: Project
@@ -115,79 +189,6 @@ collections:
           default: '',
           allowInput: true,
           hint: 'Optional. The fade passes through this on its way out, which gives the card two hues instead of one.',
-        }
-      - { name: body, label: Body, widget: markdown }
-
-  - name: blog
-    label: Posts
-    label_singular: Post
-    folder: src/content/blog
-    create: true
-    extension: md
-    format: yaml-frontmatter
-    slug: '{{slug}}'
-    summary: '{{title}}'
-    sortable_fields: [pubDate, title]
-    # Hero media lives in public/ so the CMS can preview it, and the leading
-    # slash is required on a collection-level media_folder or it is read as
-    # relative to this collection's folder. Named hero rather than posts:
-    # public/posts would be served at /posts/, which is already a page route.
-    media_folder: '/public/hero'
-    public_folder: '/hero'
-    fields:
-      - { name: title, label: Title, widget: string, required: true }
-      - { name: description, label: Description, widget: text, required: true }
-      - {
-          name: kind,
-          label: Kind,
-          widget: string,
-          required: false,
-          default: Post,
-          hint: 'The small label on the card, e.g. Post or Little ideas.',
-        }
-      - {
-          name: pubDate,
-          label: Published,
-          widget: datetime,
-          required: true,
-          date_format: 'YYYY-MM-DD',
-          time_format: false,
-          format: 'YYYY-MM-DD',
-          picker_utc: true,
-        }
-      - {
-          name: updatedDate,
-          label: Updated,
-          widget: datetime,
-          required: false,
-          date_format: 'YYYY-MM-DD',
-          time_format: false,
-          format: 'YYYY-MM-DD',
-          picker_utc: true,
-        }
-      - { name: tags, label: Tags, widget: list, required: false, default: [] }
-      - {
-          name: draft,
-          label: Draft,
-          widget: boolean,
-          required: false,
-          default: false,
-          hint: 'Drafts stay editable here but are left out of the built site.',
-        }
-      - {
-          name: heroImage,
-          label: Hero image,
-          widget: image,
-          required: false,
-          hint: 'Shown across the top of the card, above everything else. Around 1200px wide is plenty — it is served as uploaded, so a larger file is only a larger download.',
-        }
-      - {
-          name: heroVideo,
-          label: Hero video,
-          widget: file,
-          required: false,
-          accept: 'video/mp4',
-          hint: 'MP4 only, and keep it short and silent — it autoplays on a loop under the title. A few megabytes at most.',
         }
       - { name: body, label: Body, widget: markdown }
 
@@ -336,47 +337,6 @@ collections:
         }
       - { name: body, label: Notes, widget: markdown, required: false }
 
-  - name: posts
-    label: LinkedIn
-    label_singular: LinkedIn Post
-    folder: src/content/posts
-    create: true
-    extension: md
-    format: yaml-frontmatter
-    slug: '{{slug}}'
-    summary: '{{title}}'
-    sortable_fields: [pubDate, title]
-    fields:
-      - {
-          name: title,
-          label: Title,
-          widget: string,
-          required: true,
-          hint: 'Your own heading for it — LinkedIn posts have no title of their own.',
-        }
-      - {
-          name: postId,
-          label: Post ID,
-          widget: string,
-          required: true,
-          pattern: ['^[0-9]+$', 'Digits only, taken from the post URL'],
-          hint: 'The long number in the post URL. See docs/cms.md for where to find it.',
-        }
-      - {
-          name: pubDate,
-          label: Posted,
-          widget: datetime,
-          required: true,
-          date_format: 'YYYY-MM-DD',
-          time_format: false,
-          format: 'YYYY-MM-DD',
-          picker_utc: true,
-        }
-      - { name: summary, label: Summary, widget: text, required: false }
-
-  # Single-file entries. A `files` collection edits one known path rather than a
-  # folder of many, which is how the pages that are content but not a list stay
-  # editable here.
   - name: pages
     label: Pages
     files:
@@ -578,6 +538,5 @@ collections:
                   - { label: Projects, value: projects }
                   - { label: Posts, value: blog }
                   - { label: Papers, value: papers }
-                  - { label: LinkedIn, value: posts }
                   - { label: Certificates, value: certificates }
                   - { label: About, value: about }
