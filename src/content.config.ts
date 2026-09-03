@@ -16,7 +16,6 @@ const projects = defineCollection({
 			tags: z.array(z.string()).default([]),
 			repoUrl: optionalUrl,
 			liveUrl: optionalUrl,
-			featured: z.boolean().default(false),
 			heroImage: optional(image()),
 			// The pill above the title on the home page card.
 			label: z.string().default('Project'),
@@ -132,6 +131,9 @@ const home = defineCollection({
 			.regex(/^#[0-9a-fA-F]{6}$/, 'Must be a hex colour like #FFFFFF')
 			.default('#FFFFFF'),
 		portraitBackgroundOpacity: z.number().int().min(0).max(100).default(0),
+		// How many of each list the page shows, newest first.
+		projectCount: z.number().int().min(1).max(12).default(4),
+		postCount: z.number().int().min(1).max(12).default(5),
 	}),
 });
 
