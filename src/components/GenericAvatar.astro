@@ -1,0 +1,24 @@
+---
+/*
+ * The stand-in for a contributor who has no photograph.
+ *
+ * Only the site owner has a portrait; anyone else credited on a project is
+ * named but not pictured. A drawn silhouette keeps a row of people aligned
+ * without inventing a likeness for someone who never supplied one.
+ *
+ * Decorative in every use so far — the name it stands for is either written
+ * beside it or, on a card, deliberately not shown — so it is hidden from
+ * assistive technology and the surrounding markup carries the meaning.
+ */
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<svg class:list={['avatar', className]} viewBox="0 0 32 32" aria-hidden="true">
+	<circle cx="16" cy="16" r="16" fill="var(--color-sand-200)"></circle>
+	<circle cx="16" cy="12.5" r="5.2" fill="var(--color-sand-300)"></circle>
+	<path d="M5.6 30a10.8 10.8 0 0 1 20.8 0" fill="var(--color-sand-300)"></path>
+</svg>

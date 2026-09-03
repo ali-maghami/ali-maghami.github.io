@@ -1,5 +1,6 @@
 ---
 import FormattedDate from './FormattedDate.astro';
+import GenericAvatar from './GenericAvatar.astro';
 import { cardGradient } from '../lib/cards';
 import { stageLabel } from '../lib/projects';
 
@@ -12,9 +13,21 @@ interface Props {
 	cardColor: string;
 	cardColorAlt?: string;
 	avatar?: string;
+	/** Anyone credited besides the site owner. Names are not shown here. */
+	contributors?: string[];
 }
 
-const { href, stage, title, description, date, cardColor, cardColorAlt, avatar } = Astro.props;
+const {
+	href,
+	stage,
+	title,
+	description,
+	date,
+	cardColor,
+	cardColorAlt,
+	avatar,
+	contributors = [],
+} = Astro.props;
 
 // Stored per project rather than derived from the page palette, so a card keeps
 // the same colour on every visit.
@@ -35,6 +48,22 @@ const wash = cardGradient(cardColor, cardColorAlt);
 				avatar && (
 					<div class="project-people">
 						<img src={avatar} alt="" width="52" height="52" loading="lazy" />
+						{/*
+						 * One stand-in per additional contributor, so the card
+						 * shows at a glance how many people worked on it. Names
+						 * belong on the project page, not here — a card has no
+						 * room for them, and the count is the useful part.
+						 */}
+						{contributors.map(() => (
+							<GenericAvatar />
+						))}
+						{contributors.length > 0 && (
+							<span class="sr-only">
+								{`and ${contributors.length} other ${
+									contributors.length === 1 ? 'contributor' : 'contributors'
+								}`}
+							</span>
+						)}
 					</div>
 				)
 			}
@@ -122,12 +151,16 @@ const wash = cardGradient(cardColor, cardColorAlt);
 	}
 
 	.project-people {
+		display: flex;
+		align-items: center;
 		margin-top: 1rem;
 	}
 
-	.project-people img {
+	.project-people img,
+	.project-people :global(.avatar) {
 		width: 26px;
 		height: 26px;
+		flex-shrink: 0;
 		border-radius: 50%;
 		object-fit: cover;
 		/* Two rings, doing different jobs. The paper border is what separates
@@ -136,6 +169,22 @@ const wash = cardGradient(cardColor, cardColorAlt);
 		   edge to read against. */
 		border: 2px solid var(--color-paper);
 		box-shadow: 0 0 0 1px var(--color-sand-300);
+	}
+
+	/* Overlapped rather than spaced, so a long list stays compact and reads as
+	   one group. Each circle sits under the one before it, which keeps the
+	   owner's photograph on top and fully visible.
+
+	   :global because the stand-ins are a child component and carry its scope
+	   id, not this one's — a scoped selector here would match the owner's
+	   <img> and silently skip every avatar beside it. */
+	.project-people > :global(:not(:first-child)) {
+		margin-left: -9px;
+	}
+
+	.project-people img {
+		position: relative;
+		z-index: 1;
 	}
 
 	@media (max-width: 720px) {

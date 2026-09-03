@@ -21,7 +21,11 @@ if (!home) {
 
 // Newest first, with nothing jumping the queue. How many of each the page
 // shows is set in the CMS alongside the rest of the home page.
+// Active work only. The home page is a shopfront, not an archive — anything
+// retired is still a click away on the projects page, which groups it under
+// its own heading.
 const projects = (await getCollection('projects'))
+	.filter((project) => project.data.category === 'active')
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, home.data.projectCount);
 
@@ -133,6 +137,7 @@ const { Content: HeroLede } = await render(home);
 									cardColor={proj.data.cardColor}
 									cardColorAlt={proj.data.cardColorAlt}
 									avatar={portrait}
+									contributors={proj.data.contributors}
 								/>
 							))
 						}
