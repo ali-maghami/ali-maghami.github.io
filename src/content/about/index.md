@@ -40,22 +40,6 @@ A successful AI system needs more than a good model. I work on the broader archi
 
 I lead multidisciplinary teams working across AI, software, robotics, automation, and engineering. My focus includes technical strategy, system architecture, mentoring, project planning, risk management, and helping teams make sound technical decisions.
 
-## From Research to Real-World Systems
-
-I enjoy working on problems where software meets physical reality. Industrial environments introduce challenges that are easy to overlook in a laboratory: changing lighting, heat, dust, vibration, reflective materials, limited computing resources, and strict reliability requirements.
-
-My goal is to build systems that are not only technically interesting, but also practical, maintainable, and useful to the people who depend on them.
-
-Some examples of my work include:
-
-- Architecting large-scale industrial vision systems with more than 40 cameras and sensors
-- Developing AI-powered solutions for tracking and measuring moving materials
-- Creating deep-learning methods for robotic calibration and industrial inspection
-- Building 3D perception pipelines for robotic part localization and guidance
-- Developing patented computer vision methods for industrial measurement
-
-I am an inventor on two industrial vision and robotics patents and an author or co-author of more than ten research publications.
-
 ## Skills and Interests
 
 **Artificial Intelligence**
