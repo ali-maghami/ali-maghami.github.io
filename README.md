@@ -1,61 +1,124 @@
-# Ali Maghami - Personal Website & Portfolio
+# Ali Maghami — personal site and portfolio
 
-A modern, fast, and content-driven personal website built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
+The source of [ali-maghami.github.io](https://ali-maghami.github.io) — a static site built with
+[Astro](https://astro.build/), edited through a browser-based CMS, and deployed to GitHub Pages on
+every push to `main`.
 
-## ✨ Features
+Computer vision, AI and robotics: projects, posts, publications and certifications.
 
-- 💼 **Project Showcase:** Separate sections and categorization for **Personal Projects** and **Previous Work / Professional Experience**.
-- 📝 **Blog & Markdown Support:** MDX and Markdown content collections with schema validation.
-- 🎨 **Tailwind CSS Integration:** Fast and flexible styling.
-- ⚡ **Blazing Fast:** Static site generation with Astro for 100/100 Lighthouse performance.
-- 🚀 **GitHub Pages Ready:** Built-in GitHub Actions CI/CD workflow (`.github/workflows/deploy.yml`).
-- 📡 **SEO & Feeds:** Automatic sitemap and RSS feed generation.
+## How it works
 
-## 📁 Content Structure
+Content is markdown in [`src/content/`](./src/content/), validated against Zod schemas in
+[`src/content.config.ts`](./src/content.config.ts). Astro renders it to static HTML at build time —
+there is no server and no database.
 
-- **Projects (`src/content/projects/`):**
-  Add markdown files with `type: 'personal'` or `type: 'previous'` frontmatter to showcase your work.
-  ```yaml
-  ---
-  title: 'My Project Name'
-  description: 'A brief description of what was built.'
-  type: 'personal' # or 'previous'
-  pubDate: 2026-09-01
-  tags: ['Astro', 'TypeScript', 'TailwindCSS']
-  repoUrl: 'https://github.com/ali-maghami/...'
-  liveUrl: 'https://...'
-  ---
-  ```
-- **Blog Posts (`src/content/blog/`):**
-  Add markdown / MDX articles to share technical insights, tutorials, and notes.
+Editing happens two ways, and both end in the same place:
 
-## 🚀 Quick Start
+- **In the browser.** [Sveltia CMS](https://github.com/sveltia/sveltia-cms) at `/admin` writes the
+  same markdown files. Save commits straight to `main`, and the deploy publishes. One button, no
+  review step. See [`docs/cms.md`](./docs/cms.md).
+- **In an editor.** Edit the markdown, open a pull request, merge.
 
-```sh
-# 1. Install dependencies
-npm install
+A save that breaks a schema fails the build, so nothing is deployed and the live site stays on its
+last good version until the entry is fixed.
 
-# 2. Start development server
-npm run dev
+## Content
 
-# 3. Build for production
-npm run build
+| Collection | Where | What it holds |
+|---|---|---|
+| `home` | [`src/content/home/`](./src/content/home/) | The hero: heading, lede, portrait and its treatment, how many cards each column shows |
+| `about` | [`src/content/about/`](./src/content/about/) | The about page |
+| `blog` | [`src/content/blog/`](./src/content/blog/) | Posts, with an optional hero image or video |
+| `projects` | [`src/content/projects/`](./src/content/projects/) | Work, each with a stage, a category, a card colour and any contributors |
+| `papers` | [`src/content/papers/`](./src/content/papers/) | Publications, with tags and an optional PDF |
+| `certificates` | [`src/content/certificates/`](./src/content/certificates/) | Credentials, shown as badges in the footer |
 
-# 4. Preview production build
-npm run preview
+A project's frontmatter looks like this:
+
+```yaml
+---
+title: StripSense
+description: Measuring Reflective Surfaces with Stereo Vision
+stage: piloted # napkin-sketch | research-prototype | piloted | completed | product
+category: active # active | archived
+pubDate: 2024-12-01
+purpose: The longer answer to "what's it for?", shown beside the other facts.
+contributors: [Sina Alborzi] # anyone besides the site owner
+tags: [Computer Vision, Stereo Vision]
+cardColor: '#4f95cf'
+cardColorAlt: '#c066c2' # the card's wash fades through this on its way out
+---
 ```
 
-## 🌐 Deploying to GitHub Pages
+The projects page groups active work above archived; the home page shows active work only.
 
-1. In your GitHub repository settings, go to **Settings > Pages**.
-2. Under **Build and deployment > Source**, select **GitHub Actions**.
-3. Merge a PR into `main` and the workflow will build and deploy automatically!
+## Running it
 
-## 🔧 CI/CD & Contributing
+Requires Node 22.12 or newer.
 
-`main` is protected — changes go through a branch and PR, not a direct push. See [`docs/`](./docs/) for the full picture:
+```sh
+npm install
+npm run dev      # development server
+npm run build    # static build into dist/
+npm run preview  # serve that build
+npm run lint     # astro check — types and Astro diagnostics
+npm test         # vitest
+```
 
-- [`docs/ci-cd.md`](./docs/ci-cd.md) — what each GitHub Actions workflow does and what its output means
-- [`docs/branch-protection.md`](./docs/branch-protection.md) — the rules governing what can land on `main`, and why
-- [`docs/agentic-workflows.md`](./docs/agentic-workflows.md) — how AI coding agents should operate in this repo
+## Tests
 
+The logic that would be awkward to verify by eye lives in [`src/lib/`](./src/lib/) as pure modules,
+each with a test beside it: link handling, media options, card gradients, navigation state, schema
+coercion, and the CMS video block's round trip between editor fields and markup.
+
+One test reads the CMS config and both CI workflows and asserts they agree — adding a media folder
+to the CMS without telling the workflows would otherwise make every image upload run the full CI
+set instead of just the deploy.
+
+## Styling
+
+Design tokens and layout live in [`src/styles/global.css`](./src/styles/global.css) as custom
+properties. Tailwind is imported for its reset and utilities, but most styling is hand-written CSS,
+scoped per component.
+
+The page background is a soft wash that picks a different palette on each load — see
+[`src/lib/palettes.ts`](./src/lib/palettes.ts).
+
+## Deployment and CI
+
+`main` deploys to GitHub Pages on every push, including a CMS save.
+
+| Workflow | Runs on | Purpose |
+|---|---|---|
+| [`deploy.yml`](./.github/workflows/deploy.yml) | push to `main` | Build and publish. Never filtered — a save must always publish. |
+| [`pr-checks.yml`](./.github/workflows/pr-checks.yml) | push to `main` | Lint, test, build. Skipped when a push only touches content. |
+| [`codeql.yml`](./.github/workflows/codeql.yml) | push to `main`, weekly | Static analysis. Skipped on content-only pushes. |
+| [`link-check.yml`](./.github/workflows/link-check.yml) | weekly | Finds dead links. |
+| [`dependency-review.yml`](./.github/workflows/dependency-review.yml) | pull requests | Flags vulnerable dependencies. |
+| [`lighthouse.yml`](./.github/workflows/lighthouse.yml) | manual | Performance and accessibility audit on demand. |
+
+Nothing gates a merge. Checks run after code lands and a failure is a notification rather than a
+barrier — the site is protected regardless, because a broken commit fails the deploy and the last
+good version stays live.
+
+`main` is protected against deletion and force-pushing, with no bypass. It deliberately does **not**
+require pull requests: the CMS commits directly, and that rule would stop saving from working.
+
+## Documentation
+
+[`docs/`](./docs/) explains why things are set up this way, not just what the config says:
+
+- [`docs/cms.md`](./docs/cms.md) — the CMS, the GitHub OAuth app, and the Cloudflare Worker that
+  brokers the token exchange
+- [`docs/ci-cd.md`](./docs/ci-cd.md) — what each workflow does and what its output means
+- [`docs/branch-protection.md`](./docs/branch-protection.md) — the rules on `main`, and why
+- [`docs/agentic-workflows.md`](./docs/agentic-workflows.md) — how AI coding agents should work here
+
+## Licence
+
+No licence file is set, so all rights are reserved by default — the code here is readable but not
+licensed for reuse. Open an issue if you want to use part of it.
+
+Site content is separate in any case: the writing, portrait, project imagery, publications and
+certification badges are © Ali Maghami or their respective owners. The fonts are under the SIL Open
+Font Licence and carry their own terms.
