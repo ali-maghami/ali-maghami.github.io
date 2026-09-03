@@ -1,12 +1,21 @@
 ---
-title: 'Vision-Based Robotic Drilling for Aerospace Manufacturing'
-description: 'Research on precision robotic drilling with online error correction using machine vision.'
-type: 'previous'
+title: Vision-Based Robotic Drilling for Aerospace Manufacturing
+description: Research on precision robotic drilling with online error correction using machine vision.
+type: previous
 pubDate: 2023-12-01
-tags: ['Computer Vision', 'Robotics', 'Deep Learning', 'Aerospace', 'Research']
-cardColor: '#E4C4EE'
-cardColorAlt: '#F3DFF6'
+tags:
+  - Computer Vision
+  - Robotics
+  - Deep Learning
+  - Aerospace
+  - Research
 featured: false
+repoUrl: ''
+liveUrl: ''
+heroImage: ''
+label: Project
+cardColor: '#ca5858'
+cardColorAlt: '#c471d1'
 ---
 
 ## Overview
@@ -25,4 +34,3 @@ A crosshair laser profiler recovers the surface geometry ahead of the tool. Lase
 ## Technologies
 
 OpenCV, PyTorch, Semantic Segmentation, ROS, KUKA Robot Control, Laser Profiling
-
