@@ -1,10 +1,19 @@
 ---
-title: 'Calibration of Multi-Robot Cooperative Systems Using Deep Neural Networks'
-description: 'Using machine learning to calibrate dual-arm robotic systems for precision aerospace manufacturing'
+title: Calibration of Multi-Robot Cooperative Systems Using Deep Neural Networks
+description: Using machine learning to calibrate dual-arm robotic systems for precision aerospace manufacturing
 stage: research-prototype
-category: active
+contributors: []
+category: archived
 pubDate: 2023-06-15
-tags: ['Deep Learning', 'Robotics', 'Calibration', 'Aerospace', 'Research']
+tags:
+  - Deep Learning
+  - Robotics
+  - Calibration
+  - Aerospace
+  - Research
+repoUrl: ''
+liveUrl: ''
+heroImage: ''
 cardColor: '#F2A8C4'
 cardColorAlt: '#F7C9B5'
 featured: false
@@ -31,4 +40,3 @@ We trained neural networks to learn and compensate for calibration errors from r
 ## Results
 
 The methods were validated across multiple robot configurations and assembly scenarios, demonstrating practical potential for manufacturing environments.
-
