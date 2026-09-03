@@ -36,13 +36,18 @@ const shareTargets = [
 	},
 ];
 
-// The site owner leads, then anyone else credited on the entry — so their own
-// name is not retyped on every project.
-const makers = [SITE_TITLE, ...contributors];
-
 // The contributor photo lives on the home entry, as it does on the cards.
 const [home] = await getCollection('home');
 const portrait = assertPortrait(home?.data.portrait);
+
+// The site owner leads, then anyone else credited on the entry — so their own
+// name is not retyped on every project. Only the owner has a photograph; the
+// rest get a placeholder, which keeps the rows aligned without inventing a
+// likeness for someone who has not supplied one.
+const makers = [
+	{ name: SITE_TITLE, photo: portrait },
+	...contributors.map((name) => ({ name, photo: undefined })),
+];
 ---
 
 <html lang="en">
@@ -109,9 +114,24 @@ const portrait = assertPortrait(home?.data.portrait);
 						<dl class="fact-col">
 							<div class="fact">
 								<dt>Who made it?</dt>
-								<dd class="maker">
-									{portrait && <img src={portrait} alt="" width="52" height="52" loading="lazy" />}
-									<span>{makers.join(', ')}</span>
+								<dd class="makers">
+									{makers.map((maker) => (
+										<span class="maker">
+											{maker.photo ? (
+												<img src={maker.photo} alt="" width="52" height="52" loading="lazy" />
+											) : (
+												<svg class="avatar" viewBox="0 0 32 32" aria-hidden="true">
+													<circle cx="16" cy="16" r="16" fill="var(--color-sand-200)" />
+													<circle cx="16" cy="12.5" r="5.2" fill="var(--color-sand-300)" />
+													<path
+														d="M5.6 30a10.8 10.8 0 0 1 20.8 0"
+														fill="var(--color-sand-300)"
+													/>
+												</svg>
+											)}
+											<span>{maker.name}</span>
+										</span>
+									))}
 								</dd>
 							</div>
 						</dl>
@@ -252,15 +272,24 @@ const portrait = assertPortrait(home?.data.portrait);
 				color: var(--color-ink);
 			}
 
+			/* One row each, rather than a run of names: a photograph beside a
+			   list would look like it belonged to whichever name it touched. */
+			.makers {
+				display: grid;
+				gap: 0.6rem;
+			}
+
 			.maker {
 				display: flex;
 				align-items: center;
 				gap: 0.55rem;
 			}
 
-			.maker img {
+			.maker img,
+			.maker .avatar {
 				width: 28px;
 				height: 28px;
+				flex-shrink: 0;
 				border-radius: 50%;
 				object-fit: cover;
 				border: 2px solid var(--color-paper);
