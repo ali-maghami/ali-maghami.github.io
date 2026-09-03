@@ -198,6 +198,12 @@ const navItems = await getNavItems();
 
 		moveTo(active);
 
+		// The pill is sized from the link's measured width, and the heading
+		// typeface loads after first paint — so the first measurement is of
+		// fallback text and the pill ends up a few pixels narrow. Re-measuring
+		// once the fonts have settled corrects it.
+		document.fonts?.ready.then(() => moveTo(active));
+
 		links.forEach((link) => {
 			link.addEventListener('mouseenter', () => moveTo(link));
 			link.addEventListener('focus', () => moveTo(link));

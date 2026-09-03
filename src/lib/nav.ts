@@ -60,3 +60,15 @@ export function sectionForPath(pathname: string): string {
 export function showsFooterBadges(pathname: string, pages: readonly string[]): boolean {
 	return pages.includes(sectionForPath(pathname));
 }
+
+/**
+ * Whether a navigation link points at the section currently being viewed.
+ *
+ * Compares sections rather than paths, so an entry highlights the listing it
+ * belongs to: an open post keeps Posts lit, an open project keeps Projects lit.
+ * Home is exempt by construction — the site root is its own section, so it only
+ * matches itself rather than every page beneath it.
+ */
+export function isNavActive(pathname: string, href: string): boolean {
+	return sectionForPath(pathname) === sectionForPath(href);
+}
