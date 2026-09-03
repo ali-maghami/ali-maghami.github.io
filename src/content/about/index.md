@@ -46,19 +46,19 @@ I lead multidisciplinary teams working across AI, software, robotics, automation
 
 ## Skills and Interests
 
-**Artificial Intelligence**
+**Artificial Intelligence:**
 Deep learning, vision-language models, anomaly detection, synthetic data, model evaluation
 
-**Computer Vision**
+**Computer Vision:**
 2D and 3D vision, stereo imaging, tracking, metrology, point clouds, camera calibration
 
-**Robotics and Physical AI**
+**Robotics and Physical A**I:
 Robot guidance, pose estimation, perception systems, hand-eye calibration, collaborative robotics
 
-**Software Architecture**
+**Software Architecture:**
 Python, C++, OpenCV, Open3D, PyTorch, ROS, Docker, Linux, Azure, AWS, edge–cloud systems, CI/CD
 
-**Technical Leadership**
+**Technical Leadership:**
 Team development, mentoring, technical strategy, product roadmaps, system design, project delivery
 
 ***
