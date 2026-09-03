@@ -1,0 +1,7 @@
+# Everything here is meant to be found, so nothing is disallowed.
+User-agent: *
+Allow: /
+
+# Where the full list of pages lives. Crawlers look here first, which is why
+# this file exists at all — the site has nothing to hide from them.
+Sitemap: https://ali-maghami.github.io/sitemap-index.xml
