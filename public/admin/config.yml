@@ -143,6 +143,13 @@ collections:
           - { label: Completed, value: completed }
           - { label: Product, value: product }
       - {
+          name: purpose,
+          label: What's it for?,
+          widget: text,
+          required: false,
+          hint: 'A sentence or two on the project page, beside the stage and date. Longer than the description, which is the tagline under the title.',
+        }
+      - {
           name: contributors,
           label: Other contributors,
           widget: list,

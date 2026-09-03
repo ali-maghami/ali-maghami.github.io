@@ -23,6 +23,10 @@ const projects = defineCollection({
 			// is not listed here, so their name does not have to be retyped on
 			// every project.
 			contributors: z.array(z.string()).default([]),
+			// The longer answer to "what's it for?", shown beside the other
+			// facts. Separate from description, which is the one-line tagline
+			// under the title and the text on the cards.
+			purpose: optional(z.string()),
 			pubDate: z.coerce.date(),
 			tags: z.array(z.string()).default([]),
 			repoUrl: optionalUrl,
