@@ -11,7 +11,8 @@ tags:
   - OpenTelemetry
   - LLMOps
 draft: false
-heroImage: /hero/fourteen-agents-one-trace.jpg
+heroImage: ''
+heroVideo: /hero/ai-observability-animated.mp4
 ---
 
 ## Fourteen Logs Are Fourteen Haystacks
