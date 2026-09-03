@@ -35,22 +35,25 @@ const projects = defineCollection({
 
 const blog = defineCollection({
 	loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
-	schema: ({ image }) =>
-		z.object({
-			title: z.string(),
-			description: z.string(),
-			pubDate: z.coerce.date(),
-			updatedDate: optional(z.coerce.date()),
-			tags: z.array(z.string()).default([]),
-			// The small label on the card, e.g. Post or Little ideas. Free text
-			// rather than a fixed list so a new kind of writing does not need a
-			// code change to appear.
-			kind: z.string().default('Post'),
-			// Drafts stay out of the built site but remain editable in the CMS,
-			// so a half-written post can be saved without publishing it.
-			draft: z.boolean().default(false),
-			heroImage: optional(image()),
-		}),
+	schema: z.object({
+		title: z.string(),
+		description: z.string(),
+		pubDate: z.coerce.date(),
+		updatedDate: optional(z.coerce.date()),
+		tags: z.array(z.string()).default([]),
+		// The small label on the card, e.g. Post or Little ideas. Free text
+		// rather than a fixed list so a new kind of writing does not need a
+		// code change to appear.
+		kind: z.string().default('Post'),
+		// Drafts stay out of the built site but remain editable in the CMS, so a
+		// half-written post can be saved without publishing it.
+		draft: z.boolean().default(false),
+		// Hero media as public paths rather than image() imports, so the CMS can
+		// preview them — the same trade the badges and portrait make. An image
+		// sits above the card; a video sits below its title.
+		heroImage: optional(z.string()),
+		heroVideo: optional(z.string()),
+	}),
 });
 
 const papers = defineCollection({

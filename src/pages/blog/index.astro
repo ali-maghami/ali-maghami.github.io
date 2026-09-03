@@ -2,9 +2,10 @@
 import { getCollection } from 'astro:content';
 import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
-import ContentCard from '../../components/ContentCard.astro';
+import PostCard from '../../components/PostCard.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
+import { assertHeroMedia } from '../../lib/badges';
 import { getNavHref, isPublished } from '../../lib/nav';
 
 const posts = (await getCollection('blog'))
@@ -37,13 +38,14 @@ const posts = (await getCollection('blog'))
 				posts.length > 0 ? (
 					<div class="grid">
 						{posts.map((post) => (
-							<ContentCard
+							<PostCard
 								href={getNavHref(`/blog/${post.id}/`)}
+								kind={post.data.kind}
 								title={post.data.title}
 								description={post.data.description}
 								date={post.data.pubDate}
-								tags={post.data.tags}
-								image={post.data.heroImage}
+								heroImage={assertHeroMedia(post.data.heroImage)}
+								heroVideo={assertHeroMedia(post.data.heroVideo)}
 							/>
 						))}
 					</div>

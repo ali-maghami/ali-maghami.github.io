@@ -41,7 +41,7 @@ export function assertPublicImage(
 
 	const onDisk = path.join(process.cwd(), PUBLIC_DIR, value);
 	if (!existsSync(onDisk)) {
-		throw new Error(`${label} image not found: ${value} (looked for ${onDisk})`);
+		throw new Error(`${label} not found: ${value} (looked for ${onDisk})`);
 	}
 
 	return value;
@@ -49,10 +49,21 @@ export function assertPublicImage(
 
 /** A certificate's issuer badge, in public/badges. */
 export function assertBadge(badge: string | undefined): string | undefined {
-	return assertPublicImage(badge, '/badges/', 'Badge');
+	return assertPublicImage(badge, '/badges/', 'Badge image');
 }
 
 /** The home page portrait, in public/portrait. */
 export function assertPortrait(portrait: string | undefined): string | undefined {
-	return assertPublicImage(portrait, '/portrait/', 'Portrait');
+	return assertPublicImage(portrait, '/portrait/', 'Portrait image');
+}
+
+/**
+ * A post's hero image or video, in public/hero.
+ *
+ * Named `hero` rather than `posts` because public/posts would be served at
+ * /posts/, which is already a page route — two different things answering to
+ * one path is a confusion worth avoiding even where it technically resolves.
+ */
+export function assertHeroMedia(media: string | undefined): string | undefined {
+	return assertPublicImage(media, '/hero/', 'Hero media');
 }

@@ -125,8 +125,12 @@ collections:
     slug: '{{slug}}'
     summary: '{{title}}'
     sortable_fields: [pubDate, title]
-    media_folder: '../../assets/work'
-    public_folder: '../../assets/work'
+    # Hero media lives in public/ so the CMS can preview it, and the leading
+    # slash is required on a collection-level media_folder or it is read as
+    # relative to this collection's folder. Named hero rather than posts:
+    # public/posts would be served at /posts/, which is already a page route.
+    media_folder: '/public/hero'
+    public_folder: '/hero'
     fields:
       - { name: title, label: Title, widget: string, required: true }
       - { name: description, label: Description, widget: text, required: true }
@@ -167,7 +171,21 @@ collections:
           default: false,
           hint: 'Drafts stay editable here but are left out of the built site.',
         }
-      - { name: heroImage, label: Hero image, widget: image, required: false }
+      - {
+          name: heroImage,
+          label: Hero image,
+          widget: image,
+          required: false,
+          hint: 'Shown across the top of the card, above everything else. Around 1200px wide is plenty — it is served as uploaded, so a larger file is only a larger download.',
+        }
+      - {
+          name: heroVideo,
+          label: Hero video,
+          widget: file,
+          required: false,
+          accept: 'video/mp4',
+          hint: 'MP4 only, and keep it short and silent — it autoplays on a loop under the title. A few megabytes at most.',
+        }
       - { name: body, label: Body, widget: markdown }
 
   - name: papers

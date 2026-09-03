@@ -8,13 +8,29 @@ interface Props {
 	description?: string;
 	date: Date;
 	avatar?: string;
+	heroImage?: string;
+	heroVideo?: string;
 }
 
-const { href, kind, title, description, date, avatar } = Astro.props;
+const { href, kind, title, description, date, avatar, heroImage, heroVideo } = Astro.props;
 ---
 
 <article class="post-card">
+	{
+		/*
+		 * An image leads the card, above everything else. A video does not: it
+		 * follows the title, because a clip needs its heading to make sense of
+		 * what is moving, while a still reads on its own.
+		 */
+	}
 	<a class="post-link" href={href}>
+		{
+			heroImage && (
+				<img class="post-hero" src={heroImage} alt="" loading="lazy" decoding="async" />
+			)
+		}
+
+		<div class="post-body">
 		<div class="post-meta">
 			<svg class="post-icon" viewBox="0 0 16 16" aria-hidden="true" width="13" height="13">
 				<rect x="1.5" y="2.5" width="13" height="11" rx="2" fill="none" stroke="currentColor" />
@@ -26,7 +42,23 @@ const { href, kind, title, description, date, avatar } = Astro.props;
 		</div>
 
 		<h3 class="post-title">{title}</h3>
+
+		{
+			heroVideo && (
+				<video
+					class="post-video"
+					src={heroVideo}
+					autoplay
+					loop
+					muted
+					playsinline
+					preload="metadata"
+				/>
+			)
+		}
+
 		{description && <p class="post-hook">{description}</p>}
+		</div>
 	</a>
 </article>
 
@@ -48,10 +80,38 @@ const { href, kind, title, description, date, avatar } = Astro.props;
 
 	.post-link {
 		display: block;
-		padding: 1.15rem 1.25rem 1.35rem;
 		color: inherit;
 		text-decoration: none;
 	}
+
+	.post-body {
+		padding: 1.15rem 1.25rem 1.35rem;
+	}
+
+	/* Full bleed to the card's edges, squared off at the bottom where the
+	   content meets it. The border radius is one pixel under the card's own so
+	   no corner of the image shows outside the border. */
+	.post-hero {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 9px 9px 0 0;
+		border-bottom: 1px solid var(--color-sand-200);
+	}
+
+	/* Inset rather than full bleed: it sits inside the text column, so it lines
+	   up with the title above it rather than with the card. */
+	.post-video {
+		display: block;
+		width: 100%;
+		height: auto;
+		margin-top: 0.85rem;
+		border-radius: 8px;
+		border: 1px solid var(--color-sand-200);
+		background: var(--color-sand-100);
+	}
+
+
 
 	/* The label, the date and the avatar share one row; the avatar is pushed to
 	   the far edge so the two text items stay grouped at the left. */
@@ -107,3 +167,19 @@ const { href, kind, title, description, date, avatar } = Astro.props;
 		color: var(--color-ink-soft);
 	}
 </style>
+
+<script is:inline>
+	/*
+	 * Autoplay cannot be called off in CSS, so a reduced-motion preference is
+	 * honoured here instead: the loop is stopped and the controls are put back,
+	 * which leaves the clip watchable rather than removing it. Inline and
+	 * unconditional so it runs before the first frame is painted.
+	 */
+	if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		for (const video of document.querySelectorAll('video[autoplay]')) {
+			video.autoplay = false;
+			video.controls = true;
+			video.pause();
+		}
+	}
+</script>

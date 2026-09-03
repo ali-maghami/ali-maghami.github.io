@@ -11,7 +11,7 @@ tags:
   - OpenTelemetry
   - LLMOps
 draft: false
-heroImage: ../../assets/work/Gemini_Generated_Image_4x8x304x8x304x8x.jpg
+heroImage: /hero/fourteen-agents-one-trace.jpg
 ---
 
 ## Fourteen Logs Are Fourteen Haystacks
