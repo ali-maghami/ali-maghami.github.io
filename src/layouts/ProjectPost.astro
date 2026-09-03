@@ -20,11 +20,6 @@ const { title, description, pubDate, tags, repoUrl, liveUrl, stage, contributors
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
 const shareTargets = [
 	{
-		name: 'Facebook',
-		href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`,
-		path: 'M9.2 14.5V8.6h2l.3-2.3H9.2V4.8c0-.66.18-1.11 1.13-1.11h1.2V1.63A16 16 0 0 0 9.8 1.5C8.06 1.5 6.87 2.56 6.87 4.5v1.8H4.85v2.3h2.02v5.9h2.33Z',
-	},
-	{
 		name: 'X',
 		href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(title)}`,
 		path: 'M9.42 6.94 14.3 1.5h-1.16L8.9 6.22 5.53 1.5H1.63l5.11 7.14-5.11 5.7h1.16l4.47-4.99 3.57 4.99h3.9L9.42 6.94Zm-1.58 1.76-.52-.72-4.12-5.7h1.78l3.33 4.6.52.72 4.32 6h-1.78L7.84 8.7Z',
@@ -72,6 +67,19 @@ const makers = [
 									<div class="fact">
 										<dt>What's it for?</dt>
 										<dd>{purpose}</dd>
+									</div>
+								)
+							}
+
+							{
+								tags && tags.length > 0 && (
+									<div class="fact">
+										<dt>Tags</dt>
+										<dd class="tags">
+											{tags.map((tag: string) => (
+												<span class="tag">{tag}</span>
+											))}
+										</dd>
 									</div>
 								)
 							}
@@ -138,16 +146,6 @@ const makers = [
 					</div>
 
 					{
-						tags && tags.length > 0 && (
-							<div class="tags">
-								{tags.map((tag: string) => (
-									<span class="tag">{tag}</span>
-								))}
-							</div>
-						)
-					}
-
-					{
 						(repoUrl || liveUrl) && (
 							<div class="links">
 								{repoUrl && (
@@ -208,11 +206,20 @@ const makers = [
 			/* Three columns while there is room, stacking on a phone. Each column
 			   holds one or more facts, each under the label that says what it
 			   is, as on the reference. */
+			/* The first column is a third wider than an even split and the second
+			   a third narrower — it holds prose and a tag list, while the second
+			   holds two short values. Even thirds wrapped the first badly. */
 			.facts {
 				display: grid;
-				grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+				grid-template-columns: 1.3fr 0.7fr 1fr;
 				gap: 1.75rem 2.5rem;
 				margin: 2.5rem 0 0;
+			}
+
+			@media (max-width: 720px) {
+				.facts {
+					grid-template-columns: 1fr;
+				}
 			}
 
 			.fact-col {
