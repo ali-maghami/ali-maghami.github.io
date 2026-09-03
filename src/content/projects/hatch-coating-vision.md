@@ -1,12 +1,21 @@
 ---
-title: 'Multi-Camera 3D Vision System for Coating Processes'
-description: 'Vision method for localization and shape estimation of reflective metal surfaces.'
-type: 'previous'
+title: Multi-Camera 3D Vision System for Coating Processes
+description: Vision method for localization and shape estimation of reflective metal surfaces.
+type: previous
 pubDate: 2024-12-01
-tags: ['Computer Vision', 'Metrology', 'Patents', 'Industrial AI', 'Real-Time Systems']
-cardColor: '#8FC4F0'
-cardColorAlt: '#CFE6FA'
+tags:
+  - Computer Vision
+  - Metrology
+  - Patents
+  - Industrial AI
+  - Real-Time Systems
 featured: true
+repoUrl: ''
+liveUrl: ''
+heroImage: ''
+label: Project
+cardColor: '#1b76c0'
+cardColorAlt: '#971e99'
 ---
 
 ## Overview
@@ -29,4 +38,3 @@ Developed a multi-camera 3D vision method for precise localization and shape est
 ## Technologies
 
 Multi-camera 3D Vision, Stereo Depth Estimation, Point-cloud Processing, Python, C++, OpenCV, Open3D
-
