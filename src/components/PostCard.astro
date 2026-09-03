@@ -161,6 +161,9 @@ const loop = heroVideoPlayback === 'loop';
 		border-radius: 50%;
 		object-fit: cover;
 		border: 1px solid var(--color-sand-200);
+		/* Paper behind the line drawing, so the card shows through only where
+		   the circle ends rather than through the portrait itself. */
+		background: var(--color-paper);
 	}
 
 	.post-title {

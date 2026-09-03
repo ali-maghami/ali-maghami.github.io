@@ -185,6 +185,9 @@ const wash = cardGradient(cardColor, cardColorAlt);
 	.project-people img {
 		position: relative;
 		z-index: 1;
+		/* A line drawing on transparency needs paper behind it, or the card's
+		   wash shows through where the drawing is not. */
+		background: var(--color-paper);
 	}
 
 	@media (max-width: 720px) {
