@@ -56,9 +56,25 @@ const { title, description, pubDate, updatedDate, tags, heroImage, heroVideo } =
 				}
 
 				{
+					/*
+					 * Controls here but not on the card. On a card the clip is a
+					 * preview inside a link, where a play button would compete
+					 * with the click that opens the post; on the post itself the
+					 * reader has arrived to watch it, so they get to pause,
+					 * scrub and unmute. It still autoplays muted, which is the
+					 * only way a browser will start it unprompted.
+					 */
 					heroVideo && (
 						<div class="wrap-narrow hero">
-							<video src={heroVideo} autoplay loop muted playsinline preload="metadata" />
+							<video
+								src={heroVideo}
+								controls
+								autoplay
+								loop
+								muted
+								playsinline
+								preload="metadata"
+							/>
 						</div>
 					)
 				}
