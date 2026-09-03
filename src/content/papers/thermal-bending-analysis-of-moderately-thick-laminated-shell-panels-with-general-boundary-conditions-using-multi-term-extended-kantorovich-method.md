@@ -6,7 +6,7 @@ year: 2012
 kind: conference
 abstract: ''
 doi: ''
-url: https://scholar.google.com/citations?view_op=view_citation&hl=en&user=eoH8oF0AAAAJ&sortby=pubdate&citation_for_view=eoH8oF0AAAAJ:u5HHmVD_uO8C
+url: ''
 pdfUrl: ''
 citations: null
 featured: false
