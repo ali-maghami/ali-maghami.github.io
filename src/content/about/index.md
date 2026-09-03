@@ -1,7 +1,7 @@
 ---
 title: Ali Maghami
 eyebrow: About
-standfirst: Where AI meets the physical world
+standfirst: Building intelligent systems for the physical world
 skills: []
 education: []
 ---
