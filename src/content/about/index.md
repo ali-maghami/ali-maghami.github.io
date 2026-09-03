@@ -12,17 +12,17 @@ My main interest is **Physical AI**—systems that use cameras, sensors, machine
 
 I currently lead the development of vision and AI applications at Hatch in Ontario, Canada.
 
+---
+
 ## Background
 
-I have more than ten years of experience across engineering, industrial automation, robotics, and applied AI, including over eight years focused on computer vision and robotic systems.
+I have more than ten years of experience across engineering, industrial automation, robotics, and applied AI. For over eight years, my work has focused on computer vision and robotic perception—helping machines see, measure, understand, and interact with the physical world.
 
-I completed my PhD in Mechanical Engineering at the University of Manitoba, where my research explored vision-guided robotics, deep-learning inspection, multi-camera systems, and robotic calibration for advanced manufacturing.
+My background combines AI research, hands-on engineering, software architecture, and technical leadership. During my PhD at the University of Manitoba, I worked on vision-guided robotics, deep-learning inspection, multi-camera perception, and AI-based robot calibration for advanced manufacturing. This research shaped my broader interest in **Physical AI**: connecting intelligence in software with cameras, sensors, robots, and real-world processes.
 
-Before joining Hatch, I co-founded TetraGen Robotics and led the development of perception and calibration tools for industrial robots. I also worked with researchers at the National Research Council Canada on an AI-based calibration method for cooperative robots that reduced relative positioning error by more than 80%.
+Today, I focus on designing and delivering complete AI and robotics systems. My work spans the full lifecycle—from understanding a problem and defining the architecture to development, integration, validation, edge and cloud deployment, and long-term improvement. I also lead multidisciplinary teams, mentor engineers, and help turn complex technical ideas into practical roadmaps and reliable solutions.
 
-Today, my work combines technical leadership with hands-on engineering. I help teams move from an initial problem or research idea to a complete system—covering architecture, development, testing, deployment, commissioning, and long-term support.
-
----
+***
 
 ## What I Work On
 
@@ -42,7 +42,7 @@ A successful AI system needs more than a good model. I work on the broader archi
 
 I lead multidisciplinary teams working across AI, software, robotics, automation, and engineering. My focus includes technical strategy, system architecture, mentoring, project planning, risk management, and helping teams make sound technical decisions.
 
----
+***
 
 ## Skills and Interests
 
@@ -61,7 +61,7 @@ Python, C++, OpenCV, Open3D, PyTorch, ROS, Docker, Linux, Azure, AWS, edge–clo
 **Technical Leadership**
 Team development, mentoring, technical strategy, product roadmaps, system design, project delivery
 
----
+***
 
 ## Beyond Work
 
