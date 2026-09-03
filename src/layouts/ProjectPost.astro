@@ -71,36 +71,6 @@ const makers = [
 								)
 							}
 
-							{
-								tags && tags.length > 0 && (
-									<div class="fact">
-										<dt>Tags</dt>
-										<dd class="tags">
-											{tags.map((tag: string) => (
-												<span class="tag">{tag}</span>
-											))}
-										</dd>
-									</div>
-								)
-							}
-
-							<div class="fact">
-								<dt>Share</dt>
-								<dd class="share">
-									{shareTargets.map((t) => (
-										<a
-											href={t.href}
-											target="_blank"
-											rel="noopener noreferrer"
-											aria-label={`Share on ${t.name}`}
-										>
-											<svg viewBox="0 0 16 16" aria-hidden="true" width="17" height="17">
-												<path fill="currentColor" d={t.path} />
-											</svg>
-										</a>
-									))}
-								</dd>
-							</div>
 						</dl>
 
 						<dl class="fact-col">
@@ -139,6 +109,41 @@ const makers = [
 											)}
 											<span>{maker.name}</span>
 										</span>
+									))}
+								</dd>
+							</div>
+						</dl>
+
+						{
+							tags && tags.length > 0 && (
+								<dl class="fact-wide">
+									<div class="fact">
+										<dt>Tags</dt>
+										<dd class="tags">
+											{tags.map((tag: string) => (
+												<span class="tag">{tag}</span>
+											))}
+										</dd>
+									</div>
+								</dl>
+							)
+						}
+
+						<dl class="fact-wide">
+							<div class="fact">
+								<dt>Share</dt>
+								<dd class="share">
+									{shareTargets.map((t) => (
+										<a
+											href={t.href}
+											target="_blank"
+											rel="noopener noreferrer"
+											aria-label={`Share on ${t.name}`}
+										>
+											<svg viewBox="0 0 16 16" aria-hidden="true" width="17" height="17">
+												<path fill="currentColor" d={t.path} />
+											</svg>
+										</a>
 									))}
 								</dd>
 							</div>
@@ -226,6 +231,13 @@ const makers = [
 				display: grid;
 				gap: 1.5rem;
 				align-content: start;
+				margin: 0;
+			}
+
+			/* Spans every column. Tags wrap badly in a single column, and share
+			   links sit under them rather than beside the first fact. */
+			.fact-wide {
+				grid-column: 1 / -1;
 				margin: 0;
 			}
 
