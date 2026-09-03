@@ -1,5 +1,5 @@
 ---
-heading: Building intelligent systems for the physical world.
+heading: Building AI for the physical world.
 portrait: /portrait/Untitled - September 02, 2026 at 19.02.02.png
 portraitSize: 250
 portraitBorderWidth: 0
