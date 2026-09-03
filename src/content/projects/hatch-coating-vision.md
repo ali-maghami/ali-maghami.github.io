@@ -61,6 +61,8 @@ The reconstructed surface supports several measurements at once:
 
 Together, these outputs turn camera images into spatial information that another automation or control system can use. That is the connection to Physical AI: reliable perception becomes a practical input for decisions and action in the physical world.
 
+---
+
 ## Architecture is part of the algorithm
 
 The project was designed for a demanding production environment, so the hardware layout mattered as much as the vision code.
@@ -68,6 +70,8 @@ The project was designed for a demanding production environment, so the hardware
 The light pattern—the simpler and more robust part of the setup—was placed near the surface. The cameras, optics, electronics, and processing computer were kept farther away. Three synchronized cameras provided overlapping viewpoints and redundancy, while a low-latency data link carried images to an industrial computer for real-time processing.
 
 This separation reduced exposure of sensitive components and made the system easier to maintain. It also demonstrates a lesson that applies well beyond this project: a strong computer-vision solution is a complete system, not only an image-processing model.
+
+---
 
 ## What the pilot showed
 
@@ -86,9 +90,13 @@ This work reframes a familiar machine-vision problem. A shiny surface does not h
 
 More broadly, the project brings together several areas I care about: computer vision, stereo vision, 3D reconstruction, real-time software, systems architecture, and intelligent automation. The interesting part is not any one algorithm. It is how optics, geometry, hardware, and software work together to turn a difficult measurement problem into a system that can operate in the field.
 
+---
+
 ## What comes next
 
 The next steps are longer-duration trials, improved measurement sensitivity, and tighter integration with automated control. The same principle may also extend to other reflective materials and applications where direct contact is undesirable or conventional sensing is difficult.
+
+---
 
 **Patent:** [Vision method and system for coating processes and systems — WO2026039905A1](https://patents.google.com/patent/WO2026039905A1/en)
 
