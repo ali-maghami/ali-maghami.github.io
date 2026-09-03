@@ -169,14 +169,11 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 				letter-spacing: -0.025em;
 			}
 
-			/* Larger than the lede on the other listing pages, by request. The
-			   measure stays at 620px, so the line length shortens rather than
-			   the text running wider as it grows. */
 			.page-lede {
 				margin: 0;
-				font-size: 1.425rem;
+				font-size: 1.0625rem;
 				font-weight: 300;
-				line-height: 1.5;
+				line-height: 1.6;
 				color: var(--color-ink-soft);
 			}
 
