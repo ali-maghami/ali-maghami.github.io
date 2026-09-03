@@ -24,7 +24,7 @@ const posts = (await getCollection('blog'))
 	<body>
 		<Aurora />
 		<Header />
-		<main class="wrap">
+		<main class="wrap wrap-wide">
 			<header class="page-header">
 				<p class="eyebrow">Writing</p>
 				<h1>Posts</h1>
@@ -85,9 +85,13 @@ const posts = (await getCollection('blog'))
 				color: var(--color-ink-soft);
 			}
 
+			/* The floor rises with the page width, or auto-fill simply packs in a
+			   fourth column and the cards come out narrower than before. At
+			   1400px this holds three columns of about 440px — roughly a fifth
+			   wider than the 360px they were. */
 			.grid {
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+				grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
 				gap: 1.25rem;
 				align-items: start;
 				padding-bottom: 3rem;

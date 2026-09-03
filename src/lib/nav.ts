@@ -12,8 +12,8 @@ export function getNavHref(path: string): string {
  * `key` matches the counts gathered from the content collections.
  */
 const OPTIONAL_SECTIONS: { key: string; href: string; label: string }[] = [
-	{ key: 'projects', href: '/projects/', label: 'Projects' },
 	{ key: 'blog', href: '/blog/', label: 'Posts' },
+	{ key: 'projects', href: '/projects/', label: 'Projects' },
 	{ key: 'papers', href: '/papers/', label: 'Papers' },
 	// Named for its source rather than "Posts", which now belongs to the
 	// writing above it — two sections cannot share a label.
