@@ -1,7 +1,8 @@
 ---
 title: Automated Railcar Vision & Inspection System
 description: Large-scale vision platform integrating 40+ cameras for real-time railcar loading and inspection.
-type: previous
+stage: research-prototype
+category: active
 pubDate: 2024-06-15
 tags:
   - Computer Vision

@@ -1,7 +1,8 @@
 ---
 title: 'Automated Vision-Based Inspection of Drilled CFRP Composites Using Multi-Light Imaging'
 description: 'Deep learning for detecting defects in aerospace composite structures'
-type: 'previous'
+stage: research-prototype
+category: active
 pubDate: 2021-08-10
 tags: ['Computer Vision', 'Deep Learning', 'Inspection', 'Aerospace', 'Research']
 cardColor: '#9FE0D8'

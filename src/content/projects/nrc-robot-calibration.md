@@ -1,7 +1,8 @@
 ---
 title: 'Deep Learning-Based Robot Calibration for Aerospace Assembly'
 description: 'Machine learning approach for calibrating dual-arm robotic systems in precision aerospace manufacturing.'
-type: 'previous'
+stage: research-prototype
+category: active
 pubDate: 2022-08-15
 tags: ['Deep Learning', 'Robotics', 'Aerospace', 'Research', 'Machine Learning']
 cardColor: '#C9B8F2'

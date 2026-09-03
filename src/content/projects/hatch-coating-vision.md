@@ -1,7 +1,8 @@
 ---
 title: Multi-Camera 3D Vision System for Coating Processes
 description: Vision method for localization and shape estimation of reflective metal surfaces.
-type: previous
+stage: research-prototype
+category: active
 pubDate: 2024-12-01
 tags:
   - Computer Vision
