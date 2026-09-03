@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
@@ -9,7 +8,7 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, tags, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, tags, heroImage, heroVideo } = Astro.props;
 ---
 
 <html lang="en">
@@ -51,7 +50,15 @@ const { title, description, pubDate, updatedDate, tags, heroImage } = Astro.prop
 				{
 					heroImage && (
 						<div class="wrap-narrow hero">
-							<Image src={heroImage} alt="" width={1200} height={675} />
+							<img src={heroImage} alt="" loading="lazy" decoding="async" />
+						</div>
+					)
+				}
+
+				{
+					heroVideo && (
+						<div class="wrap-narrow hero">
+							<video src={heroVideo} autoplay loop muted playsinline preload="metadata" />
 						</div>
 					)
 				}
@@ -109,7 +116,9 @@ const { title, description, pubDate, updatedDate, tags, heroImage } = Astro.prop
 				padding: 0 1.25rem 1rem;
 			}
 
-			.hero img {
+			.hero img,
+			.hero video {
+				display: block;
 				width: 100%;
 				height: auto;
 				border-radius: 10px;

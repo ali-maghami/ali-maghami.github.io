@@ -25,6 +25,7 @@ on:
       - 'src/assets/**'
       - 'public/badges/**'
       - 'public/portrait/**'
+      - 'public/hero/**'
       - 'docs/**'
       - '**.md'
   workflow_dispatch:

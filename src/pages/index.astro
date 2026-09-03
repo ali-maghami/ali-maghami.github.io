@@ -7,7 +7,7 @@ import ProjectCard from '../components/ProjectCard.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-import { assertPortrait } from '../lib/badges';
+import { assertHeroMedia, assertPortrait } from '../lib/badges';
 import { getNavHref, isPublished } from '../lib/nav';
 import { portraitStyle } from '../lib/portrait';
 
@@ -106,6 +106,8 @@ const { Content: HeroLede } = await render(home);
 										description={post.data.description}
 										date={post.data.pubDate}
 										avatar={portrait}
+										heroImage={assertHeroMedia(post.data.heroImage)}
+										heroVideo={assertHeroMedia(post.data.heroVideo)}
 									/>
 								))}
 							</div>
