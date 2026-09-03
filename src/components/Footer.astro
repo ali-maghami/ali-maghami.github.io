@@ -1,6 +1,7 @@
 ---
 import { FOOTER_BADGE_LIMIT, FOOTER_BADGE_PAGES, SITE_TITLE, SOCIAL } from '../consts';
 import { assertBadge } from '../lib/badges';
+import ExternalLink from './ExternalLink.astro';
 import { buildNavItems, getNavHref, showsFooterBadges } from '../lib/nav';
 import { getSiteSections } from '../lib/sections';
 
@@ -78,21 +79,9 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 					.map((item) => <a href={getNavHref(item.href)}>{item.label}</a>)
 			}
 			{allCertificates.length > 0 && <a href={getNavHref('/certificates/')}>Certificates</a>}
-			{SOCIAL.github && (
-				<a href={SOCIAL.github} target="_blank" rel="noopener noreferrer">
-					GitHub
-				</a>
-			)}
-			{SOCIAL.linkedin && (
-				<a href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">
-					LinkedIn
-				</a>
-			)}
-			{SOCIAL.scholar && (
-				<a href={SOCIAL.scholar} target="_blank" rel="noopener noreferrer">
-					Scholar
-				</a>
-			)}
+			{SOCIAL.github && <ExternalLink href={SOCIAL.github}>GitHub</ExternalLink>}
+			{SOCIAL.linkedin && <ExternalLink href={SOCIAL.linkedin}>LinkedIn</ExternalLink>}
+			{SOCIAL.scholar && <ExternalLink href={SOCIAL.scholar}>Scholar</ExternalLink>}
 		</nav>
 	</div>
 </footer>
@@ -208,14 +197,18 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 		gap: 1.25rem;
 	}
 
-	.footer-nav a {
+	/* :global because the external links are rendered by ExternalLink, and
+	   Astro's scoping does not reach into a child component — without it those
+	   three would fall back to default link styling while their neighbours
+	   stayed small and muted. Confined to .footer-nav, so nothing leaks. */
+	.footer-nav :global(a) {
 		font-size: 0.8125rem;
 		color: var(--color-ink-muted);
 		text-decoration: none;
 		transition: color 0.2s ease;
 	}
 
-	.footer-nav a:hover {
+	.footer-nav :global(a:hover) {
 		color: var(--color-ink);
 	}
 
