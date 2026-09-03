@@ -9,6 +9,10 @@ doi: 10.1007/s10846-023-01867-6
 url: https://link.springer.com/article/10.1007/s10846-023-01867-6
 pdf: ''
 citations: null
-tags: []
+tags:
+  - Physical AI
+  - Cooperative Robotics
+  - Robot Calibration
+  - Multi-Robot Systems
 featured: false
 ---
