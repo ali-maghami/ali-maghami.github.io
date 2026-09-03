@@ -2,7 +2,8 @@
 title: Calibration Tools for Computer Vision Systems
 description: GUI-based software suite for camera, robot, and hand-eye calibration workflows.
 stage: research-prototype
-category: active
+contributors: []
+category: archived
 pubDate: 2021-10-15
 tags:
   - Computer Vision
@@ -10,12 +11,12 @@ tags:
   - GUI Design
   - Python
   - OpenCV
-featured: true
 repoUrl: ''
 liveUrl: ''
 heroImage: ''
 cardColor: '#173cab'
 cardColorAlt: '#7cdfe4'
+featured: true
 ---
 
 ## Overview
