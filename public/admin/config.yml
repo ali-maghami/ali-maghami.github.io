@@ -99,7 +99,20 @@ collections:
           widget: file,
           required: false,
           accept: 'video/mp4',
-          hint: 'MP4 only, and keep it short and silent — it autoplays on a loop under the title. A few megabytes at most.',
+          hint: 'MP4 only, and keep it short. A few megabytes at most — it is served as uploaded. How it starts is set below.',
+        }
+      - {
+          name: heroVideoPlayback,
+          label: Hero video playback,
+          widget: select,
+          default: loop,
+          options:
+            [
+              { label: 'Loop — starts on its own and repeats', value: loop },
+              { label: 'Play once — starts on its own, then stops', value: once },
+              { label: 'Play by viewer — waits to be pressed', value: viewer },
+            ],
+          hint: 'A video that starts on its own is muted, because no browser will start one with sound unprompted. On the post card it never shows controls; Play by viewer simply shows the first frame there.',
         }
       - {
           name: body,
@@ -112,6 +125,7 @@ collections:
           # body goes to public/ instead, where it is served as uploaded.
           media_folder: '/public/media',
           public_folder: '/media',
+          hint: "Options for an image or video go in its Alt text box, before a colon — 'hero: The coating rig' spans the full page width, 'loop hero' loops a video across it. Width: text (default) or hero. Video: viewer (default), once, loop. Anything after the colon stays the description.",
         }
 
   - name: projects
@@ -241,6 +255,7 @@ collections:
           # body goes to public/ instead, where it is served as uploaded.
           media_folder: '/public/media',
           public_folder: '/media',
+          hint: "Options for an image or video go in its Alt text box, before a colon — 'hero: The coating rig' spans the full page width, 'loop hero' loops a video across it. Width: text (default) or hero. Video: viewer (default), once, loop. Anything after the colon stays the description.",
         }
 
   - name: papers

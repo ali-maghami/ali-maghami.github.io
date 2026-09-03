@@ -7,7 +7,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 import { rehypeExternalLinks } from './src/lib/external-links';
-import { rehypeVideoEmbeds } from './src/lib/video-embeds';
+import { rehypeBodyMedia } from './src/lib/body-media';
 
 // https://astro.build/config
 export default defineConfig({
@@ -17,7 +17,7 @@ export default defineConfig({
   // Links written in a body are plain markdown, with no way to say whether they
   // leave the site. This decides from the address instead.
   markdown: {
-    rehypePlugins: [rehypeExternalLinks, rehypeVideoEmbeds],
+    rehypePlugins: [rehypeExternalLinks, rehypeBodyMedia],
   },
 
   fonts: [

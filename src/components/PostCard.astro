@@ -10,9 +10,26 @@ interface Props {
 	avatar?: string;
 	heroImage?: string;
 	heroVideo?: string;
+	heroVideoPlayback?: 'loop' | 'once' | 'viewer';
 }
 
-const { href, kind, title, description, date, avatar, heroImage, heroVideo } = Astro.props;
+const {
+	href,
+	kind,
+	title,
+	description,
+	date,
+	avatar,
+	heroImage,
+	heroVideo,
+	heroVideoPlayback = 'loop',
+} = Astro.props;
+
+// 'viewer' cannot mean what it does on the post page: the card is a link, so a
+// play button inside it would compete with the click that opens the post. It
+// shows the first frame instead, which is the preview the card wants anyway.
+const autoplay = heroVideoPlayback !== 'viewer';
+const loop = heroVideoPlayback === 'loop';
 ---
 
 <article class="post-card">
@@ -48,9 +65,9 @@ const { href, kind, title, description, date, avatar, heroImage, heroVideo } = A
 				<video
 					class="post-video"
 					src={heroVideo}
-					autoplay
-					loop
-					muted
+					autoplay={autoplay}
+					loop={loop}
+					muted={autoplay}
 					playsinline
 					preload="metadata"
 				/>
