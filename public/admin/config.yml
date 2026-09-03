@@ -115,6 +115,15 @@ collections:
     # Formatted in local time they would show the previous day west of
     # Greenwich, so the list would disagree with the site.
     summary: "{{pubDate | date('YYYY-MM-DD', 'utc')}} — {{title}}"
+    # Active and archived listed separately, the way the projects page shows
+    # them. `default` makes the grouping active on open, rather than something
+    # to pick from a menu each time.
+    view_groups:
+      groups:
+        - name: category
+          label: Category
+          field: category
+      default: category
     sortable_fields: [pubDate, title]
     # Astro's image() helper resolves heroImage relative to the markdown file,
     # not to the site root, so these are relative paths rather than the usual
