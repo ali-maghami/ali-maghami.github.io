@@ -6,7 +6,7 @@ skills: []
 education: []
 ---
 
-I’m an engineer, researcher, and technical leader working at the intersection of artificial intelligence, computer vision, robotics, and software architecture.
+I’m an engineer, researcher, and technical leader working at the intersection of artificial intelligence, computer vision, and robotics.
 
 My main interest is **Physical AI**—systems that use cameras, sensors, machine learning, and robotics to understand and interact with the real world. I’m especially interested in turning promising research into reliable technology for manufacturing, mining, and other industrial environments.
 
