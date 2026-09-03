@@ -1,12 +1,21 @@
 ---
-title: 'Calibration Tools for Computer Vision Systems'
-description: 'GUI-based software suite for camera, robot, and hand-eye calibration workflows.'
-type: 'previous'
+title: Calibration Tools for Computer Vision Systems
+description: GUI-based software suite for camera, robot, and hand-eye calibration workflows.
+type: previous
 pubDate: 2021-10-15
-tags: ['Computer Vision', 'Calibration', 'GUI Design', 'Python', 'OpenCV']
-cardColor: '#B6CFF2'
-cardColorAlt: '#DCE8FA'
+tags:
+  - Computer Vision
+  - Calibration
+  - GUI Design
+  - Python
+  - OpenCV
 featured: true
+repoUrl: ''
+liveUrl: ''
+heroImage: ''
+label: Project
+cardColor: '#c8b432'
+cardColorAlt: '#a14b12'
 ---
 
 ## Overview
@@ -23,4 +32,3 @@ Developed calibration software that provides practical tools for camera, robot, 
 ## Technologies
 
 Python, PyQt5, OpenCV, Intel RealSense, Universal Robots, KUKA
-
