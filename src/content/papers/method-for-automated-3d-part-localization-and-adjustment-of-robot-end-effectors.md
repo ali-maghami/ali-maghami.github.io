@@ -1,6 +1,6 @@
 ---
 title: Method for automated 3d part localization and adjustment of robot end-effectors
-authors: Yousef ALBORZISeyedali MAGHAMIBhavin Narendrakumar DHARIAMichael Terry NEWMAN
+authors: Yousef ALBORZI, Seyedali MAGHAMI, Bhavin DHARIA, Michael NEWMAN
 venue: '-'
 year: 2022
 kind: patent
