@@ -2,6 +2,7 @@
 title: StripSense
 description: Measuring Reflective Surfaces with Stereo Vision
 stage: piloted
+purpose: Measuring moving reflective surfaces without touching them—and without placing sensitive cameras close to heat, dust, or contamination.
 contributors:
   - Sina Alborzi
 category: active
@@ -19,10 +20,6 @@ cardColor: '#4f95cf'
 cardColorAlt: '#c066c2'
 featured: true
 ---
-
-## What’s it for?
-
-Measuring moving reflective surfaces without touching them—and without placing sensitive cameras close to heat, dust, or contamination.
 
 ## Most vision systems fight reflection
 
