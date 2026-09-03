@@ -31,7 +31,7 @@ Instead of trying to see the surface directly, the system observes the reflectio
 
 The result is a non-contact machine-vision system that can measure a moving reflective sheet while the cameras and computing hardware remain at a practical distance.
 
----
+***
 
 ## How it works
 
@@ -40,7 +40,7 @@ The result is a non-contact machine-vision system that can measure a moving refl
 3. **Observe from several angles.** Two or more synchronized cameras capture the reflected features at the same instant. Synchronization matters because the surface is moving.
 4. **Reconstruct the geometry.** Corresponding features are matched across the camera views and triangulated into 3D points. Those points form a live model of the surface and its edges.
 
----
+***
 
 ## A reference frame that updates itself
 
@@ -50,7 +50,7 @@ To handle this, the cameras track reference markers fixed to the light fixture. 
 
 This small architectural decision makes the system much more useful in the field. It separates real surface movement from changes in the measurement setup.
 
----
+***
 
 ## From pixels to useful geometry
 
@@ -87,7 +87,7 @@ Two comparisons helped validate the measurements:
 
 The trial also exposed the practical limits. Clear optical access and clean protective windows remain important for long-term operation. Even so, maintenance during the pilot was minimal, and changing reflectivity did not prevent reliable feature detection.
 
----
+***
 
 ## Why this project matters
 
