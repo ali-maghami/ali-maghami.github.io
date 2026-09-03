@@ -1,10 +1,19 @@
 ---
-title: 'Deep Learning-Based Robot Calibration for Aerospace Assembly'
-description: 'Machine learning approach for calibrating dual-arm robotic systems in precision aerospace manufacturing.'
+title: Deep Learning-Based Robot Calibration for Aerospace Assembly
+description: Machine learning approach for calibrating dual-arm robotic systems in precision aerospace manufacturing.
 stage: research-prototype
-category: active
+contributors: []
+category: archived
 pubDate: 2022-08-15
-tags: ['Deep Learning', 'Robotics', 'Aerospace', 'Research', 'Machine Learning']
+tags:
+  - Deep Learning
+  - Robotics
+  - Aerospace
+  - Research
+  - Machine Learning
+repoUrl: ''
+liveUrl: ''
+heroImage: ''
 cardColor: '#C9B8F2'
 cardColorAlt: '#E3D6F7'
 featured: false
@@ -30,4 +39,3 @@ Developed a deep-learning method for estimating and compensating errors in dual-
 ## Technologies
 
 PyTorch, Deep Neural Networks, Regression Modeling, NumPy, Pandas, Cross-validation
-
