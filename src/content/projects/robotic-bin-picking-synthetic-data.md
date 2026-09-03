@@ -1,10 +1,19 @@
 ---
-title: 'Robotic Bin Picking with Synthetic Data & Deep Learning'
-description: 'End-to-end 3D perception pipeline for automated bin picking using synthetic data and deep learning.'
+title: Robotic Bin Picking with Synthetic Data & Deep Learning
+description: End-to-end 3D perception pipeline for automated bin picking using synthetic data and deep learning.
 stage: research-prototype
-category: active
+contributors: []
+category: archived
 pubDate: 2022-03-15
-tags: ['Deep Learning', 'Robotics', 'Synthetic Data', 'Computer Vision', 'Point Cloud Processing']
+tags:
+  - Deep Learning
+  - Robotics
+  - Synthetic Data
+  - Computer Vision
+  - Point Cloud Processing
+repoUrl: ''
+liveUrl: ''
+heroImage: ''
 cardColor: '#A8DFC1'
 cardColorAlt: '#DCF0D8'
 featured: false
@@ -34,4 +43,3 @@ At run time the RGB keypoint and reachability predictions are lifted onto the co
 ## Technologies
 
 PyTorch, Mask R-CNN, OpenCV, Open3D, Robot OS (ROS), Blender API, Python
-
