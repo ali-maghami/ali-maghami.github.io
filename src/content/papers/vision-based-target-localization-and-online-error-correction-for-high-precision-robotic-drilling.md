@@ -10,10 +10,10 @@ url: https://www.cambridge.org/core/journals/robotica/article/visionbased-target
 pdf: /pdf/Robotica.pdf
 citations: null
 tags:
-  - Computer Vision
+  - Robotics
   - Tracking
+  - Computer Vision
   - Stereo Vision
   - Pose Estimation
-  - Robotics
 featured: false
 ---
