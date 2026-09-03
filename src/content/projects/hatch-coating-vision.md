@@ -31,12 +31,16 @@ Instead of trying to see the surface directly, the system observes the reflectio
 
 The result is a non-contact machine-vision system that can measure a moving reflective sheet while the cameras and computing hardware remain at a practical distance.
 
+---
+
 ## How it works
 
 1. **Create a visual reference.** A light fixture produces a pattern of long lines and reference features near the measurement area.
 2. **Let the surface reshape the pattern.** The reflective surface acts like a changing mirror. Its position and curvature alter where the lines appear, how they bend, and how far apart they look.
 3. **Observe from several angles.** Two or more synchronized cameras capture the reflected features at the same instant. Synchronization matters because the surface is moving.
 4. **Reconstruct the geometry.** Corresponding features are matched across the camera views and triangulated into 3D points. Those points form a live model of the surface and its edges.
+
+---
 
 ## A reference frame that updates itself
 
@@ -45,6 +49,8 @@ Recovering 3D points is only part of the problem. Measurements must also remain 
 To handle this, the cameras track reference markers fixed to the light fixture. Those markers define a local coordinate system that is recalculated with every measurement. Surface position, orientation, and shape are therefore reported relative to the equipment—not just relative to the cameras.
 
 This small architectural decision makes the system much more useful in the field. It separates real surface movement from changes in the measurement setup.
+
+---
 
 ## From pixels to useful geometry
 
@@ -80,6 +86,8 @@ Two comparisons helped validate the measurements:
 - **Position:** the measured center position showed strong agreement with an independent laser sensor during a three-hour comparison, with small and bounded differences for most of the test.
 
 The trial also exposed the practical limits. Clear optical access and clean protective windows remain important for long-term operation. Even so, maintenance during the pilot was minimal, and changing reflectivity did not prevent reliable feature detection.
+
+---
 
 ## Why this project matters
 
