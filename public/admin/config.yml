@@ -72,7 +72,6 @@ collections:
           picker_utc: true,
         }
       - { name: tags, label: Tags, widget: list, required: false, default: [] }
-      - { name: featured, label: Featured, widget: boolean, required: false, default: false }
       - {
           name: repoUrl,
           label: Repository URL,
@@ -409,6 +408,28 @@ collections:
               max: 100,
               default: 0,
               hint: 'Percent. 0 leaves the background colour off entirely.',
+            }
+          - {
+              name: projectCount,
+              label: Projects on the home page,
+              widget: number,
+              required: false,
+              value_type: int,
+              min: 1,
+              max: 12,
+              default: 4,
+              hint: 'How many project cards the home page lists, newest first.',
+            }
+          - {
+              name: postCount,
+              label: Posts on the home page,
+              widget: number,
+              required: false,
+              value_type: int,
+              min: 1,
+              max: 12,
+              default: 5,
+              hint: 'How many post cards the home page lists, newest first.',
             }
           - name: portraitFilter
             label: Portrait filter

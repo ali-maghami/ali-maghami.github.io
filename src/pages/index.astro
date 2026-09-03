@@ -11,18 +11,6 @@ import { assertPortrait } from '../lib/badges';
 import { getNavHref, isPublished } from '../lib/nav';
 import { portraitStyle } from '../lib/portrait';
 
-const projects = (await getCollection('projects'))
-	.sort((a, b) => {
-		if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
-		return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
-	})
-	.slice(0, 4);
-
-const posts = (await getCollection('blog'))
-	.filter(isPublished)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 5);
-
 const [home] = await getCollection('home');
 
 if (!home) {
@@ -30,6 +18,17 @@ if (!home) {
 		'The home collection is empty. Expected src/content/home/index.md — the hero renders from it.',
 	);
 }
+
+// Newest first, with nothing jumping the queue. How many of each the page
+// shows is set in the CMS alongside the rest of the home page.
+const projects = (await getCollection('projects'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, home.data.projectCount);
+
+const posts = (await getCollection('blog'))
+	.filter(isPublished)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, home.data.postCount);
 
 const { heading, focusAreas } = home.data;
 // Checked rather than trusted: a public path is only a string, so a stale one
