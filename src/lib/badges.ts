@@ -60,9 +60,9 @@ export function assertPortrait(portrait: string | undefined): string | undefined
 /**
  * A post's hero image or video, in public/hero.
  *
- * Named `hero` rather than `posts` because public/posts would be served at
- * /posts/, which is already a page route — two different things answering to
- * one path is a confusion worth avoiding even where it technically resolves.
+ * Named `hero` rather than `posts`, which was a page route when this was
+ * written. That route is gone, but the name still says what the folder holds
+ * rather than which section happens to use it.
  */
 export function assertHeroMedia(media: string | undefined): string | undefined {
 	return assertPublicImage(media, '/hero/', 'Hero media');

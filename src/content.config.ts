@@ -98,17 +98,6 @@ const certificates = defineCollection({
 	}),
 });
 
-const posts = defineCollection({
-	loader: glob({ base: './src/content/posts', pattern: '**/*.{md,mdx}' }),
-	schema: z.object({
-		title: z.string(),
-		// The numeric id from a LinkedIn post URL, used to build the official
-		// embed iframe. See docs/cms.md for how to find it.
-		postId: z.string(),
-		pubDate: z.coerce.date(),
-		summary: optional(z.string()),
-	}),
-});
 
 const home = defineCollection({
 	loader: glob({ base: './src/content/home', pattern: '**/*.{md,mdx}' }),
@@ -159,4 +148,4 @@ const about = defineCollection({
 	}),
 });
 
-export const collections = { projects, blog, papers, certificates, posts, home, about };
+export const collections = { projects, blog, papers, certificates, home, about };

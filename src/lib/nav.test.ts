@@ -24,13 +24,13 @@ describe('buildNavItems', () => {
 	});
 
 	it('hides sections with no entries so the nav never links to an empty page', () => {
-		const labels = buildNavItems({ projects: 9, blog: 0, papers: 0, posts: 0 }).map((i) => i.label);
+		const labels = buildNavItems({ projects: 9, blog: 0, papers: 0 }).map((i) => i.label);
 		expect(labels).toEqual(['Home', 'Projects', 'About']);
 	});
 
 	it('keeps a stable order as sections fill up', () => {
-		const labels = buildNavItems({ projects: 9, blog: 2, papers: 3, posts: 1 }).map((i) => i.label);
-		expect(labels).toEqual(['Home', 'Posts', 'Projects', 'Papers', 'LinkedIn', 'About']);
+		const labels = buildNavItems({ projects: 9, blog: 2, papers: 3 }).map((i) => i.label);
+		expect(labels).toEqual(['Home', 'Posts', 'Projects', 'Papers', 'About']);
 	});
 });
 
