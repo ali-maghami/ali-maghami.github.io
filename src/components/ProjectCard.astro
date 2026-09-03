@@ -129,6 +129,12 @@ const wash = cardGradient(cardColor, cardColorAlt);
 		height: 26px;
 		border-radius: 50%;
 		object-fit: cover;
+		/* Two rings, doing different jobs. The paper border is what separates
+		   overlapping avatars from each other; on its own it is invisible
+		   against a white card, so a hairline outside it gives the circle an
+		   edge to read against. */
+		border: 2px solid var(--color-paper);
+		box-shadow: 0 0 0 1px var(--color-sand-300);
 	}
 
 	@media (max-width: 720px) {

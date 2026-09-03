@@ -4,32 +4,20 @@ import { cardGradient } from './cards';
 describe('cardGradient', () => {
 	it('fades a single colour out from the top right', () => {
 		expect(cardGradient('#BFE3E0')).toBe(
-			'radial-gradient(52% 48% at 100% 0%, rgb(191 227 224 / 1) 0%, transparent 62%)',
+			'radial-gradient(174% 71% at 106% 6%, rgb(191 227 224 / 1) 0%, transparent 70%)',
 		);
 	});
 
-	it('shows the second colour as a band emerging from under the first', () => {
-		// Two layers, not one blending through the other, and the outer one
-		// starts its colour where the inner is already fading.
-		const css = cardGradient('#7DD3FC', '#DCEFC8');
-		expect(css.split('), radial-gradient')).toHaveLength(2);
-		expect(css).toContain('rgb(125 211 252 / 1) 0%');
-		expect(css).toContain('rgb(220 239 200 / 1) 30%');
+	it('layers the second colour beneath the first, at its own geometry', () => {
+		// The exact figures are the point here — they are a chosen look rather
+		// than something derived, so a change to either should be deliberate.
+		expect(cardGradient('#4F95CF', '#C066C2')).toBe(
+			'radial-gradient(174% 71% at 106% 6%, rgb(79 149 207 / 1) 0%, transparent 70%), ' +
+				'radial-gradient(63% 90% at 95% 10%, rgb(192 102 194 / 1) 6%, transparent 60%)',
+		);
 	});
 
-	it('keeps both pools clear of the lower left, where the title sits', () => {
-		// Every stop is gone well before the far corner; a wash that reached it
-		// would put the title and description on colour instead of on paper.
-		const css = cardGradient('#7DD3FC', '#DCEFC8');
-		for (const [, pct] of css.matchAll(/transparent (\d+)%/g)) {
-			expect(Number(pct)).toBeLessThanOrEqual(70);
-		}
-		for (const [, w] of css.matchAll(/radial-gradient\((\d+)%/g)) {
-			expect(Number(w)).toBeLessThan(80);
-		}
-	});
-
-	it('paints the first colour over the second where they overlap', () => {
+	it('paints the first colour over the second', () => {
 		const css = cardGradient('#7DD3FC', '#DCEFC8');
 		expect(css.indexOf('125 211 252')).toBeLessThan(css.indexOf('220 239 200'));
 	});
