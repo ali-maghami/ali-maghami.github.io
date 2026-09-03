@@ -57,17 +57,6 @@ Python, C++, OpenCV, Open3D, PyTorch, ROS, Docker, Linux, Azure, AWS, edge–clo
 **Technical Leadership**
 Team development, mentoring, technical strategy, product roadmaps, system design, project delivery
 
-## Education
-
-**PhD, Mechanical Engineering**
-University of Manitoba, 2023
-
-**MSc, Mechanical Engineering – Applied Mechanics**
-Ferdowsi University of Mashhad, 2012
-
-**BSc, Mechanical Engineering – Solid Mechanics Design**
-Ferdowsi University of Mashhad, 2010
-
 ## Beyond Work
 
 I use this site to share what I’m learning about AI, robotics, computer vision, software architecture, and technical leadership. I’m particularly interested in the gap between demonstrating that an idea works and building a dependable system around it.
