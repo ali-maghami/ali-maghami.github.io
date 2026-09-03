@@ -75,10 +75,13 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 					<ol class="paper-list">
 						{papers.map((paper) => (
 							<li class="paper">
-								<div class="paper-tags">
-									<span class="year-badge">{paper.data.year}</span>
-									<span class="kind">{KIND_LABELS[paper.data.kind] ?? paper.data.kind}</span>
-								</div>
+								{paper.data.tags.length > 0 && (
+									<div class="tags">
+										{paper.data.tags.map((tag: string) => (
+											<span class="tag">{tag}</span>
+										))}
+									</div>
+								)}
 
 								<h2 class="paper-title">
 									{paper.data.url ? (
@@ -93,13 +96,10 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 								<p class="authors">{paper.data.authors}</p>
 								<p class="venue">{paper.data.venue}</p>
 
-								{paper.data.tags.length > 0 && (
-									<div class="tags">
-										{paper.data.tags.map((tag: string) => (
-											<span class="tag">{tag}</span>
-										))}
-									</div>
-								)}
+								<div class="paper-tags">
+									<span class="year-badge">{paper.data.year}</span>
+									<span class="kind">{KIND_LABELS[paper.data.kind] ?? paper.data.kind}</span>
+								</div>
 
 								{paper.data.abstract && <p class="abstract">{paper.data.abstract}</p>}
 
@@ -237,11 +237,12 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 				border-color: var(--color-sand-300);
 			}
 
+			/* Below the venue now, so the space goes above it rather than below. */
 			.paper-tags {
 				display: flex;
 				align-items: center;
 				gap: 0.5rem;
-				margin-bottom: 0.75rem;
+				margin-top: 0.7rem;
 			}
 
 			/* The year leads, so the reader places the work before reading what
@@ -301,18 +302,27 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 				color: var(--color-ink-muted);
 			}
 
-			/* Rounded rather than the square chips used elsewhere, to sit with the
-			   year and kind bubbles above them on the same card. */
+			/* Leading the card now, so the space goes below rather than above.
+			   Rounded rather than the square chips used elsewhere, to match the
+			   year and kind bubbles further down the same card. */
 			.tags {
 				display: flex;
 				flex-wrap: wrap;
 				gap: 0.4rem;
-				margin-top: 0.7rem;
+				margin-bottom: 0.75rem;
 			}
 
+			/* Blue rather than sand, and a step up in size: the tags lead the card
+			   now, so they carry more weight than the year and kind bubbles
+			   further down. The blue is the site's link colour at low opacity,
+			   so it belongs to the palette rather than introducing a new one. */
 			.tags :global(.tag) {
 				border-radius: 999px;
-				padding: 0.2rem 0.6rem;
+				padding: 0.22rem 0.65rem;
+				font-size: 0.75rem;
+				color: var(--color-lavender-deep);
+				background: rgb(107 115 209 / 9%);
+				border: 1px solid rgb(107 115 209 / 22%);
 			}
 
 			.abstract {
