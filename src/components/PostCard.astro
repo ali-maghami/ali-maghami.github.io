@@ -64,13 +64,17 @@ const { href, kind, title, description, date, avatar } = Astro.props;
 		color: var(--color-ink-muted);
 	}
 
+	/* The label and its icon take the link colour, matching "View all" at the
+	   top of the column — they name the kind of thing the card is, and reading
+	   as the accent rather than as body text keeps that legible at this size.
+	   The date beside them stays muted; it is not part of the label. */
 	.post-icon {
 		flex-shrink: 0;
-		opacity: 0.75;
+		color: var(--color-lavender);
 	}
 
 	.post-kind {
-		color: var(--color-ink-soft);
+		color: var(--color-lavender);
 	}
 
 	.post-avatar {
