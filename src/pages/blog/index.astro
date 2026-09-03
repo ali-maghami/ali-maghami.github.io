@@ -51,6 +51,7 @@ const posts = (await getCollection('blog'))
 								avatar={portrait}
 								heroImage={assertHeroMedia(post.data.heroImage)}
 								heroVideo={assertHeroMedia(post.data.heroVideo)}
+								heroVideoPlayback={post.data.heroVideoPlayback}
 							/>
 						))}
 					</div>

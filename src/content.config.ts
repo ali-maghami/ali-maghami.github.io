@@ -66,6 +66,10 @@ const blog = defineCollection({
 		// sits above the card; a video sits below its title.
 		heroImage: optional(z.string()),
 		heroVideo: optional(z.string()),
+		// How that video starts. Defaulted rather than optional so every post
+		// renders the same way whether or not the field was ever touched, and
+		// 'loop' keeps posts written before the choice existed unchanged.
+		heroVideoPlayback: z.enum(['loop', 'once', 'viewer']).default('loop'),
 	}),
 });
 
