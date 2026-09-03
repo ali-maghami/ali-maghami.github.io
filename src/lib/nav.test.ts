@@ -4,6 +4,7 @@ import {
 	getNavHref,
 	isPublished,
 	sectionForPath,
+	isNavActive,
 	showsFooterBadges,
 } from './nav';
 
@@ -83,5 +84,35 @@ describe('showsFooterBadges', () => {
 
 	it('shows nothing when no sections are configured', () => {
 		expect(showsFooterBadges('/', [])).toBe(false);
+	});
+});
+
+describe('isNavActive', () => {
+	it('lights a section on its own listing page', () => {
+		expect(isNavActive('/projects/', '/projects/')).toBe(true);
+		expect(isNavActive('/blog/', '/blog/')).toBe(true);
+		expect(isNavActive('/about/', '/about/')).toBe(true);
+	});
+
+	it('keeps the listing lit while one of its entries is open', () => {
+		// The reported fault: opening a post or a project left nothing marked.
+		expect(isNavActive('/blog/fourteen-agents-one-trace/', '/blog/')).toBe(true);
+		expect(isNavActive('/projects/railcar-vision-inspection/', '/projects/')).toBe(true);
+	});
+
+	it('lights Home only at the site root', () => {
+		expect(isNavActive('/', '/')).toBe(true);
+		expect(isNavActive('/projects/', '/')).toBe(false);
+		expect(isNavActive('/blog/a-post/', '/')).toBe(false);
+	});
+
+	it('does not light a section from a different one', () => {
+		expect(isNavActive('/projects/', '/blog/')).toBe(false);
+		expect(isNavActive('/papers/', '/projects/')).toBe(false);
+	});
+
+	it('tolerates a missing trailing slash on either side', () => {
+		expect(isNavActive('/about', '/about/')).toBe(true);
+		expect(isNavActive('/about/', '/about')).toBe(true);
 	});
 });
