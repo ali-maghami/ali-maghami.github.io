@@ -21,6 +21,8 @@ cardColorAlt: '#c066c2'
 featured: true
 ---
 
+_Images are AI-generated and used for illustrative purposes, as permission to publish original project imagery was not available._
+
 ## Most vision systems fight reflection
 
 Reflective materials are notoriously difficult for computer vision. Glare can hide texture, wash out edges, and make conventional illumination unreliable.
@@ -43,8 +45,6 @@ The result is a non-contact machine-vision system that can measure a moving refl
 ***
 
 <video src="/media/reflective-surface-vision-animation-1.mp4" controls playsinline preload="metadata" autoplay loop muted></video>
-
-_`Synchronized 3D Reconstruction of a Reflective Surface`_
 
 ***
 
