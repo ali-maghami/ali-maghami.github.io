@@ -16,212 +16,91 @@ tags:
   - Cloud Architecture
 repoUrl: ''
 liveUrl: ''
-heroImage: ''
+heroImage: /media/herocoilbox.webp
 cardColor: '#c77fa9'
 cardColorAlt: '#8f600f'
 ---
 
-## First: what is a Coilbox?
+CoilSense is a real-time computer-vision system developed to give heavy industrial equipment visual awareness of a fast-moving steel process.
 
-Imagine a steel mill producing a very long, hot strip of steel.
+The system uses industrial cameras, AI-based feature detection, classical computer vision, geometric measurement, GPU inference, and PLC integration to turn video into actionable process information.
 
-Before that strip continues through the production line, it can be temporarily wound into a large coil. A **Coilbox** is the machine that performs and manages this coiling and uncoiling process.
-
-The coil can be more than two meters in diameter, the steel is extremely hot, and everything is moving quickly.
-
-![A Coilbox winding hot steel strip into a coil](/media/coilsense-coilbox.jpg)
-
-Operators need to know things such as:
-
-- Where is the end of the steel strip?
-- Is the coil moving the way it should?
-- Is the coil reasonably round?
-- Has the steel uncoiled correctly?
-- Is the next mechanical operation safe to perform?
-
-Traditionally, much of this depends on operators watching the process.
-
-**CoilSense asks a different question: what if the machine could see these things itself?**
+It was designed for a particularly difficult vision environment: glowing steel, high temperatures, steam, dust, flying scale, equipment occlusion, and rapid motion.
 
 ***
 
-## Giving the machine another sensor: vision
+## From detection to engineering measurements
 
-CoilSense is a computer-vision system designed to observe the Coilbox and convert camera images into useful information about what the machine is doing.
+The goal was not simply to detect objects in an image.
 
-Instead of measuring just one variable, the same vision system can perform several tasks, including tracking, speed measurement, step completion verification, and geometric inspection.
+The vision pipeline identifies features such as the coil tail and inner coil geometry, then uses those detections to calculate measurements including:
 
-In software terms, you can think of it as a **real-time perception service for a physical machine**.
+- tail position and orientation;
+- coil motion and process-state verification;
+- coil shape and roundness;
+- material speed; and
+- completion of key mechanical operations.
 
-Cameras provide the raw data. AI extracts important features. Geometry converts those features into measurements and metrics. The results are then exposed to operators and the machine's control system.
+This required combining **AI-based perception with deterministic computer-vision and geometry algorithms**.
 
-![Cameras to AI features to geometry to operator and control system](/media/coilsense-perception-pipeline.jpg)
+AI handles the difficult task of finding useful features in noisy and partially occluded images. Geometry then converts those features into repeatable engineering measurements.
 
-***
-
-## Why this is harder than normal computer vision
-
-A steel mill is almost the opposite of a clean computer-vision dataset.
-
-The cameras have to deal with:
-
-- extreme heat;
-- steam and dust;
-- pieces of scale flying through the air;
-- fast motion;
-- limited installation space; and
-- large pieces of machinery blocking parts of the image.
-
-So the problem isn't simply:
-
-> Find the coil in this image.
-
-It is closer to:
-
-> Find the important part of a fast-moving, partially hidden, glowing object while the environment keeps changing—and return an answer quickly enough for another machine to act on it.
-
-That difference matters.
+**AI handles perception. Deterministic algorithms handle measurement.**
 
 ***
 
-## From object detection to process understanding
+## Real-time vision architecture
 
-One of the first tasks was tracking the **tail** of the coil—the exposed end of the steel strip.
+For moving industrial equipment, latency matters as much as accuracy.
 
-Knowing that the tail exists is not enough. The system needs to know where it is and how it is oriented so the next mechanical step can happen correctly.
+I developed the acquisition and processing pipeline so camera capture, inference, and measurement could operate concurrently rather than sequentially.
 
-The vision pipeline therefore detects several related features, including the tail, the inner part of the coil, and the shape near the center of the coil. Those detections are then used to calculate useful geometry such as the tail angle.
+The system was designed around:
 
-This is an important distinction.
+**Industrial Camera → Image Acquisition → AI Inference → Geometry → Process State → PLC / Operator**
 
-An ordinary AI demo might stop at:
+The implementation included GPU-accelerated inference, concurrent image processing, latest-frame prioritization, industrial networking, and integration with the machine control system.
 
-**"Tail detected: 96% confidence."**
-
-An industrial system needs to continue:
-
-**"The tail is here, at this angle, at this moment, and the machine can use that information."**
+This made the architecture closer to a real-time robotics perception stack than a traditional image-analysis application.
 
 ***
 
-## AI finds the features. Geometry does the measurement.
+## Building beyond the AI model
 
-Another part of CoilSense evaluates the shape of the coil.
+The project covered much more than model development.
 
-A poorly formed coil may not be perfectly round. That matters because its shape can affect how it moves and how it interacts with the equipment.
+It included:
 
-A purely mathematical solution is difficult because only part of the coil may be visible, equipment can hide sections of it, and the shape is not always a perfect ellipse.
+- industrial camera and optics selection;
+- field-of-view and resolution design;
+- AI model training and deployment;
+- computer-vision and geometric algorithms;
+- real-time GPU processing;
+- concurrent camera acquisition;
+- industrial PC integration;
+- camera and network communication;
+- PLC integration;
+- operator interfaces; and
+- deployment in a harsh industrial environment.
 
-So the system combines two approaches, classical computer-vision and geometry algorithms to analyze and calculate how much the shape deviates from the expected geometry.
-
-That architecture is common in practical industrial AI:
-
-**AI handles the messy perception problem.**
-**Deterministic algorithms handle the engineering measurement.**
-
-You don't necessarily want a neural network to guess a measurement if geometry can calculate it.
-
-![How CoilSense is deployed alongside the machine](/media/coilsense-deployment-architecture.webp)
-
-***
-
-## Real-time software changes how you design the pipeline
-
-Computer vision on moving machinery has another constraint:
-
-**a correct answer that arrives too late can still be wrong.**
-
-During development, the camera pipeline was redesigned so image acquisition could run independently from inference.
-
-The camera operated at roughly 60 frames per second, while detection reached around 50 frames per second on the development hardware. One particularly useful design choice was to prioritize the **newest frame**. Skip stale information and process the newest state. The project used a last-in-first-out approach specifically to help reduce delay.
-
-That lesson applies far beyond steel mills—to robotics, autonomous systems, video analytics, drones, and other real-time AI applications.
+Many of the most important design decisions were system-level decisions: camera placement, occlusion, environmental protection, latency, compute architecture, and how perception outputs should interact with automation.
 
 ***
 
-## The software does not end at the model
+## What I took from the project
 
-A production vision system needs much more than inference code.
+This project reinforced an important principle for industrial AI:
 
-CoilSense includes the pieces required to operate as part of industrial equipment:
+**the model is only one part of the system.**
 
-- cameras and optics;
-- protected camera enclosures;
-- industrial computing and GPUs;
-- networking;
-- trained AI models;
-- measurement algorithms;
-- camera communication;
-- communication with the machine controller;
-- user interfaces; and
-- data handling.
+Reliable Physical AI requires perception, deterministic engineering logic, real-time software, hardware, networking, and control integration to work together.
 
-The computer communicates with the PLC—the industrial controller responsible for operating the machine.
+The real challenge is not:
 
-That means the complete flow looks more like:
-
-**Camera → AI → Geometry → Process State → PLC / Operator**
-
-rather than simply:
-
-**Image → Model → Prediction**
-
-***
-
-## Software architecture meets the physical world
-
-This project reinforced something I think software engineers increasingly need to understand about AI systems.
-
-In normal application development, many architecture decisions are about software boundaries.
-
-In Physical AI, the architecture also includes the environment.
-
-Where can the camera physically go?
-
-What happens if steam blocks the image?
-
-How wide should the field of view be?
-
-How quickly must the answer reach the controller?
-
-Can the hardware survive the temperature and contamination?
-
-Those are software architecture decisions—but they cannot be solved inside software alone.
-
-***
-
-## Why this project matters
-
-For software engineers, CoilSense is a useful example of what happens when AI leaves the browser and enters the physical world.
-
-The model is important, but it is only one piece.
-
-The complete system has to deal with:
-
-**latency, concurrency, GPU inference, networking, hardware interfaces, sensor placement, environmental constraints, failure modes, geometry, industrial controls, and maintainability.**
-
-And those pieces ultimately support very concrete outcomes: reduced unplanned downtime, improved product quality, longer equipment life, and safer operation.
-
-The interesting engineering problem isn't simply:
-
-**Can AI recognize something in an image?**
+**Can AI recognize something?**
 
 It is:
 
-**Can we turn perception into reliable information that a real machine can use?**
+**Can perception become reliable information that a physical machine can use?**
 
-That, to me, is the much more interesting future of AI.
-
-***
-
-## What comes next
-
-Once a machine can visually understand individual events, the next step is understanding the complete process.
-
-Tail position, coil motion, coil shape, uncoiling state, and material speed can become different signals describing one physical system.
-
-That opens the door to richer anomaly detection, process optimization, predictive monitoring, and eventually more closed-loop automation.
-
-The long-term idea is simple:
-
-![CoilSense running alongside the machine](/hero/closing.jpg)
+That is the problem CoilSense was designed to solve.
