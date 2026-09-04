@@ -58,10 +58,9 @@ docker compose -f compose.prod.yml up -d
 docker inspect --format '{{.State.Health.Status}}' portfolio
 ```
 
-The Docker build sets `SITE_URL=https://maghami.dev`. Local and GitHub Pages
-builds retain `https://ali-maghami.github.io` unless `SITE_URL` is explicitly
-provided, so preparing this deployment does not change the current canonical
-URLs.
+The Docker build sets `SITE_URL=https://maghami.dev`, which is also the default
+for local and GitHub Pages builds now that the apex is canonical. Set
+`SITE_URL` explicitly only for an intentional preview origin.
 
 ## Deploy from a trusted workstation
 

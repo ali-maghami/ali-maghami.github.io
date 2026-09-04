@@ -1,8 +1,8 @@
 # Ali Maghami — personal site and portfolio
 
-The source of [ali-maghami.github.io](https://ali-maghami.github.io) — a static site built with
-[Astro](https://astro.build/), edited through a browser-based CMS, and deployed to GitHub Pages on
-every push to `main`.
+The source of [maghami.dev](https://maghami.dev) — a static site built with
+[Astro](https://astro.build), served from an isolated container on Hetzner, and retained on GitHub
+Pages as a rollback copy.
 
 Computer vision, AI and robotics: projects, posts, publications and certifications.
 
