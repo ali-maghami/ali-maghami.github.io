@@ -92,6 +92,33 @@ describe('media references in content', () => {
 
 		expect(missing, 'referenced file does not exist').toEqual([]);
 	});
+
+	/*
+	 * The gap this closes. An absolute path in a body is passed through as a
+	 * plain URL — Astro does not resolve it, so the build says nothing and the
+	 * page ships with a broken image. Two of these reached main pointing at
+	 * /src/assets/work/, which is not part of the built site at all.
+	 *
+	 * Anything absolute therefore has to exist under public/, which is the only
+	 * directory copied to the site root verbatim.
+	 */
+	it('points every absolute reference at a file under public/', () => {
+		const missing: string[] = [];
+
+		for (const file of files) {
+			for (const ref of mediaReferences(readFileSync(file, 'utf8'))) {
+				if (!ref.startsWith('/')) continue;
+				const target = path.join(root, 'public', decodeURIComponent(ref).slice(1));
+				try {
+					readFileSync(target);
+				} catch {
+					missing.push(`${path.relative(root, file)} -> ${ref}`);
+				}
+			}
+		}
+
+		expect(missing, 'an absolute media path must resolve under public/').toEqual([]);
+	});
 });
 
 describe('hero media in frontmatter', () => {
