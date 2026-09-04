@@ -21,7 +21,7 @@ cardColorAlt: '#c066c2'
 featured: true
 ---
 
-_Images are AI-generated and used for illustrative purposes, as permission to publish original project imagery was not available._
+_`Images are AI-generated and used for illustrative purposes, as permission to publish original project imagery was not available.`_
 
 ## Most vision systems fight reflection
 
