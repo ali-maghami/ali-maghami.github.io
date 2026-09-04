@@ -12,7 +12,7 @@ tags:
   - Real-Time Systems
   - Cloud Architecture
 draft: false
-heroImage: /src/assets/work/coilsense-coilbox.png
+heroImage: /hero/teaching-steel-industry-equipment-to-see.jpg
 heroVideo: ''
 heroVideoPlayback: loop
 ---

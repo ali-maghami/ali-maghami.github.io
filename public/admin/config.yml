@@ -24,9 +24,20 @@ backend:
 # build. A save that breaks the schema fails the build, nothing is deployed, and
 # the live site stays on its last good version until the entry is fixed.
 
-# Fallback only. The projects collection overrides these — see the note there.
-media_folder: src/assets/work
-public_folder: /src/assets/work
+# Fallback for collections that set no folder of their own, and the folder the
+# asset browser offers by default.
+#
+# It used to be src/assets/work, whose public path is /src/assets/work — an
+# address Astro never serves. Picking any asset from there in the media browser
+# wrote that dead path into the entry, which is how a post hero ended up
+# pointing at /src/assets/work/coilsense-coilbox.png and failed the build.
+#
+# public/media is served exactly as uploaded, so a stray pick now yields a URL
+# that works rather than one that cannot. Projects still override this with a
+# relative path, because Astro's image() helper resolves heroImage against the
+# markdown file rather than the site root.
+media_folder: public/media
+public_folder: /media
 
 # Rename uploads to a plain slug. Off by default, which broke three deploys in
 # one evening: a file called "ChatGPT Image Sep 3, 2026, 09_28_37 PM.png" is
