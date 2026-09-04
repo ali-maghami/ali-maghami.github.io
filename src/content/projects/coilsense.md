@@ -16,10 +16,12 @@ tags:
   - Cloud Architecture
 repoUrl: ''
 liveUrl: ''
-heroImage: /media/herocoilbox.webp
+heroImage: ''
 cardColor: '#c77fa9'
-cardColorAlt: '#8f600f'
+cardColorAlt: '#0f8f2f'
 ---
+
+![](/media/herocoilbox.webp)
 
 CoilSense is a real-time computer-vision system developed to give heavy industrial equipment visual awareness of a fast-moving steel process.
 
