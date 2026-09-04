@@ -17,6 +17,8 @@ heroVideo: ''
 heroVideoPlayback: loop
 ---
 
+_`Images are AI-generated and used for illustrative purposes, as permission to publish original project imagery was not available.`_
+
 ## First: what is a Coilbox?
 
 Imagine a steel mill producing a very long, hot strip of steel.
