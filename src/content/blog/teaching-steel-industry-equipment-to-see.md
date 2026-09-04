@@ -12,7 +12,7 @@ tags:
   - Real-Time Systems
   - Cloud Architecture
 draft: false
-heroImage: /hero/teaching-steel-industry-equipment-to-see.jpg
+heroImage: /src/assets/work/coilsense-coilbox.png
 heroVideo: ''
 heroVideoPlayback: loop
 ---
@@ -32,6 +32,8 @@ Operators need to know things such as:
 - Is the coil reasonably round?
 - Has the steel uncoiled correctly?
 - Is the next mechanical operation safe to perform?
+
+![](/src/assets/work/coilsense-coilbox.png)
 
 Traditionally, much of this depends on operators watching the process.
 
@@ -218,4 +220,4 @@ That opens the door to richer anomaly detection, process optimization, predictiv
 
 The long-term idea is simple:
 
-![](/src/assets/work/closing-1.png)
+![](/hero/closing.png)
