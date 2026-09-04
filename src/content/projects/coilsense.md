@@ -29,7 +29,7 @@ Before that strip continues through the production line, it can be temporarily w
 
 The coil can be more than two meters in diameter, the steel is extremely hot, and everything is moving quickly.
 
-![A Coilbox winding hot steel strip into a coil](../../assets/work/coilsense-coilbox.png)
+![](../../assets/work/ChatGPT%20Image%20Sep%203%2C%202026%2C%2009_28_37%20PM.png)
 
 Operators need to know things such as:
 
@@ -55,7 +55,7 @@ In software terms, you can think of it as a **real-time perception service for a
 
 Cameras provide the raw data. AI extracts important features. Geometry converts those features into measurements and metrics. The results are then exposed to operators and the machine's control system.
 
-![Cameras to AI features to geometry to operator and control system](../../assets/work/coilsense-perception-pipeline.png)
+![](../../assets/work/ChatGPT%20Image%20Sep%203%2C%202026%2C%2009_38_53%20PM.png)
 
 ***
 
@@ -108,13 +108,11 @@ An industrial system needs to continue:
 
 Another part of CoilSense evaluates the shape of the coil.
 
-A poorly formed coil may not be perfectly round. That matters because its shape can affect how it moves and how it interacts with the equipment. The development requirements therefore included looking at both the inner and outer geometry of the coil.
+A poorly formed coil may not be perfectly round. That matters because its shape can affect how it moves and how it interacts with the equipment.
 
 A purely mathematical solution is difficult because only part of the coil may be visible, equipment can hide sections of it, and the shape is not always a perfect ellipse.
 
-So the system combines two approaches.
-
-First, a neural network segments important regions such as the inner and outer coil boundaries. Then classical computer-vision and geometry algorithms analyze those boundaries and calculate how much the shape deviates from the expected geometry.
+So the system combines two approaches, classical computer-vision and geometry algorithms to analyze and calculate how much the shape deviates from the expected geometry.
 
 That architecture is common in practical industrial AI:
 
@@ -122,6 +120,8 @@ That architecture is common in practical industrial AI:
 **Deterministic algorithms handle the engineering measurement.**
 
 You don't necessarily want a neural network to guess a measurement if geometry can calculate it.
+
+![](../../assets/work/ChatGPT%20Image%20Sep%203%2C%202026%2C%2010_04_12%20PM.png)
 
 ***
 
@@ -133,27 +133,7 @@ Computer vision on moving machinery has another constraint:
 
 During development, the camera pipeline was redesigned so image acquisition could run independently from inference.
 
-The camera operated at roughly 52 frames per second, while tail detection reached around 50 frames per second on the development hardware. The processing architecture was also changed to reduce measured latency from roughly 60 ms to around 30 ms.
-
-One particularly useful design choice was to prioritize the **newest frame**.
-
-Suppose the AI cannot keep up for a moment.
-
-A conventional queue might look like this:
-
-`frame 101 → frame 102 → frame 103 → frame 104 → frame 105`
-
-The application dutifully processes every image.
-
-But by the time it reaches frame 105, the physical machine may already be somewhere else.
-
-For real-time perception, a better strategy can be:
-
-`frame 101 → frame 105`
-
-Skip stale information and process the newest state.
-
-The project used a last-in-first-out approach specifically to help reduce this kind of delay.
+The camera operated at roughly 60 frames per second, while detection reached around 50 frames per second on the development hardware. One particularly useful design choice was to prioritize the **newest frame**. Skip stale information and process the newest state. The project used a last-in-first-out approach specifically to help reduce delay.
 
 That lesson applies far beyond steel mills—to robotics, autonomous systems, video analytics, drones, and other real-time AI applications.
 
