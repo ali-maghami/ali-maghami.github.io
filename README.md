@@ -110,6 +110,8 @@ require pull requests: the CMS commits directly, and that rule would stop saving
 
 - [`docs/cms.md`](./docs/cms.md) — the CMS, the GitHub OAuth app, and the Cloudflare Worker that
   brokers the token exchange
+- [`docs/hetzner.md`](./docs/hetzner.md) — the isolated container and staged cutover to
+  `maghami.dev`
 - [`docs/ci-cd.md`](./docs/ci-cd.md) — what each workflow does and what its output means
 - [`docs/branch-protection.md`](./docs/branch-protection.md) — the rules on `main`, and why
 - [`docs/agentic-workflows.md`](./docs/agentic-workflows.md) — how AI coding agents should work here

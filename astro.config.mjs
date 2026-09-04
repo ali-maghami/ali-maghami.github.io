@@ -11,7 +11,10 @@ import { rehypeBodyMedia } from './src/lib/body-media';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://ali-maghami.github.io',
+  // GitHub Pages remains the default during the hosting migration. The
+  // Hetzner image sets SITE_URL=https://maghami.dev at build time so canonical
+  // URLs, the sitemap and RSS output describe the domain that serves them.
+  site: process.env.SITE_URL ?? 'https://ali-maghami.github.io',
   integrations: [mdx(), sitemap()],
 
   // Links written in a body are plain markdown, with no way to say whether they

@@ -1,0 +1,21 @@
+# Runs the public portfolio on the server. Caddy remains the only service with
+# host ports; this container is reachable solely through the shared edge
+# network and has no access to ContentFlow or its database.
+name: portfolio
+
+services:
+  web:
+    build:
+      context: .
+      args:
+        SITE_URL: ${SITE_URL:-https://maghami.dev}
+    container_name: portfolio
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - edge
+
+networks:
+  edge:
+    external: true
