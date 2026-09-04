@@ -156,7 +156,7 @@ CoilSense includes the pieces required to operate as part of industrial equipmen
 - user interfaces; and
 - data handling.
 
-The computer communicates with the Coilbox's PLC—the industrial controller responsible for operating the machine.
+The computer communicates with the PLC—the industrial controller responsible for operating the machine.
 
 That means the complete flow looks more like:
 
@@ -182,35 +182,11 @@ What happens if steam blocks the image?
 
 How wide should the field of view be?
 
-Does seeing a larger area reduce the resolution of the measurement?
-
 How quickly must the answer reach the controller?
 
 Can the hardware survive the temperature and contamination?
 
-For example, the development work explicitly encountered the trade-off between increasing the field of view to monitor another operation and losing image resolution for the existing measurements.
-
 Those are software architecture decisions—but they cannot be solved inside software alone.
-
-***
-
-## From perception to action
-
-The interesting part of CoilSense is not that it uses AI.
-
-It is what happens **after** the AI.
-
-The system can warn an operator when attention is required and exchange information with the Coilbox control system.
-
-That creates a chain like this:
-
-**See something → understand it → measure it → decide what it means → help the machine respond**
-
-This is what I find compelling about **Physical AI**.
-
-The output is not another piece of digital content.
-
-It changes how a physical system operates.
 
 ***
 
