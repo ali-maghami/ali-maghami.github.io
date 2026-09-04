@@ -12,7 +12,7 @@ tags:
   - Real-Time Systems
   - Cloud Architecture
 draft: false
-heroImage: /hero/teaching-steel-industry-equipment-to-see.jpg
+heroImage: /src/assets/work/coilsense-coilbox.png
 heroVideo: ''
 heroVideoPlayback: loop
 ---
@@ -33,7 +33,7 @@ Operators need to know things such as:
 - Has the steel uncoiled correctly?
 - Is the next mechanical operation safe to perform?
 
-![A Coilbox winding hot steel strip into a coil](/media/coilsense-coilbox.jpg)
+![](/hero/teaching-steel-industry-equipment-to-see.jpg)
 
 Traditionally, much of this depends on operators watching the process.
 
@@ -51,7 +51,7 @@ In software terms, you can think of it as a **real-time perception service for a
 
 Cameras provide the raw data. AI extracts important features. Geometry converts those features into measurements and metrics. The results are then exposed to operators and the machine's control system.
 
-![Cameras to AI features to geometry to operator and control system](/media/coilsense-perception-pipeline.jpg)
+![](/media/measurement.png)
 
 ***
 
@@ -117,7 +117,7 @@ That architecture is common in practical industrial AI:
 
 You don't necessarily want a neural network to guess a measurement if geometry can calculate it.
 
-![The perception pipeline in operation](/hero/mid.jpg)
+![](/hero/mid.png)
 
 ***
 
@@ -220,4 +220,4 @@ That opens the door to richer anomaly detection, process optimization, predictiv
 
 The long-term idea is simple:
 
-![CoilSense running alongside the machine](/hero/closing.jpg)
+![](/hero/closing.png)
