@@ -51,8 +51,6 @@ In software terms, you can think of it as a **real-time perception service for a
 
 Cameras provide the raw data. AI extracts important features. Geometry converts those features into measurements and metrics. The results are then exposed to operators and the machine's control system.
 
-![Turning detected features into a measurement](/media/measurement.webp)
-
 ***
 
 ## Why this is harder than normal computer vision
