@@ -12,7 +12,7 @@ tags:
   - Real-Time Systems
   - Cloud Architecture
 draft: false
-heroImage: /hero/teaching-steel-industry-equipment-to-see.jpg
+heroImage: /hero/herocoilbox.webp
 heroVideo: ''
 heroVideoPlayback: loop
 ---
