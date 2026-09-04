@@ -23,6 +23,8 @@ cardColorAlt: '#0f8f2f'
 
 ![](/media/herocoilbox.webp)
 
+_`Images are AI-generated and used for illustrative purposes, as permission to publish original project imagery was not available.`_
+
 CoilSense is a real-time computer-vision system developed to give heavy industrial equipment visual awareness of a fast-moving steel process.
 
 The system uses industrial cameras, AI-based feature detection, classical computer vision, geometric measurement, GPU inference, and PLC integration to turn video into actionable process information.
