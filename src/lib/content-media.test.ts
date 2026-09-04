@@ -92,12 +92,30 @@ describe('media references in content', () => {
 });
 
 describe('the CMS media configuration', () => {
+	const cmsConfig = async () => {
+		const { parse } = await import('yaml');
+		return parse(readFileSync(path.join(root, 'public', 'admin', 'config.yml'), 'utf8'));
+	};
+
 	// If this is ever turned off, the problem returns silently on the next
 	// upload with an awkward name.
 	it('slugifies uploaded filenames', async () => {
-		const { parse } = await import('yaml');
-		const config = parse(readFileSync(path.join(root, 'public', 'admin', 'config.yml'), 'utf8'));
+		expect((await cmsConfig()).media_libraries?.default?.config?.slugify_filename).toBe(true);
+	});
 
-		expect(config.media_library?.config?.slugify_filename).toBe(true);
+	/*
+	 * The singular key is the trap, and the reason this file gained a second
+	 * assertion. `media_library` is a union across providers — Cloudinary,
+	 * Uploadcare, S3 and the rest — so it requires a `name` saying which one is
+	 * meant. Written without one it is not merely ignored: the CMS refuses to
+	 * start and every editor sees a configuration error instead of their
+	 * content.
+	 *
+	 * The first version of this test asserted the singular shape and passed,
+	 * because it checked the shape the test itself assumed rather than the one
+	 * the CMS accepts. A green run is not evidence the CMS will load.
+	 */
+	it('does not use the singular key, which needs a provider name', async () => {
+		expect((await cmsConfig()).media_library).toBeUndefined();
 	});
 });
