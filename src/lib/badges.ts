@@ -47,6 +47,16 @@ export function assertPublicImage(
 	return value;
 }
 
+/**
+ * A project's hero image, in public/media.
+ *
+ * Every media path on the site is a public path now, so this is the same shape
+ * as the rest rather than the one exception the build resolved differently.
+ */
+export function assertProjectHero(image: string | undefined): string | undefined {
+	return assertPublicImage(image, '/media/', 'Project hero image');
+}
+
 /** A certificate's issuer badge, in public/badges. */
 export function assertBadge(badge: string | undefined): string | undefined {
 	return assertPublicImage(badge, '/badges/', 'Badge image');
