@@ -1,0 +1,17 @@
+# Merge these site blocks into /home/ali/infra/Caddyfile. The public portfolio
+# remains a separate container; write.maghami.dev and ContentFlow are unchanged.
+
+maghami.dev {
+	encode zstd gzip
+	reverse_proxy portfolio:8080
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}
+
+www.maghami.dev {
+	redir https://maghami.dev{uri} permanent
+}
