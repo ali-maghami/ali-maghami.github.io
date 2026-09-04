@@ -28,7 +28,23 @@ jobs:
           node-version: 22
           cache: 'npm'
 
+      - name: Restore node_modules
+        id: node-modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          # Keyed on the lock file, so the cache is only reused for exactly the
+          # dependency tree it was built from. A CMS save never touches that
+          # file, which is why every content deploy hits this.
+          key: node-modules-${{ runner.os }}-node22-${{ hashFiles('package-lock.json') }}
+
+      # setup-node's own cache holds the downloaded tarballs, so npm still had
+      # to extract and link 363 packages on every run — two minutes of a
+      # two-and-a-half minute deploy, for a site that builds in three seconds.
+      # Restoring node_modules skips that entirely; this step only runs when
+      # the dependency tree actually changed.
       - name: Install dependencies
+        if: steps.node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Build with Astro
