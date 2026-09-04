@@ -224,4 +224,4 @@ That opens the door to richer anomaly detection, process optimization, predictiv
 
 The long-term idea is simple:
 
-**give industrial machines something they historically haven't had—the ability to see and understand what is happening around them.**
+![](../../assets/work/closing.png)
