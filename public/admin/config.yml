@@ -28,6 +28,19 @@ backend:
 media_folder: src/assets/work
 public_folder: /src/assets/work
 
+# Rename uploads to a plain slug. Off by default, which broke three deploys in
+# one evening: a file called "ChatGPT Image Sep 3, 2026, 09_28_37 PM.png" is
+# written into markdown percent-encoded, and Astro resolves a body image against
+# the filesystem, where the commas are literal. The spaces survived decoding,
+# the commas did not, and the build failed with ImageNotFound.
+#
+# ChatGPT and Gemini both name their exports that way, so this was going to keep
+# happening. Slugifying at the point of upload means the awkward name never
+# reaches the markdown at all.
+media_library:
+  config:
+    slugify_filename: true
+
 collections:
   - name: blog
     label: Posts

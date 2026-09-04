@@ -29,7 +29,7 @@ Before that strip continues through the production line, it can be temporarily w
 
 The coil can be more than two meters in diameter, the steel is extremely hot, and everything is moving quickly.
 
-![](../../assets/work/ChatGPT%20Image%20Sep%203%2C%202026%2C%2009_28_37%20PM.png)
+![A Coilbox winding hot steel strip into a coil](../../assets/work/coilsense-coilbox.png)
 
 Operators need to know things such as:
 
@@ -55,7 +55,7 @@ In software terms, you can think of it as a **real-time perception service for a
 
 Cameras provide the raw data. AI extracts important features. Geometry converts those features into measurements and metrics. The results are then exposed to operators and the machine's control system.
 
-![](../../assets/work/ChatGPT%20Image%20Sep%203%2C%202026%2C%2009_38_53%20PM.png)
+![Cameras to AI features to geometry to operator and control system](../../assets/work/coilsense-perception-pipeline.png)
 
 ***
 
@@ -121,7 +121,7 @@ That architecture is common in practical industrial AI:
 
 You don't necessarily want a neural network to guess a measurement if geometry can calculate it.
 
-![](../../assets/work/ChatGPT%20Image%20Sep%203%2C%202026%2C%2010_04_12%20PM.png)
+![How CoilSense is deployed alongside the machine](../../assets/work/coilsense-deployment-architecture.png)
 
 ***
 
