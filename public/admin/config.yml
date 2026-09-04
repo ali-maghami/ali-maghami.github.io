@@ -37,9 +37,14 @@ public_folder: /src/assets/work
 # ChatGPT and Gemini both name their exports that way, so this was going to keep
 # happening. Slugifying at the point of upload means the awkward name never
 # reaches the markdown at all.
-media_library:
-  config:
-    slugify_filename: true
+# The plural form. `media_library` (singular) is a union across providers and
+# requires a `name` to say which one — without it the CMS refuses to start at
+# all. `media_libraries.default` names the provider by its key instead, and
+# takes nothing but `config`.
+media_libraries:
+  default:
+    config:
+      slugify_filename: true
 
 collections:
   - name: blog
