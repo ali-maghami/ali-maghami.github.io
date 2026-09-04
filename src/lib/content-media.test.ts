@@ -223,4 +223,56 @@ describe('the CMS media configuration', () => {
 		expect(config.public_folder).not.toMatch(/^\/src\//);
 		expect(config.media_folder).toMatch(/^public\//);
 	});
+
+	/*
+	 * The invariant the whole evening was spent learning.
+	 *
+	 * There used to be two media systems: public/, served verbatim at an
+	 * absolute URL, and src/assets, resolved at build time from a path relative
+	 * to the markdown file. Only the first can be addressed by URL, but the
+	 * asset browser offered both — so choosing a project image for a post hero
+	 * produced /src/assets/work/..., a path that cannot resolve, and choosing
+	 * it for a body produced a broken image the build did not even report.
+	 *
+	 * Every folder is under public/ now. If one is ever pointed back into src/,
+	 * that class of failure returns, so it fails here instead.
+	 */
+	it('keeps every media folder under public/, so one media system exists', async () => {
+		const config = await cmsConfig();
+		const offenders: string[] = [];
+
+		const check = (name: string, folder: unknown, publicPath: unknown) => {
+			if (typeof folder === 'string' && !folder.replace(/^\//, '').startsWith('public/')) {
+				offenders.push(`${name} media_folder=${folder}`);
+			}
+			if (typeof publicPath === 'string' && !publicPath.startsWith('/')) {
+				offenders.push(`${name} public_folder=${publicPath}`);
+			}
+		};
+
+		check('(global)', config.media_folder, config.public_folder);
+		for (const collection of config.collections) {
+			check(collection.name, collection.media_folder, collection.public_folder);
+			for (const field of collection.fields ?? []) {
+				check(`${collection.name}.${field.name}`, field.media_folder, field.public_folder);
+			}
+		}
+
+		expect(offenders, 'a media folder outside public/ cannot be served by URL').toEqual([]);
+	});
+});
+
+describe('the media system', () => {
+	// src/assets is gone. A reference to it means the two-system split is back.
+	it('has no content referencing src/assets', () => {
+		const offenders: string[] = [];
+
+		for (const file of files) {
+			if (/(?:\.\.\/)*assets\/|\/src\/assets/.test(readFileSync(file, 'utf8'))) {
+				offenders.push(path.relative(root, file));
+			}
+		}
+
+		expect(offenders, 'media lives in public/ only').toEqual([]);
+	});
 });

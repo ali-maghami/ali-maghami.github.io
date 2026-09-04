@@ -31,7 +31,11 @@ const projects = defineCollection({
 			tags: z.array(z.string()).default([]),
 			repoUrl: optionalUrl,
 			liveUrl: optionalUrl,
-			heroImage: optional(image()),
+			// A plain public path, as everywhere else. It used to be image(),
+			// which resolves relative to the markdown file and so only worked for
+			// assets under src/ — a second media system the CMS could not tell
+			// apart from the servable one. See docs/media.md.
+			heroImage: optional(z.string()),
 			// The card's wash, fading from its top right corner. Set per project
 			// and stored, so a card keeps its colour between visits rather than
 			// changing with the page palette.

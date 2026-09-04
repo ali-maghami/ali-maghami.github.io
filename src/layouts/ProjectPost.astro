@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
@@ -8,13 +7,28 @@ import GenericAvatar from '../components/GenericAvatar.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_TITLE } from '../consts';
-import { assertPortrait } from '../lib/badges';
+import { assertPortrait, assertProjectHero } from '../lib/badges';
 import { stageLabel } from '../lib/projects';
 
 type Props = CollectionEntry<'projects'>['data'];
 
-const { title, description, pubDate, tags, repoUrl, liveUrl, stage, contributors, purpose, heroImage } =
+const {
+	title,
+	description,
+	pubDate,
+	tags,
+	repoUrl,
+	liveUrl,
+	stage,
+	contributors,
+	purpose,
+	heroImage: rawHeroImage,
+} =
 	Astro.props;
+
+// Checked rather than trusted: a stale path renders a blank where the lead
+// image should be, and the CMS is what writes it.
+const heroImage = assertProjectHero(rawHeroImage);
 
 // Share links need the page's own absolute URL, which only the built site
 // knows — Astro.site plus this path, the same pair the canonical tag uses.
@@ -170,7 +184,7 @@ const makers = [
 				{
 					heroImage && (
 						<div class="hero-image">
-							<Image width={1020} height={510} src={heroImage} alt="" />
+							<img src={heroImage} alt="" width="1020" height="510" loading="eager" />
 						</div>
 					)
 				}

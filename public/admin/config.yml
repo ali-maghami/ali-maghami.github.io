@@ -56,6 +56,15 @@ media_libraries:
   default:
     config:
       slugify_filename: true
+      # Resized and re-encoded as the file is uploaded. public/ is served
+      # exactly as it is committed, so nothing downstream will do this — and
+      # a single un-resized screenshot arrived at 3MB, served raw on every
+      # visit. 1600px is wider than any slot on the site.
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 1600
 
 collections:
   - name: blog
@@ -179,11 +188,13 @@ collections:
           field: category
       default: category
     sortable_fields: [pubDate, title]
-    # Astro's image() helper resolves heroImage relative to the markdown file,
-    # not to the site root, so these are relative paths rather than the usual
-    # /public-rooted ones. src/content/projects/x.md -> ../../assets/work/y.png
-    media_folder: '../../assets/work'
-    public_folder: '../../assets/work'
+    # The same public folder as every other collection. This used to point at
+    # ../../assets/work for Astro's image() helper, which made project media the
+    # one kind the site could not serve by URL — and the asset browser offered
+    # it for post heroes and bodies, where it could only break. heroImage is a
+    # plain public path now, so there is one media system instead of two.
+    media_folder: '/public/media'
+    public_folder: '/media'
     fields:
       - { name: title, label: Title, widget: string, required: true }
       - {

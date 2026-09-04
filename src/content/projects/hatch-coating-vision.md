@@ -15,7 +15,7 @@ tags:
   - Systems Architecture
 repoUrl: ''
 liveUrl: ''
-heroImage: ../../assets/work/Gemini_Generated_Image_mnvwasmnvwasmnvw (1)-1.jpg
+heroImage: /media/hatch-coating-vision-hero.webp
 cardColor: '#4f95cf'
 cardColorAlt: '#c066c2'
 featured: true
