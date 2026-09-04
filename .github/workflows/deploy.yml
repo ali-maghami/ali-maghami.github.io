@@ -47,6 +47,16 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
+      # Ahead of the build, not after it. The content guards run in about a
+      # tenth of a second and name the exact file and path; the Astro build
+      # takes minutes to reach the same conclusion, and for an absolute path
+      # in a body it never reaches it at all — the page just ships broken.
+      #
+      # A CMS save commits straight to main, so this is the first moment
+      # anything checks it.
+      - name: Check content before building
+        run: npx vitest run src/lib/content-media.test.ts
+
       - name: Build with Astro
         run: npm run build
 
