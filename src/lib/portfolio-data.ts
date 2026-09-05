@@ -257,6 +257,24 @@ export async function listPosts(): Promise<PostRecord[]> {
 	return rows.map((row) => mapPost(row));
 }
 
+/*
+ * Draft previews read the same row without the published filter. Kept as
+ * separate functions rather than a flag on the public ones, so a caller cannot
+ * reach an unpublished entry by passing something falsy by accident — every
+ * use of these is a place a signed token was checked.
+ */
+export async function getProjectDraft(slug: string): Promise<ProjectRecord | undefined> {
+	const sql = getDatabase();
+	const rows = await sql`SELECT * FROM portfolio_project WHERE slug = ${slug} LIMIT 1`;
+	return rows[0] ? mapProject(rows[0]) : undefined;
+}
+
+export async function getPostDraft(slug: string): Promise<PostRecord | undefined> {
+	const sql = getDatabase();
+	const rows = await sql`SELECT * FROM portfolio_post WHERE slug = ${slug} LIMIT 1`;
+	return rows[0] ? mapPost(rows[0]) : undefined;
+}
+
 export async function getPostBySlug(slug: string): Promise<PostRecord | undefined> {
 	const sql = getDatabase();
 	const rows = await sql`SELECT * FROM portfolio_post WHERE slug = ${slug} AND status = 'published' LIMIT 1`;

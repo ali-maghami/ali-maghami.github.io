@@ -1,14 +1,42 @@
 ---
+import DraftBanner from '../../components/DraftBanner.astro';
 import ProjectPost from '../../layouts/ProjectPost.astro';
 import { renderPortfolioMarkdown } from '../../lib/markdown';
-import { getProjectBySlug } from '../../lib/portfolio-data';
+import { getProjectBySlug, getProjectDraft } from '../../lib/portfolio-data';
+import { verifyPreviewToken } from '../../lib/preview';
 
 const slug = Astro.params.slug;
-const project = slug ? await getProjectBySlug(slug) : undefined;
+
+// A signed token from the CMS grants this one entry for a short window. Every
+// other request sees exactly what it saw before: published entries only.
+const preview =
+	!!slug &&
+	verifyPreviewToken(
+		Astro.url.searchParams.get('preview'),
+		'projects',
+		slug,
+		process.env.PREVIEW_SECRET,
+	);
+
+const project = slug
+	? preview
+		? await getProjectDraft(slug)
+		: await getProjectBySlug(slug)
+	: undefined;
+
 if (!project) return Astro.redirect('/404');
+
+// A preview is for one person for a few minutes: it must not be indexed, and
+// it must not be cached anywhere a later visitor could pick it up.
+if (preview) {
+	Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+	Astro.response.headers.set('Cache-Control', 'no-store, private');
+}
+
 const bodyHtml = await renderPortfolioMarkdown(project.bodyMarkdown);
 ---
 
 <ProjectPost {...project}>
+	{preview && <DraftBanner />}
 	<Fragment set:html={bodyHtml} />
 </ProjectPost>

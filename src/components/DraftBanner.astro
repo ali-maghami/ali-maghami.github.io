@@ -1,0 +1,55 @@
+---
+/*
+ * Shown only on a signed draft preview.
+ *
+ * Fixed to the bottom rather than the top: this page looks exactly like a
+ * published one, and the whole risk of a preview is forgetting which you are
+ * reading — but a bar across the masthead would cover the thing being
+ * previewed. The bottom is always in view and never in the way.
+ */
+---
+
+<div class="draft-banner" role="status">
+	<span class="dot" aria-hidden="true"></span>
+	<strong>Draft preview</strong>
+	<span class="detail">Not published. This link expires and is not indexed.</span>
+</div>
+
+<style>
+	.draft-banner {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: center;
+		gap: 0.5rem;
+		padding: 0.6rem 1rem;
+		background: var(--color-ink);
+		color: var(--color-paper);
+		font-size: 0.875rem;
+		box-shadow: 0 -2px 12px rgb(48 48 38 / 18%);
+	}
+
+	.dot {
+		align-self: center;
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background: var(--color-banana);
+	}
+
+	.detail {
+		color: var(--color-sand-300);
+	}
+
+	@media print {
+		/* A printed preview is a document, not a screen. */
+		.draft-banner {
+			display: none;
+		}
+	}
+</style>
