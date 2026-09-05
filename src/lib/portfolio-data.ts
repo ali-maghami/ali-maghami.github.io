@@ -1,5 +1,6 @@
 import postgres from 'postgres';
 
+import { cached } from './request-cache';
 
 type OptionalString = string | null | undefined;
 
@@ -144,6 +145,13 @@ export async function pingDatabase(): Promise<void> {
 	await sql`SELECT 1`;
 }
 
+/** Closes the pool. For tests, which would otherwise leave a worker waiting on it. */
+export async function closeDatabase(): Promise<void> {
+	const open = database;
+	database = undefined;
+	await open?.end();
+}
+
 function optional(value: OptionalString): string | undefined {
 	return value?.trim() || undefined;
 }
@@ -167,7 +175,12 @@ function number(value: unknown, fallback: number): number {
 	return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
 }
 
-function mapProject(row: Record<string, unknown>): ProjectRecord {
+/*
+ * The mappers are exported for their tests: they are where a database row is
+ * coerced into the shape the pages trust, and that coercion is the part worth
+ * pinning down without a database in the loop.
+ */
+export function mapProject(row: Record<string, unknown>): ProjectRecord {
 	return {
 		id: String(row.slug),
 		title: String(row.title),
@@ -188,7 +201,7 @@ function mapProject(row: Record<string, unknown>): ProjectRecord {
 	};
 }
 
-function mapPost(row: Record<string, unknown>): PostRecord {
+export function mapPost(row: Record<string, unknown>): PostRecord {
 	return {
 		id: String(row.slug),
 		title: String(row.title),
@@ -205,7 +218,7 @@ function mapPost(row: Record<string, unknown>): PostRecord {
 	};
 }
 
-function mapPaper(row: Record<string, unknown>): PaperRecord {
+export function mapPaper(row: Record<string, unknown>): PaperRecord {
 	return {
 		id: String(row.slug),
 		title: String(row.title),
@@ -224,7 +237,7 @@ function mapPaper(row: Record<string, unknown>): PaperRecord {
 	};
 }
 
-function mapCertificate(row: Record<string, unknown>): CertificateRecord {
+export function mapCertificate(row: Record<string, unknown>): CertificateRecord {
 	return {
 		id: String(row.slug),
 		name: String(row.name),
@@ -239,22 +252,64 @@ function mapCertificate(row: Record<string, unknown>): CertificateRecord {
 	};
 }
 
-export async function listProjects(): Promise<ProjectRecord[]> {
-	const sql = getDatabase();
-	const rows = await sql`SELECT * FROM portfolio_project WHERE status = 'published' ORDER BY pub_date DESC`;
-	return rows.map((row) => mapProject(row));
+/*
+ * Every public read below is wrapped in the request cache: within one page
+ * render, the Header, the Footer and the page itself share a single execution
+ * of each query, and nothing outlives the request. See lib/request-cache.ts.
+ */
+
+export interface PublishedCounts {
+	projects: number;
+	posts: number;
+	papers: number;
 }
 
-export async function getProjectBySlug(slug: string): Promise<ProjectRecord | undefined> {
-	const sql = getDatabase();
-	const rows = await sql`SELECT * FROM portfolio_project WHERE slug = ${slug} AND status = 'published' LIMIT 1`;
-	return rows[0] ? mapProject(rows[0]) : undefined;
+/**
+ * How many entries each section has, in one round trip.
+ *
+ * The navigation hides an empty section, which used to be decided by loading
+ * every row of every section and counting the arrays. Three integers are all
+ * that question needs.
+ */
+export function countPublished(): Promise<PublishedCounts> {
+	return cached('counts', async () => {
+		const sql = getDatabase();
+		const [row] = await sql`
+			SELECT
+				(SELECT count(*) FROM portfolio_project WHERE status = 'published')::int AS projects,
+				(SELECT count(*) FROM portfolio_post WHERE status = 'published')::int AS posts,
+				(SELECT count(*) FROM portfolio_paper WHERE status = 'published')::int AS papers
+		`;
+		return {
+			projects: Number(row?.projects ?? 0),
+			posts: Number(row?.posts ?? 0),
+			papers: Number(row?.papers ?? 0),
+		};
+	});
 }
 
-export async function listPosts(): Promise<PostRecord[]> {
-	const sql = getDatabase();
-	const rows = await sql`SELECT * FROM portfolio_post WHERE status = 'published' ORDER BY pub_date DESC`;
-	return rows.map((row) => mapPost(row));
+export function listProjects(): Promise<ProjectRecord[]> {
+	return cached('projects', async () => {
+		const sql = getDatabase();
+		const rows = await sql`SELECT * FROM portfolio_project WHERE status = 'published' ORDER BY pub_date DESC`;
+		return rows.map((row) => mapProject(row));
+	});
+}
+
+export function getProjectBySlug(slug: string): Promise<ProjectRecord | undefined> {
+	return cached(`project:${slug}`, async () => {
+		const sql = getDatabase();
+		const rows = await sql`SELECT * FROM portfolio_project WHERE slug = ${slug} AND status = 'published' LIMIT 1`;
+		return rows[0] ? mapProject(rows[0]) : undefined;
+	});
+}
+
+export function listPosts(): Promise<PostRecord[]> {
+	return cached('posts', async () => {
+		const sql = getDatabase();
+		const rows = await sql`SELECT * FROM portfolio_post WHERE status = 'published' ORDER BY pub_date DESC`;
+		return rows.map((row) => mapPost(row));
+	});
 }
 
 /*
@@ -275,30 +330,42 @@ export async function getPostDraft(slug: string): Promise<PostRecord | undefined
 	return rows[0] ? mapPost(rows[0]) : undefined;
 }
 
-export async function getPostBySlug(slug: string): Promise<PostRecord | undefined> {
-	const sql = getDatabase();
-	const rows = await sql`SELECT * FROM portfolio_post WHERE slug = ${slug} AND status = 'published' LIMIT 1`;
-	return rows[0] ? mapPost(rows[0]) : undefined;
+export function getPostBySlug(slug: string): Promise<PostRecord | undefined> {
+	return cached(`post:${slug}`, async () => {
+		const sql = getDatabase();
+		const rows = await sql`SELECT * FROM portfolio_post WHERE slug = ${slug} AND status = 'published' LIMIT 1`;
+		return rows[0] ? mapPost(rows[0]) : undefined;
+	});
 }
 
-export async function listPapers(): Promise<PaperRecord[]> {
-	const sql = getDatabase();
-	const rows = await sql`SELECT * FROM portfolio_paper WHERE status = 'published' ORDER BY year DESC`;
-	return rows.map((row) => mapPaper(row));
+export function listPapers(): Promise<PaperRecord[]> {
+	return cached('papers', async () => {
+		const sql = getDatabase();
+		const rows = await sql`SELECT * FROM portfolio_paper WHERE status = 'published' ORDER BY year DESC`;
+		return rows.map((row) => mapPaper(row));
+	});
 }
 
-export async function listCertificates(): Promise<CertificateRecord[]> {
-	const sql = getDatabase();
-	const rows = await sql`SELECT * FROM portfolio_certificate WHERE status = 'published' ORDER BY issue_date DESC`;
-	return rows.map((row) => mapCertificate(row));
+export function listCertificates(): Promise<CertificateRecord[]> {
+	return cached('certificates', async () => {
+		const sql = getDatabase();
+		const rows = await sql`SELECT * FROM portfolio_certificate WHERE status = 'published' ORDER BY issue_date DESC`;
+		return rows.map((row) => mapCertificate(row));
+	});
 }
 
-export async function getHomePage(): Promise<HomePageRecord> {
-	const sql = getDatabase();
-	const rows = await sql`SELECT data, body_markdown FROM portfolio_page WHERE key = 'home' LIMIT 1`;
-	if (!rows[0]) throw new Error('The home page is missing from the portfolio database.');
-	const data = object(rows[0].data);
-	const bodyMarkdown = String(rows[0].body_markdown ?? '');
+export function getHomePage(): Promise<HomePageRecord> {
+	return cached('page:home', async () => {
+		const sql = getDatabase();
+		const rows = await sql`SELECT data, body_markdown FROM portfolio_page WHERE key = 'home' LIMIT 1`;
+		if (!rows[0]) throw new Error('The home page is missing from the portfolio database.');
+		return mapHomePage(rows[0]);
+	});
+}
+
+export function mapHomePage(row: Record<string, unknown>): HomePageRecord {
+	const data = object(row.data);
+	const bodyMarkdown = String(row.body_markdown ?? '');
 	return {
 		heading: String(data.heading ?? ''),
 		focusAreas: stringArray(data.focusAreas),
@@ -315,12 +382,18 @@ export async function getHomePage(): Promise<HomePageRecord> {
 	};
 }
 
-export async function getAboutPage(): Promise<AboutPageRecord> {
-	const sql = getDatabase();
-	const rows = await sql`SELECT data, body_markdown FROM portfolio_page WHERE key = 'about' LIMIT 1`;
-	if (!rows[0]) throw new Error('The about page is missing from the portfolio database.');
-	const data = object(rows[0].data);
-	const bodyMarkdown = String(rows[0].body_markdown ?? '');
+export function getAboutPage(): Promise<AboutPageRecord> {
+	return cached('page:about', async () => {
+		const sql = getDatabase();
+		const rows = await sql`SELECT data, body_markdown FROM portfolio_page WHERE key = 'about' LIMIT 1`;
+		if (!rows[0]) throw new Error('The about page is missing from the portfolio database.');
+		return mapAboutPage(rows[0]);
+	});
+}
+
+export function mapAboutPage(row: Record<string, unknown>): AboutPageRecord {
+	const data = object(row.data);
+	const bodyMarkdown = String(row.body_markdown ?? '');
 	return {
 		title: String(data.title ?? ''),
 		eyebrow: String(data.eyebrow ?? 'About'),
@@ -331,9 +404,16 @@ export async function getAboutPage(): Promise<AboutPageRecord> {
 	};
 }
 
-export async function getSiteSettings(): Promise<SiteSettings> {
-	const sql = getDatabase();
-	const value = object((await sql`SELECT value FROM portfolio_setting WHERE key = 'site' LIMIT 1`)[0]?.value);
+export function getSiteSettings(): Promise<SiteSettings> {
+	return cached('settings', async () => {
+		const sql = getDatabase();
+		const rows = await sql`SELECT value FROM portfolio_setting WHERE key = 'site' LIMIT 1`;
+		return mapSiteSettings(rows[0]?.value);
+	});
+}
+
+export function mapSiteSettings(raw: unknown): SiteSettings {
+	const value = object(raw);
 	const social = object(value.social);
 	const footerBadges = object(value.footerBadges);
 	return {
@@ -352,21 +432,22 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 	};
 }
 
-export async function getUploadedMedia(mediaPath: string): Promise<UploadedMediaRecord | undefined> {
-	const sql = getDatabase();
-	if (!sql) return undefined;
-	const rows = await sql`
-		SELECT path, mime_type, byte_size
-		FROM portfolio_media
-		WHERE path = ${mediaPath}
-		LIMIT 1
-	`;
-	if (!rows[0]) return undefined;
-	return {
-		path: String(rows[0].path),
-		mimeType: String(rows[0].mime_type),
-		byteSize: Number(rows[0].byte_size),
-	};
+export function getUploadedMedia(mediaPath: string): Promise<UploadedMediaRecord | undefined> {
+	return cached(`media:${mediaPath}`, async () => {
+		const sql = getDatabase();
+		const rows = await sql`
+			SELECT path, mime_type, byte_size
+			FROM portfolio_media
+			WHERE path = ${mediaPath}
+			LIMIT 1
+		`;
+		if (!rows[0]) return undefined;
+		return {
+			path: String(rows[0].path),
+			mimeType: String(rows[0].mime_type),
+			byteSize: Number(rows[0].byte_size),
+		};
+	});
 }
 
 /**

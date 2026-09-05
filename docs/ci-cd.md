@@ -18,8 +18,15 @@ an Astro artifact to GitHub Pages.
 
 [`pr-checks.yml`](../.github/workflows/pr-checks.yml) installs the locked Node
 22 dependency tree, runs `astro check`, executes the Vitest suite and builds the
-standalone server. No production database credential is supplied: the build
-uses the repository content fallback, while production connects at runtime.
+standalone server. No production database credential is supplied; production
+connects at runtime.
+
+The job does start a throwaway PostgreSQL service, creates the seven content
+tables from [`scripts/test-database.sql`](../scripts/test-database.sql) — a
+copy of the CMS migration for the tables the reader role can see — and points
+`PORTFOLIO_TEST_DATABASE_URL` at it. `src/lib/portfolio-data.integration.test.ts`
+runs the real queries against it and is skipped wherever that variable is
+unset, so the suite still passes on a workstation without a database.
 
 ## Security workflows
 

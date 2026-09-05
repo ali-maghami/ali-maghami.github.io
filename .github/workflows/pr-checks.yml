@@ -19,6 +19,29 @@ jobs:
     name: Build and verify
     runs-on: ubuntu-latest
 
+    # The data layer is tested against a real PostgreSQL rather than a mock:
+    # the queries, the enum and array columns and the row-to-record mapping
+    # are exactly what a mock would have to fake. The tables come from
+    # scripts/test-database.sql, which mirrors the CMS migration.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: portfolio
+          POSTGRES_DB: portfolio
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Only the tests read this. The build below still runs without a
+      # database credential, as production builds do.
+      PORTFOLIO_TEST_DATABASE_URL: postgres://postgres:portfolio@localhost:5432/portfolio
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -55,6 +78,9 @@ jobs:
           else
             echo "No lint script found, skipping."
           fi
+
+      - name: Create the portfolio tables
+        run: psql "$PORTFOLIO_TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f scripts/test-database.sql
 
       - name: Run tests if available
         run: |
