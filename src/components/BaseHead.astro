@@ -24,6 +24,8 @@ const { title, description, image } = Astro.props;
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
 <link rel="sitemap" href="/sitemap.xml" />
+<!-- Feed readers look for this on any page, not just /blog/. -->
+<link rel="alternate" type="application/rss+xml" title="Ali Maghami" href="/rss.xml" />
 <meta name="generator" content={Astro.generator} />
 
 <BackgroundPalette />
