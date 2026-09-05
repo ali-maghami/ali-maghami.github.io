@@ -112,11 +112,11 @@ const { siteTitle: SITE_TITLE, social: SOCIAL } = settings;
 		gap: 0.125rem;
 		padding: 0.25rem;
 		border-radius: 999px;
-		background: rgb(255 255 255 / 55%);
-		border: 1px solid rgb(255 255 255 / 45%);
+		background: var(--color-glass);
+		border: 1px solid var(--color-glass-border);
 		box-shadow:
-			0 1px 2px rgb(48 48 38 / 4%),
-			0 4px 14px rgb(48 48 38 / 6%);
+			0 1px 2px rgb(var(--shadow-rgb) / 4%),
+			0 4px 14px rgb(var(--shadow-rgb) / 6%);
 		backdrop-filter: blur(20px);
 		-webkit-backdrop-filter: blur(20px);
 		max-width: 100%;
@@ -137,7 +137,7 @@ const { siteTitle: SITE_TITLE, social: SOCIAL } = settings;
 		width: 0;
 		border-radius: 999px;
 		background: var(--color-paper);
-		box-shadow: 0 1px 2px rgb(48 48 38 / 8%);
+		box-shadow: 0 1px 2px rgb(var(--shadow-rgb) / 8%);
 		opacity: 0;
 		pointer-events: none;
 		transform: translateX(0);

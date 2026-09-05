@@ -1,4 +1,5 @@
 ---
+import { paletteForPath } from '../../lib/palettes';
 import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
@@ -31,10 +32,13 @@ const entries = papers.map((paper) => ({
 	paper,
 	authors: formatAuthors(paper.authors, settings.siteTitle),
 }));
+
+// The section's colour, set on <html> so the stylesheet can key on it.
+const paletteName = paletteForPath(Astro.url.pathname).name;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-palette={paletteName}>
 	<head>
 		<BaseHead
 			title={`Papers | ${settings.siteTitle}`}

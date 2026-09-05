@@ -104,11 +104,11 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 		margin-top: auto;
 	}
 
-	/* Translucent white rather than a fixed sand tone: the page surface changes
-	   colour on every load, and a warm panel clashed with the cooler palettes. */
+	/* Frosted rather than a fixed sand tone: the strip sits on whichever
+	   surface the section owns, and a warm panel clashed with the cooler ones. */
 	.cert-strip {
 		border-bottom: 1px solid var(--color-sand-200);
-		background: rgb(255 255 255 / 45%);
+		background: var(--color-glass);
 		padding: 1.5rem 1.25rem 1.25rem;
 	}
 

@@ -8,9 +8,9 @@
  * gets to its body text. Layout sits above it via the z-index rules in
  * global.css, so it never intercepts a click or covers a heading.
  *
- * The four blob colours come from --accent-1..4, which BackgroundPalette sets
- * per page load. The theme tokens remain as fallbacks so this still renders
- * correctly with JavaScript disabled.
+ * The four blob colours come from --accent-1..4, set by the section palette on
+ * <html> (see lib/palettes.ts). The theme tokens remain as fallbacks for a
+ * page without one.
  */
 ---
 
@@ -44,7 +44,7 @@
 		border-radius: 50%;
 		filter: blur(90px);
 		/* Saturated rather than washed out — the colours are the point. */
-		opacity: 0.85;
+		opacity: calc(0.85 * var(--aurora-strength, 1));
 		will-change: transform;
 	}
 
@@ -67,7 +67,7 @@
 		top: -10%;
 		right: -4%;
 		background: var(--accent-2, var(--color-banana));
-		opacity: 0.75;
+		opacity: calc(0.75 * var(--aurora-strength, 1));
 		animation: drift-2 32s ease-in-out infinite alternate;
 	}
 
@@ -79,7 +79,7 @@
 		bottom: -26%;
 		left: 24%;
 		background: var(--accent-3, var(--color-mint));
-		opacity: 0.8;
+		opacity: calc(0.8 * var(--aurora-strength, 1));
 		animation: drift-3 24s ease-in-out infinite alternate;
 	}
 
@@ -94,7 +94,7 @@
 		top: -8%;
 		left: 38%;
 		background: var(--accent-4, var(--color-copper-warm));
-		opacity: 0.6;
+		opacity: calc(0.6 * var(--aurora-strength, 1));
 		animation: drift-2 29s ease-in-out infinite alternate-reverse;
 	}
 
@@ -104,7 +104,7 @@
 		inset: 0;
 		background-image: radial-gradient(
 			circle at 1px 1px,
-			rgb(48 48 38 / 10%) 1px,
+			rgb(var(--shadow-rgb) / 10%) 1px,
 			transparent 0
 		);
 		background-size: 4px 4px;
