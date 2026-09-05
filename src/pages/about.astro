@@ -3,22 +3,35 @@ import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import StructuredData from '../components/StructuredData.astro';
+import { portraitImage } from '../lib/badges';
+import { publicFile } from '../lib/images';
 import { renderPortfolioMarkdown } from '../lib/markdown';
-import { getAboutPage } from '../lib/portfolio-data';
+import { getAboutPage, getHomePage, getSiteSettings } from '../lib/portfolio-data';
+import { personSchema } from '../lib/structured-data';
 
-// A single-entry collection: the About page is content, edited at /admin/,
+// A single-entry collection: the About page is content, edited in the CMS,
 // rather than markup. The prose is the markdown body; the two definition
-// lists below come from structured frontmatter so they stay consistently
+// lists below come from structured fields so they stay consistently
 // formatted no matter who edits them.
-const about = await getAboutPage();
+const [about, settings, home] = await Promise.all([getAboutPage(), getSiteSettings(), getHomePage()]);
 const { title, eyebrow, standfirst, skills, education } = about;
 const bodyHtml = await renderPortfolioMarkdown(about.bodyMarkdown);
+const SOCIAL = settings.social;
+
+// A CV is offered when one is committed at public/pdf/cv.pdf. A file rather
+// than a CMS field for now: the CMS has nowhere to record it yet, and the
+// document changes far less often than the content does.
+const CV_PATH = '/pdf/cv.pdf';
+const cv = publicFile(CV_PATH) ? CV_PATH : undefined;
+const hasContact = Boolean(SOCIAL.email || SOCIAL.linkedin || SOCIAL.github || SOCIAL.scholar || cv);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={`About | ${title}`} description={standfirst.slice(0, 160)} />
+		<StructuredData data={personSchema(settings, Astro.site!, portraitImage(home.portrait))} />
 	</head>
 
 	<body>
@@ -63,6 +76,45 @@ const bodyHtml = await renderPortfolioMarkdown(about.bodyMarkdown);
 								))}
 							</dl>
 						</>
+					)
+				}
+
+				{
+					hasContact && (
+						<section class="contact" aria-labelledby="contact-heading">
+							<h2 id="contact-heading">Get in touch</h2>
+							<p>
+								Email is the quickest way to reach me, for collaboration, speaking, or a question
+								about any of the work here.
+							</p>
+							<div class="contact-links">
+								{SOCIAL.email && (
+									<a class="btn btn-primary" href={`mailto:${SOCIAL.email}`}>
+										Email me
+									</a>
+								)}
+								{cv && (
+									<a class="btn" href={cv} download>
+										Download CV
+									</a>
+								)}
+								{SOCIAL.linkedin && (
+									<a class="btn" href={SOCIAL.linkedin} target="_blank" rel="noopener noreferrer">
+										LinkedIn
+									</a>
+								)}
+								{SOCIAL.github && (
+									<a class="btn" href={SOCIAL.github} target="_blank" rel="noopener noreferrer">
+										GitHub
+									</a>
+								)}
+								{SOCIAL.scholar && (
+									<a class="btn" href={SOCIAL.scholar} target="_blank" rel="noopener noreferrer">
+										Google Scholar
+									</a>
+								)}
+							</div>
+						</section>
 					)
 				}
 			</div>
@@ -126,6 +178,35 @@ const bodyHtml = await renderPortfolioMarkdown(about.bodyMarkdown);
 				margin: 0;
 				font-size: 0.9375rem;
 				color: var(--color-ink-muted);
+			}
+
+			/* The one call to action on the page, after everything else has
+			   been said. A panel rather than more prose, so it is found by a
+			   reader skimming for how to get in touch. */
+			.contact {
+				margin: 2.5rem 0 1rem;
+				padding: 1.5rem 1.6rem;
+				background: var(--color-paper);
+				border: 1px solid var(--color-sand-200);
+				border-radius: 14px;
+				box-shadow: var(--shadow-card);
+			}
+
+			.contact h2 {
+				margin: 0 0 0.5rem;
+				font-size: 1.25rem;
+			}
+
+			.contact p {
+				margin: 0 0 1.1rem;
+				font-size: 0.9375rem;
+				color: var(--color-ink-soft);
+			}
+
+			.contact-links {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.6rem;
 			}
 
 			@media (max-width: 720px) {
