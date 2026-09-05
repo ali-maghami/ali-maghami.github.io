@@ -25,6 +25,11 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=8080
 
+# The commit this image was built from, reported by /healthz. The deploy script
+# supplies it; a build without it says so rather than guessing.
+ARG GIT_REVISION=unknown
+ENV GIT_REVISION=${GIT_REVISION}
+
 COPY --from=build /app/dist/ ./dist/
 COPY --from=build /app/node_modules/ ./node_modules/
 COPY --from=build /app/package.json ./package.json

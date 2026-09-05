@@ -9,6 +9,8 @@ const { siteTitle: SITE_TITLE, social: SOCIAL } = settings;
 ---
 
 <header class="site-header">
+	{/* Invisible until focused: lets a keyboard reader jump past the nav. */}
+	<a class="skip-link" href="#main">Skip to content</a>
 	<nav class="nav-inner" aria-label="Main">
 		<a class="brand" href={getNavHref('/')}>{SITE_TITLE}</a>
 

@@ -1,11 +1,5 @@
 import { buildNavItems, type NavItem } from './nav';
-import {
-	type CertificateRecord,
-	listCertificates,
-	listPapers,
-	listPosts,
-	listProjects,
-} from './portfolio-data';
+import { type CertificateRecord, countPublished, listCertificates } from './portfolio-data';
 
 export interface SiteSections {
 	counts: Record<string, number>;
@@ -13,32 +7,26 @@ export interface SiteSections {
 }
 
 /**
- * Header and Footer both render on every page and both need this, so without a
- * cache the content layer is queried twice per page. Astro shares this module
- * across the whole static build, so one promise serves every page — which also
- * keeps the "collection is empty" notice for a not-yet-populated section down to
- * one line per build instead of one per page.
+ * What the Header and Footer need on every page: which sections have anything
+ * in them, and the certificates the footer strip may show.
+ *
+ * This used to load every published project, post, paper and certificate in
+ * full — four SELECT * queries — to read their lengths, and did so once for
+ * the Header and again for the Footer. The counts now come from one query
+ * that returns three integers, and the request cache means both components
+ * share a single execution of it and of the certificate list.
  */
-async function loadSections(): Promise<SiteSections> {
-	const [projects, blog, papers, certificates] = await Promise.all([
-		listProjects(),
-		listPosts(),
-		listPapers(),
-		listCertificates(),
-	]);
+export async function getSiteSections(): Promise<SiteSections> {
+	const [counts, certificates] = await Promise.all([countPublished(), listCertificates()]);
 
 	return {
 		counts: {
-			projects: projects.length,
-			blog: blog.length,
-			papers: papers.length,
+			projects: counts.projects,
+			blog: counts.posts,
+			papers: counts.papers,
 		},
 		certificates,
 	};
-}
-
-export function getSiteSections(): Promise<SiteSections> {
-	return loadSections();
 }
 
 export async function getNavItems(): Promise<NavItem[]> {

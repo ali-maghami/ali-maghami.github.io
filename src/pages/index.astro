@@ -6,10 +6,12 @@ import ProjectCard from '../components/ProjectCard.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { heroMedia, portraitImage } from '../lib/badges';
+import { resizedImage } from '../lib/images';
 import { renderPortfolioMarkdown } from '../lib/markdown';
 import { getNavHref } from '../lib/nav';
 import { getHomePage, getSiteSettings, listPosts, listProjects } from '../lib/portfolio-data';
 import { portraitStyle } from '../lib/portrait';
+import { metaDescription, plainText } from '../lib/summary';
 
 const [home, settings, allProjects, allPosts] = await Promise.all([
 	getHomePage(),
@@ -51,12 +53,18 @@ const portraitVars = portraitStyle({
 // The lede carries a link and emphasis, so it is markdown rather than a plain
 // string and Astro renders it here.
 const heroLede = await renderPortfolioMarkdown(home.bodyMarkdown);
+
+// The description a search result or share shows is the page's own opening —
+// the heading and the first sentence of the lede — rather than the terse site
+// tagline, which stays as the fallback for a home page with no copy yet.
+const description =
+	metaDescription([heading, plainText(home.bodyMarkdown)]) || SITE_DESCRIPTION;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={heading ? `${SITE_TITLE} · ${heading}` : SITE_TITLE} description={description} />
 	</head>
 	<body>
 		<Aurora />
@@ -68,7 +76,13 @@ const heroLede = await renderPortfolioMarkdown(home.bodyMarkdown);
 						{
 							portrait && (
 								<div class="portrait" style={portraitVars}>
-									<img src={portrait} alt={`Portrait of ${SITE_TITLE}`} width="320" height="320" />
+									<img
+										src={resizedImage(portrait, 640)}
+										alt={`Portrait of ${SITE_TITLE}`}
+										width="320"
+										height="320"
+										fetchpriority="high"
+									/>
 								</div>
 							)
 						}
@@ -86,7 +100,7 @@ const heroLede = await renderPortfolioMarkdown(home.bodyMarkdown);
 			</div>
 		</div>
 
-		<main class="wrap">
+		<main id="main" class="wrap">
 			<div class="rule" aria-hidden="true"></div>
 
 			{/* One column until there is something to put in the other. */}

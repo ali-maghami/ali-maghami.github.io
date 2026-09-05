@@ -60,7 +60,8 @@ cp -a "\$release_dir/." "${APP_DIR}/"
 cd "${APP_DIR}"
 
 echo "==> building ${REV}"
-docker compose -f compose.prod.yml build
+# Baked into the image so /healthz can say which commit is running.
+GIT_REVISION="${REV}" docker compose -f compose.prod.yml build
 
 echo "==> starting ${REV}"
 docker compose -f compose.prod.yml up -d

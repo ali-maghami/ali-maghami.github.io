@@ -2,6 +2,7 @@
 import FormattedDate from './FormattedDate.astro';
 import GenericAvatar from './GenericAvatar.astro';
 import { cardGradient } from '../lib/cards';
+import { resizedImage } from '../lib/images';
 import { stageLabel } from '../lib/projects';
 
 interface Props {
@@ -47,7 +48,7 @@ const wash = cardGradient(cardColor, cardColorAlt);
 			{
 				avatar && (
 					<div class="project-people">
-						<img src={avatar} alt="" width="52" height="52" loading="lazy" />
+						<img src={resizedImage(avatar, 104)} alt="" width="52" height="52" loading="lazy" />
 						{/*
 						 * One stand-in per additional contributor, so the card
 						 * shows at a glance how many people worked on it. Names

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { uploadPathsIn } from './media-dimensions';
+import { publicImagePathsIn, uploadPathsIn } from './media-dimensions';
 
 const A = '/uploads/123e4567-e89b-12d3-a456-426614174000.webp';
 const B = '/uploads/00000000-1111-2222-3333-444444444444.mp4';
@@ -27,5 +27,25 @@ describe('uploadPathsIn', () => {
 
 	it('returns nothing for an empty body', () => {
 		expect(uploadPathsIn('')).toEqual([]);
+	});
+});
+
+describe('publicImagePathsIn', () => {
+	it('finds committed images in the folders the CMS may name', () => {
+		expect(
+			publicImagePathsIn('![A rig](/media/rig.webp) then ![](/hero/still.jpg) and ![](/badges/aws.png)'),
+		).toEqual(['/media/rig.webp', '/hero/still.jpg', '/badges/aws.png']);
+	});
+
+	it('returns each once and leaves uploads to the other matcher', () => {
+		expect(publicImagePathsIn(`![](/media/a.png) ![](/media/a.png) ![](${A})`)).toEqual(['/media/a.png']);
+	});
+
+	it('ignores video and PDF, which have no image size to reserve', () => {
+		expect(publicImagePathsIn('![loop](/media/clip.mp4) [paper](/pdf/thesis.pdf)')).toEqual([]);
+	});
+
+	it('returns nothing for an empty body', () => {
+		expect(publicImagePathsIn('')).toEqual([]);
 	});
 });

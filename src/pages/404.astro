@@ -1,0 +1,94 @@
+---
+import Aurora from '../components/Aurora.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { getNavHref } from '../lib/nav';
+import { getSiteSettings } from '../lib/portfolio-data';
+import { getNavItems } from '../lib/sections';
+
+/*
+ * Rendered for any address that names nothing: a route with no match, and a
+ * post or project slug that is not published. Both arrive here with a 404
+ * already set by Astro; setting it again costs nothing and keeps this page
+ * correct if it is ever reached some other way.
+ */
+Astro.response.status = 404;
+
+const [settings, navItems] = await Promise.all([getSiteSettings(), getNavItems()]);
+const places = navItems.filter((item) => item.href !== '/');
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={`Page not found | ${settings.siteTitle}`}
+			description="That address does not lead anywhere on this site."
+		/>
+	</head>
+	<body>
+		<Aurora />
+		<Header />
+		<main id="main" class="wrap-narrow not-found">
+			<p class="eyebrow">404</p>
+			<h1>There is nothing at this address.</h1>
+			<p class="lede">
+				It may have moved when the site changed, or the link may have lost a character on its way
+				here. The work itself is a click away.
+			</p>
+			<nav class="places" aria-label="Where to go instead">
+				<a class="btn btn-primary" href={getNavHref('/')}>Home</a>
+				{places.map((item) => <a class="btn" href={getNavHref(item.href)}>{item.label}</a>)}
+			</nav>
+		</main>
+		<Footer />
+
+		<style>
+			.not-found {
+				padding-top: 4rem;
+				padding-bottom: 4rem;
+			}
+
+			.eyebrow {
+				margin: 0 0 0.75rem;
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			h1 {
+				margin: 0;
+				font-size: 2.5rem;
+				line-height: 1.15;
+				letter-spacing: -0.025em;
+			}
+
+			.lede {
+				max-width: 34em;
+				margin: 1rem 0 2rem;
+				font-size: 1.125rem;
+				font-weight: 300;
+				line-height: 1.55;
+				color: var(--color-ink-soft);
+			}
+
+			.places {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.6rem;
+			}
+
+			@media (max-width: 720px) {
+				.not-found {
+					padding-top: 2.5rem;
+				}
+				h1 {
+					font-size: 1.875rem;
+				}
+			}
+		</style>
+	</body>
+</html>

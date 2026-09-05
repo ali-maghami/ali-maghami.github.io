@@ -73,11 +73,20 @@ npm test         # vitest
 ## Tests
 
 The logic that would be awkward to verify by eye lives in [`src/lib/`](./src/lib/) as pure modules,
-each with a test beside it: link handling, media options, card gradients, navigation state, schema
-coercion, and the CMS video block's round trip between editor fields and markup.
+each with a test beside it: link handling, media options, card gradients, navigation state, the
+row-to-record mapping, byte ranges, image URLs and the request cache.
 
-Production database and upload access are integration concerns; the application
-logic continues to use focused unit tests.
+The queries themselves run against a real PostgreSQL in
+`portfolio-data.integration.test.ts`. CI provides one; locally, start one and
+apply the schema, then point the tests at it:
+
+```sh
+docker run -d --name portfolio-test -e POSTGRES_PASSWORD=portfolio -e POSTGRES_DB=portfolio -p 5432:5432 postgres:17-alpine
+psql postgres://postgres:portfolio@localhost:5432/portfolio -v ON_ERROR_STOP=1 -f scripts/test-database.sql
+PORTFOLIO_TEST_DATABASE_URL=postgres://postgres:portfolio@localhost:5432/portfolio npm test
+```
+
+Without that variable the integration file is skipped and everything else runs.
 
 ## Styling
 

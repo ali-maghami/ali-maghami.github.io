@@ -6,6 +6,7 @@ import GenericAvatar from '../components/GenericAvatar.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { portraitImage, projectHero } from '../lib/badges';
+import { resizedImage } from '../lib/images';
 import { type ProjectRecord, getHomePage, getSiteSettings } from '../lib/portfolio-data';
 import { stageLabel } from '../lib/projects';
 
@@ -55,20 +56,27 @@ const portrait = portraitImage(home.portrait);
 // rest get a placeholder, which keeps the rows aligned without inventing a
 // likeness for someone who has not supplied one.
 const makers = [
-	{ name: SITE_TITLE, photo: portrait },
+	{ name: SITE_TITLE, photo: resizedImage(portrait, 104) },
 	...contributors.map((name) => ({ name, photo: undefined })),
 ];
 ---
 
 <html lang="en">
 	<head>
-		<BaseHead title={`${title} | Projects`} description={description} />
+		<BaseHead
+			title={`${title} | ${SITE_TITLE}`}
+			description={description}
+			image={heroImage}
+			imageAlt={title}
+			type="article"
+			publishedTime={pubDate}
+		/>
 	</head>
 
 	<body>
 		<Aurora />
 		<Header />
-		<main>
+		<main id="main">
 			<article>
 				<div class="wrap-narrow article-head">
 					<h1>{title}</h1>
@@ -184,7 +192,14 @@ const makers = [
 				{
 					heroImage && (
 						<div class="hero-image">
-							<img src={heroImage} alt="" width="1020" height="510" loading="eager" />
+							<img
+								src={resizedImage(heroImage, 1280)}
+								alt=""
+								width="1020"
+								height="510"
+								loading="eager"
+								fetchpriority="high"
+							/>
 						</div>
 					)
 				}

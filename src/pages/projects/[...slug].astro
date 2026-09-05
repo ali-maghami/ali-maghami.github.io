@@ -24,7 +24,9 @@ const project = slug
 		: await getProjectBySlug(slug)
 	: undefined;
 
-if (!project) return Astro.redirect('/404');
+// A 404 response, not a redirect to /404: the address stays in the bar, the
+// status tells crawlers to drop it, and Astro renders src/pages/404.astro.
+if (!project) return new Response(null, { status: 404 });
 
 // A preview is for one person for a few minutes: it must not be indexed, and
 // it must not be cached anywhere a later visitor could pick it up.

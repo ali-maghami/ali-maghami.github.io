@@ -85,6 +85,7 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 					.map((item) => <a href={getNavHref(item.href)}>{item.label}</a>)
 			}
 			{allCertificates.length > 0 && <a href={getNavHref('/certificates/')}>Certificates</a>}
+			<a href="/rss.xml">RSS</a>
 			{SOCIAL.github && <ExternalLink href={SOCIAL.github}>GitHub</ExternalLink>}
 			{SOCIAL.linkedin && <ExternalLink href={SOCIAL.linkedin}>LinkedIn</ExternalLink>}
 			{SOCIAL.scholar && <ExternalLink href={SOCIAL.scholar}>Scholar</ExternalLink>}

@@ -446,6 +446,29 @@ a:hover .ext {
 	border-radius: 4px;
 }
 
+/* The first thing the Tab key reaches. Parked above the viewport until then,
+   so it costs sighted readers nothing and keyboard readers a single press. */
+.skip-link {
+	position: absolute;
+	top: 0.75rem;
+	left: 1.25rem;
+	z-index: 100;
+	padding: 0.5rem 0.95rem;
+	border-radius: 999px;
+	background: var(--color-ink);
+	color: var(--color-paper);
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-decoration: none;
+	transform: translateY(-300%);
+	transition: transform 0.15s ease;
+}
+
+.skip-link:focus-visible {
+	transform: none;
+	outline-color: var(--color-paper);
+}
+
 @media (max-width: 720px) {
 	h1 {
 		font-size: 1.875rem;
