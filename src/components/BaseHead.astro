@@ -40,10 +40,10 @@ const { title, description, image } = Astro.props;
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
-<meta property="og:url" content={Astro.url} />
+<meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-{image && <meta property="og:image" content={new URL(image.src, Astro.url)} />}
+{image && <meta property="og:image" content={new URL(image.src, canonicalURL)} />}
 
 <!-- Twitter -->
 <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
