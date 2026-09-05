@@ -11,6 +11,7 @@
  * loops, spans the full width, and is still described to a screen reader.
  */
 import type { HastNode } from './external-links';
+import { dimensionsFor } from './media-dimensions';
 
 /** Extensions a browser can play in a <video> element. */
 const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogv', '.mov'];
@@ -121,8 +122,21 @@ export function rehypeBodyMedia() {
 			// Omitted rather than empty, so text-width media carries no class="".
 			const widthClass = width === 'hero' ? { className: ['media-hero'] } : {};
 
+			// Intrinsic size lets the browser reserve the space, so a body image
+			// no longer shoves the text down as it arrives. Lazily loaded because
+			// body media is below the fold by definition.
+			const size = dimensionsFor(src);
+			const measured = size ? { width: size.width, height: size.height } : {};
+
 			if (!isVideoSrc(src)) {
-				node.properties = { ...node.properties, alt: label, ...widthClass };
+				node.properties = {
+					...node.properties,
+					alt: label,
+					...measured,
+					loading: 'lazy',
+					decoding: 'async',
+					...widthClass,
+				};
 				return;
 			}
 
@@ -132,6 +146,7 @@ export function rehypeBodyMedia() {
 				controls: true,
 				playsInline: true,
 				preload: 'metadata',
+				...measured,
 				...widthClass,
 				...playbackAttributes(playback),
 				...(label ? { 'aria-label': label } : {}),

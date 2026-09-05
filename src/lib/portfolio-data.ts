@@ -368,3 +368,30 @@ export async function getUploadedMedia(mediaPath: string): Promise<UploadedMedia
 		byteSize: Number(rows[0].byte_size),
 	};
 }
+
+/**
+ * Intrinsic sizes for a set of uploads, in one query.
+ *
+ * Only rows that actually carry dimensions come back: uploads predating the
+ * CMS recording them have nulls, and a caller cannot reserve space it does not
+ * know.
+ */
+export async function getUploadedDimensions(
+	paths: string[],
+): Promise<Map<string, { width: number; height: number }>> {
+	const sizes = new Map<string, { width: number; height: number }>();
+	if (!paths.length) return sizes;
+
+	const sql = getDatabase();
+	const rows = await sql`
+		SELECT path, width, height
+		FROM portfolio_media
+		WHERE path = ANY(${paths}) AND width IS NOT NULL AND height IS NOT NULL
+	`;
+
+	for (const row of rows) {
+		sizes.set(String(row.path), { width: Number(row.width), height: Number(row.height) });
+	}
+
+	return sizes;
+}
