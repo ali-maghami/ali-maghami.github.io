@@ -180,8 +180,21 @@ describe('mapHomePage', () => {
 			postCount: 5,
 			now: undefined,
 			since: undefined,
+			highlights: [],
 			bodyMarkdown: '',
 		});
+	});
+
+	it('keeps only highlight rows with both a value and a label', () => {
+		expect(
+			mapHomePage({
+				data: {
+					highlights: [{ value: ' 5 ', label: 'publications' }, { value: '', label: 'x' }, { value: '2' }, 'junk', null],
+				},
+				body_markdown: '',
+			}).highlights,
+		).toEqual([{ value: '5', label: 'publications' }]);
+		expect(mapHomePage({ data: { highlights: 'nope' }, body_markdown: '' }).highlights).toEqual([]);
 	});
 
 	it('reads the current-role line and the start year only when they are well formed', () => {

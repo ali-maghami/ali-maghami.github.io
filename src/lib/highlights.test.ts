@@ -59,3 +59,19 @@ describe('highlights', () => {
 		]);
 	});
 });
+
+describe('highlights typed in the CMS', () => {
+	it('win outright over anything counted', () => {
+		const custom = [
+			{ value: '11+', label: 'years in the field' },
+			{ value: '40+', label: 'cameras deployed' },
+		];
+		expect(highlights({ papers: [paper('journal')], projects: [project], certificates: [], custom })).toEqual(custom);
+	});
+
+	it('fall back to the counts when the list is empty', () => {
+		expect(highlights({ papers: [paper('journal')], projects: [], certificates: [], custom: [] })).toEqual([
+			{ value: '1', label: 'publication' },
+		]);
+	});
+});

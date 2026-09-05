@@ -87,6 +87,11 @@ export interface HomePageRecord {
 	now?: string;
 	/** The year the career started, for "N+ years"; unset until the CMS has it. */
 	since?: number;
+	/**
+	 * The figures under the lede as typed in the CMS. Empty means the site
+	 * counts them from the published content instead.
+	 */
+	highlights: Array<{ value: string; label: string }>;
 	bodyMarkdown: string;
 }
 
@@ -406,8 +411,22 @@ export function mapHomePage(row: Record<string, unknown>): HomePageRecord {
 		postCount: number(data.postCount, 5),
 		now: optional(data.now as OptionalString),
 		since: typeof data.since === 'number' && Number.isInteger(data.since) ? data.since : undefined,
+		highlights: highlightList(data.highlights),
 		bodyMarkdown,
 	};
+}
+
+/** Rows with both a value and a label; anything else in the list is skipped. */
+function highlightList(value: unknown): Array<{ value: string; label: string }> {
+	if (!Array.isArray(value)) return [];
+	return value.flatMap((item) => {
+		// JSON keys, not columns: named so the schema-contract test does not
+		// mistake them for a row being read.
+		const entry = object(item);
+		const figure = optional(entry.value as OptionalString);
+		const label = optional(entry.label as OptionalString);
+		return figure && label ? [{ value: figure, label }] : [];
+	});
 }
 
 export function getAboutPage(): Promise<AboutPageRecord> {
