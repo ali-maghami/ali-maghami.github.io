@@ -84,6 +84,40 @@ The script refuses to deploy a dirty working tree. Override `DEPLOY_TARGET`,
 `APP_DIR` or `VERIFY_URL` only when intentionally targeting a different host or
 staging domain.
 
+## Which commit is running
+
+`https://maghami.dev/healthz` prints the revision the image was built from:
+
+```text
+ok
+content: database
+revision: 2001c9d
+```
+
+The deploy script passes `GIT_REVISION` to the Compose build and the Dockerfile
+bakes it into the runtime environment. An image built any other way reports
+`unknown`.
+
+## Cache headers for committed media
+
+The application serves everything under `public/` with `max-age=0`, so badges,
+the portrait and hero images were re-validated on every page view.
+[`deploy/Caddyfile.portfolio`](../deploy/Caddyfile.portfolio) now sets a
+day-long `Cache-Control` on those paths at the edge. That file is a template
+for `/home/ali/infra/Caddyfile`, so the change reaches production only when the
+site block there is updated to match and Caddy is reloaded:
+
+```sh
+cd /home/ali/infra
+docker compose exec caddy caddy validate --config /etc/caddy/Caddyfile
+docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
+curl -sI https://maghami.dev/badges/project-management-professional-pmp.png | grep -i cache-control
+```
+
+Hashed build assets under `/_astro/`, resized images under `/img/` and uploads
+under `/uploads/` are marked immutable by the application itself and need no
+help from Caddy.
+
 ## Cutover checklist
 
 - Build and start the portfolio container.

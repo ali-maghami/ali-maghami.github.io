@@ -10,6 +10,18 @@ maghami.dev {
 		X-Content-Type-Options "nosniff"
 		Referrer-Policy "strict-origin-when-cross-origin"
 	}
+
+	# Files committed under public/ are served by the application with
+	# max-age=0, so every page view re-validated every badge, portrait and hero
+	# image. They change only with a deploy, so a day in the browser cache and
+	# a week of stale-while-revalidate is safe. Hashed build assets under
+	# /_astro/, resized images under /img/ and uploads under /uploads/ already
+	# arrive from the application marked immutable and are left alone.
+	#
+	# `>` defers the write until the upstream response has arrived, so this
+	# replaces the application's header rather than being overwritten by it.
+	@public path /badges/* /hero/* /media/* /portrait/* /pdf/* /og/* /favicon.ico /favicon.svg
+	header @public >Cache-Control "public, max-age=86400, stale-while-revalidate=604800"
 }
 
 www.maghami.dev {
