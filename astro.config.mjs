@@ -21,6 +21,33 @@ export default defineConfig({
   // renders the real one.
   integrations: [mdx()],
 
+  // A content security policy with a hash for each script and stylesheet the
+  // build emits, sent as a response header by the node adapter. Everything the
+  // site loads is its own — fonts, images, video, the resize endpoint — so
+  // nothing else is allowed. Style attributes stay allowed: the card wash and
+  // the portrait options arrive as inline custom properties from the CMS, and
+  // hashing them would mean hashing content. Shiki's highlighted code uses
+  // style attributes too, which is what the build warning is about.
+  security: {
+    csp: {
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data:",
+        "font-src 'self'",
+        "media-src 'self'",
+        "connect-src 'self'",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "frame-ancestors 'none'",
+        'upgrade-insecure-requests',
+      ],
+      styleDirective: {
+        resources: [{ resource: "'unsafe-inline'", kind: 'attribute' }],
+      },
+    },
+  },
+
   // Links written in a body are plain markdown, with no way to say whether they
   // leave the site. This decides from the address instead.
   markdown: {

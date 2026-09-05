@@ -218,15 +218,16 @@ const poster = videoPoster(heroVideo);
 	}
 </style>
 
-<script is:inline>
+<script>
 	/*
 	 * Autoplay cannot be called off in CSS, so a reduced-motion preference is
 	 * honoured here instead: the loop is stopped and the controls are put back,
-	 * which leaves the clip watchable rather than removing it. Inline and
-	 * unconditional so it runs before the first frame is painted.
+	 * which leaves the clip watchable rather than removing it. A processed
+	 * script rather than an inline one, so the content security policy can
+	 * account for it; it runs as soon as the document has parsed.
 	 */
 	if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-		for (const video of document.querySelectorAll('video[autoplay]')) {
+		for (const video of document.querySelectorAll<HTMLVideoElement>('video[autoplay]')) {
 			video.autoplay = false;
 			video.controls = true;
 			video.pause();
