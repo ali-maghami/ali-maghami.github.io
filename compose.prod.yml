@@ -9,6 +9,7 @@ services:
       context: .
       args:
         SITE_URL: ${SITE_URL:-https://maghami.dev}
+        GIT_REVISION: ${GIT_REVISION:-unknown}
     container_name: portfolio
     restart: unless-stopped
     env_file: .env.reader

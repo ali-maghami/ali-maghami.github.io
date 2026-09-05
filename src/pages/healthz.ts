@@ -13,15 +13,21 @@ import { pingDatabase } from '../lib/portfolio-data';
  *
  * Docker does not restart a container for failing its healthcheck, so a
  * database blip marks this unhealthy and clears on the next probe.
+ *
+ * The revision is the commit the image was built from, passed in by the deploy
+ * script. Deploys are manual, so "is the site running what is on main?" used
+ * to be answered by comparing features; now it is one line here.
  */
 export const prerender = false;
+
+const revision = process.env.GIT_REVISION || 'unknown';
 
 export const GET: APIRoute = async () => {
 	try {
 		await pingDatabase();
 	} catch (error) {
 		const reason = error instanceof Error ? error.message : 'unknown error';
-		return new Response(`unhealthy\ncontent: unavailable\nreason: ${reason}\n`, {
+		return new Response(`unhealthy\ncontent: unavailable\nrevision: ${revision}\nreason: ${reason}\n`, {
 			status: 503,
 			headers: {
 				'Content-Type': 'text/plain; charset=utf-8',
@@ -30,7 +36,7 @@ export const GET: APIRoute = async () => {
 		});
 	}
 
-	return new Response('ok\ncontent: database\n', {
+	return new Response(`ok\ncontent: database\nrevision: ${revision}\n`, {
 		headers: {
 			'Content-Type': 'text/plain; charset=utf-8',
 			'Cache-Control': 'no-store',
