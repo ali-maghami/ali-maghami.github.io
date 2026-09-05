@@ -2,7 +2,6 @@
 
 import mdx from '@astrojs/mdx';
 import node from '@astrojs/node';
-import sitemap from '@astrojs/sitemap';
 import { defineConfig, fontProviders } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
@@ -17,7 +16,10 @@ export default defineConfig({
   site: process.env.SITE_URL ?? 'https://maghami.dev',
   output: 'server',
   adapter: node({ mode: 'standalone' }),
-  integrations: [mdx(), sitemap()],
+  // No sitemap integration: it resolves routes at build time, and the project
+  // and post pages come from the database per request. src/pages/sitemap.xml.ts
+  // renders the real one.
+  integrations: [mdx()],
 
   // Links written in a body are plain markdown, with no way to say whether they
   // leave the site. This decides from the address instead.

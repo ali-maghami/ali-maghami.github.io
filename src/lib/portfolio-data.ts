@@ -1,7 +1,5 @@
-import { getCollection } from 'astro:content';
 import postgres from 'postgres';
 
-import fallbackSettings from '../data/settings.json';
 
 type OptionalString = string | null | undefined;
 
@@ -21,6 +19,8 @@ export interface ProjectRecord {
 	cardColor: string;
 	cardColorAlt: string;
 	bodyMarkdown: string;
+	/** When the entry last changed in the CMS. Drives <lastmod>. */
+	updatedAt: Date;
 }
 
 export interface PostRecord {
@@ -35,6 +35,8 @@ export interface PostRecord {
 	heroVideo?: string;
 	heroVideoPlayback: 'loop' | 'once' | 'viewer';
 	bodyMarkdown: string;
+	/** When the entry last changed in the CMS. Drives <lastmod>. */
+	updatedAt: Date;
 }
 
 export interface PaperRecord {
@@ -114,11 +116,32 @@ export interface UploadedMediaRecord {
 
 let database: ReturnType<typeof postgres> | undefined;
 
+/**
+ * The database is the only source of content.
+ *
+ * This used to return undefined when the variable was missing, and every
+ * caller fell back to markdown committed before the CMS cutover — so a deploy
+ * that lost .env.reader served months-old content with a 200 and no error
+ * anywhere. Failing here instead makes that a visible outage rather than a
+ * quiet lie.
+ */
 function getDatabase() {
 	const url = process.env.PORTFOLIO_DATABASE_URL;
-	if (!url) return undefined;
+	if (!url) {
+		throw new Error(
+			'PORTFOLIO_DATABASE_URL is not set. The site reads its content from the ' +
+				'portfolio database through the read-only role; there is no local fallback. ' +
+				'In production it is in /home/ali/apps/portfolio/.env.reader.',
+		);
+	}
 	database ??= postgres(url, { max: 5, prepare: false });
 	return database;
+}
+
+/** A cheap round trip, so /healthz can tell reachable from merely configured. */
+export async function pingDatabase(): Promise<void> {
+	const sql = getDatabase();
+	await sql`SELECT 1`;
 }
 
 function optional(value: OptionalString): string | undefined {
@@ -161,6 +184,7 @@ function mapProject(row: Record<string, unknown>): ProjectRecord {
 		cardColor: String(row.card_color),
 		cardColorAlt: String(row.card_color_alt ?? ''),
 		bodyMarkdown: String(row.body_markdown ?? ''),
+		updatedAt: new Date(row.updated_at as string | Date),
 	};
 }
 
@@ -177,6 +201,7 @@ function mapPost(row: Record<string, unknown>): PostRecord {
 		heroVideo: optional(row.hero_video as OptionalString),
 		heroVideoPlayback: row.hero_video_playback as PostRecord['heroVideoPlayback'],
 		bodyMarkdown: String(row.body_markdown ?? ''),
+		updatedAt: new Date(row.updated_at as string | Date),
 	};
 }
 
@@ -216,86 +241,46 @@ function mapCertificate(row: Record<string, unknown>): CertificateRecord {
 
 export async function listProjects(): Promise<ProjectRecord[]> {
 	const sql = getDatabase();
-	if (sql) {
-		const rows = await sql`SELECT * FROM portfolio_project WHERE status = 'published' ORDER BY pub_date DESC`;
-		return rows.map((row) => mapProject(row));
-	}
-	return (await getCollection('projects')).map((entry) => ({
-		id: entry.id,
-		...entry.data,
-		bodyMarkdown: entry.body ?? '',
-	}));
+	const rows = await sql`SELECT * FROM portfolio_project WHERE status = 'published' ORDER BY pub_date DESC`;
+	return rows.map((row) => mapProject(row));
 }
 
 export async function getProjectBySlug(slug: string): Promise<ProjectRecord | undefined> {
 	const sql = getDatabase();
-	if (sql) {
-		const rows = await sql`SELECT * FROM portfolio_project WHERE slug = ${slug} AND status = 'published' LIMIT 1`;
-		return rows[0] ? mapProject(rows[0]) : undefined;
-	}
-	return (await listProjects()).find((entry) => entry.id === slug);
+	const rows = await sql`SELECT * FROM portfolio_project WHERE slug = ${slug} AND status = 'published' LIMIT 1`;
+	return rows[0] ? mapProject(rows[0]) : undefined;
 }
 
 export async function listPosts(): Promise<PostRecord[]> {
 	const sql = getDatabase();
-	if (sql) {
-		const rows = await sql`SELECT * FROM portfolio_post WHERE status = 'published' ORDER BY pub_date DESC`;
-		return rows.map((row) => mapPost(row));
-	}
-	return (await getCollection('blog'))
-		.filter((entry) => entry.data.draft !== true)
-		.map((entry) => ({ id: entry.id, ...entry.data, bodyMarkdown: entry.body ?? '' }));
+	const rows = await sql`SELECT * FROM portfolio_post WHERE status = 'published' ORDER BY pub_date DESC`;
+	return rows.map((row) => mapPost(row));
 }
 
 export async function getPostBySlug(slug: string): Promise<PostRecord | undefined> {
 	const sql = getDatabase();
-	if (sql) {
-		const rows = await sql`SELECT * FROM portfolio_post WHERE slug = ${slug} AND status = 'published' LIMIT 1`;
-		return rows[0] ? mapPost(rows[0]) : undefined;
-	}
-	return (await listPosts()).find((entry) => entry.id === slug);
+	const rows = await sql`SELECT * FROM portfolio_post WHERE slug = ${slug} AND status = 'published' LIMIT 1`;
+	return rows[0] ? mapPost(rows[0]) : undefined;
 }
 
 export async function listPapers(): Promise<PaperRecord[]> {
 	const sql = getDatabase();
-	if (sql) {
-		const rows = await sql`SELECT * FROM portfolio_paper WHERE status = 'published' ORDER BY year DESC`;
-		return rows.map((row) => mapPaper(row));
-	}
-	return (await getCollection('papers')).map((entry) => ({
-		id: entry.id,
-		...entry.data,
-		bodyMarkdown: entry.body ?? '',
-	}));
+	const rows = await sql`SELECT * FROM portfolio_paper WHERE status = 'published' ORDER BY year DESC`;
+	return rows.map((row) => mapPaper(row));
 }
 
 export async function listCertificates(): Promise<CertificateRecord[]> {
 	const sql = getDatabase();
-	if (sql) {
-		const rows = await sql`SELECT * FROM portfolio_certificate WHERE status = 'published' ORDER BY issue_date DESC`;
-		return rows.map((row) => mapCertificate(row));
-	}
-	return (await getCollection('certificates')).map((entry) => ({
-		id: entry.id,
-		...entry.data,
-		bodyMarkdown: entry.body ?? '',
-	}));
+	const rows = await sql`SELECT * FROM portfolio_certificate WHERE status = 'published' ORDER BY issue_date DESC`;
+	return rows.map((row) => mapCertificate(row));
 }
 
 export async function getHomePage(): Promise<HomePageRecord> {
 	const sql = getDatabase();
-	let data: Record<string, unknown>;
-	let bodyMarkdown: string;
-	if (sql) {
-		const rows = await sql`SELECT data, body_markdown FROM portfolio_page WHERE key = 'home' LIMIT 1`;
-		if (!rows[0]) throw new Error('The home page is missing from the portfolio database.');
-		data = object(rows[0].data);
-		bodyMarkdown = String(rows[0].body_markdown ?? '');
-	} else {
-		const [entry] = await getCollection('home');
-		if (!entry) throw new Error('The home content collection is empty.');
-		return { ...entry.data, bodyMarkdown: entry.body ?? '' };
-	}
+	const rows = await sql`SELECT data, body_markdown FROM portfolio_page WHERE key = 'home' LIMIT 1`;
+	if (!rows[0]) throw new Error('The home page is missing from the portfolio database.');
+	const data = object(rows[0].data);
+	const bodyMarkdown = String(rows[0].body_markdown ?? '');
 	return {
 		heading: String(data.heading ?? ''),
 		focusAreas: stringArray(data.focusAreas),
@@ -314,18 +299,10 @@ export async function getHomePage(): Promise<HomePageRecord> {
 
 export async function getAboutPage(): Promise<AboutPageRecord> {
 	const sql = getDatabase();
-	let data: Record<string, unknown>;
-	let bodyMarkdown: string;
-	if (sql) {
-		const rows = await sql`SELECT data, body_markdown FROM portfolio_page WHERE key = 'about' LIMIT 1`;
-		if (!rows[0]) throw new Error('The about page is missing from the portfolio database.');
-		data = object(rows[0].data);
-		bodyMarkdown = String(rows[0].body_markdown ?? '');
-	} else {
-		const [entry] = await getCollection('about');
-		if (!entry) throw new Error('The about content collection is empty.');
-		return { ...entry.data, bodyMarkdown: entry.body ?? '' };
-	}
+	const rows = await sql`SELECT data, body_markdown FROM portfolio_page WHERE key = 'about' LIMIT 1`;
+	if (!rows[0]) throw new Error('The about page is missing from the portfolio database.');
+	const data = object(rows[0].data);
+	const bodyMarkdown = String(rows[0].body_markdown ?? '');
 	return {
 		title: String(data.title ?? ''),
 		eyebrow: String(data.eyebrow ?? 'About'),
@@ -338,9 +315,7 @@ export async function getAboutPage(): Promise<AboutPageRecord> {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
 	const sql = getDatabase();
-	const value = sql
-		? object((await sql`SELECT value FROM portfolio_setting WHERE key = 'site' LIMIT 1`)[0]?.value)
-		: (fallbackSettings as unknown as Record<string, unknown>);
+	const value = object((await sql`SELECT value FROM portfolio_setting WHERE key = 'site' LIMIT 1`)[0]?.value);
 	const social = object(value.social);
 	const footerBadges = object(value.footerBadges);
 	return {

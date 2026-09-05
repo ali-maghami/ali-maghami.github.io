@@ -3,7 +3,7 @@ export function renderRobots(site: URL) {
 		'User-agent: *',
 		'Allow: /',
 		'',
-		`Sitemap: ${new URL('sitemap-index.xml', site).href}`,
+		`Sitemap: ${new URL('sitemap.xml', site).href}`,
 		'',
 	].join('\n');
 }

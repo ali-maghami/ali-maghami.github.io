@@ -19,9 +19,10 @@ rendered Markdown previews, direct media uploads, Home and About page controls,
 and site/social/footer settings. A successful save is visible on the public
 site without a Git commit or rebuild.
 
-The Markdown under [`src/content/`](./src/content/) remains a local development
-fallback when `PORTFOLIO_DATABASE_URL` is not configured; it is not the
-production source of truth.
+The database is the only source. There is no Markdown fallback: without
+`PORTFOLIO_DATABASE_URL` the site refuses to serve rather than quietly
+answering with something older. `/healthz` reports which source answered, and
+the deployment waits on it.
 
 ## Content
 
@@ -56,7 +57,9 @@ The projects page groups active work above archived; the home page shows active 
 
 ## Running it
 
-Requires Node 22.12 or newer.
+Requires Node 22.12 or newer, and a portfolio database to read from —
+`docker compose up -d postgres` in the portfolio-cms repository provides one,
+and `PORTFOLIO_DATABASE_URL` must point at it.
 
 ```sh
 npm install
