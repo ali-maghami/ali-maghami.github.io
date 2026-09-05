@@ -3,8 +3,11 @@ import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
+import StructuredData from '../../components/StructuredData.astro';
+import { formatAuthors } from '../../lib/authors';
 import { paperPdf } from '../../lib/badges';
 import { getSiteSettings, listPapers } from '../../lib/portfolio-data';
+import { publicationSchema } from '../../lib/structured-data';
 
 // Newest first. Not grouped under year headings any more: each card carries its
 // own year, so a heading above it would say the same thing twice.
@@ -21,6 +24,13 @@ const KIND_LABELS: Record<string, string> = {
 };
 
 const totalCitations = papers.reduce((sum, p) => sum + (p.citations ?? 0), 0);
+
+// Each author line tidied and the owner picked out, once, for the card and
+// for the structured data alike.
+const entries = papers.map((paper) => ({
+	paper,
+	authors: formatAuthors(paper.authors, settings.siteTitle),
+}));
 ---
 
 <!doctype html>
@@ -30,6 +40,17 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.citations ?? 0), 0);
 			title={`Papers | ${settings.siteTitle}`}
 			description="Peer-reviewed publications and patents in computer vision, robotics, and applied AI."
 		/>
+		{
+			entries.map(({ paper, authors }) => (
+				<StructuredData
+					data={publicationSchema(
+						paper,
+						authors.map((author) => author.name),
+						Astro.site!,
+					)}
+				/>
+			))
+		}
 	</head>
 	<body>
 		<Aurora />
@@ -74,7 +95,7 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.citations ?? 0), 0);
 			{
 				papers.length > 0 ? (
 					<ol class="paper-list">
-						{papers.map((paper) => (
+						{entries.map(({ paper, authors }) => (
 							<li class="paper">
 								{paper.tags.length > 0 && (
 									<div class="tags">
@@ -94,7 +115,14 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.citations ?? 0), 0);
 									)}
 								</h2>
 
-								<p class="authors">{paper.authors}</p>
+								<p class="authors">
+									{authors.map((author, index) => (
+										<>
+											{index > 0 && ', '}
+											{author.self ? <strong>{author.name}</strong> : author.name}
+										</>
+									))}
+								</p>
 								<p class="venue">{paper.venue}</p>
 
 								<div class="paper-tags">
@@ -294,6 +322,13 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.citations ?? 0), 0);
 				margin: 0 0 0.3rem;
 				font-size: 0.875rem;
 				color: var(--color-ink-soft);
+			}
+
+			/* The owner, on every line, is what a reader scanning the list is
+			   looking for. */
+			.authors strong {
+				font-weight: 600;
+				color: var(--color-ink);
 			}
 
 			.venue {

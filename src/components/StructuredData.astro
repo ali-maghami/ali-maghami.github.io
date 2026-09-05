@@ -1,0 +1,15 @@
+---
+import { serializeJsonLd } from '../lib/structured-data';
+
+/*
+ * One JSON-LD block. Inline so Astro leaves it alone: this is data for a
+ * crawler, not a script to bundle.
+ */
+interface Props {
+	data: Record<string, unknown>;
+}
+
+const { data } = Astro.props;
+---
+
+<script is:inline type="application/ld+json" set:html={serializeJsonLd(data)} />

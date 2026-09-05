@@ -1,16 +1,36 @@
 ---
 import Aurora from '../components/Aurora.astro';
+import AuthorCard from '../components/AuthorCard.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import { publicImageSize, resizedImage, videoPoster } from '../lib/images';
-import { type PostRecord, getSiteSettings } from '../lib/portfolio-data';
+import ProjectCard from '../components/ProjectCard.astro';
+import ShareLinks from '../components/ShareLinks.astro';
+import StructuredData from '../components/StructuredData.astro';
+import { portraitImage } from '../lib/badges';
+import { firstBodyImage } from '../lib/body-image';
+import { publicFile, publicImageSize, resizedImage, videoPoster } from '../lib/images';
+import { getNavHref } from '../lib/nav';
+import { type PostRecord, getHomePage, getSiteSettings, listPosts, listProjects } from '../lib/portfolio-data';
+import { neighbours, relatedByTags } from '../lib/related';
+import { blogPostingSchema } from '../lib/structured-data';
 
 type Props = PostRecord;
 
-const { title, description, pubDate, updatedDate, tags, heroImage, heroVideo, heroVideoPlayback } =
-	Astro.props;
+const post = Astro.props;
+const {
+	id,
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	tags,
+	heroImage,
+	heroVideo,
+	heroVideoPlayback,
+	bodyMarkdown,
+} = post;
 
 // Muted rides along with autoplay because a browser will not start an unmuted
 // video unprompted — without it, 'loop' and 'once' would quietly do nothing.
@@ -21,7 +41,36 @@ const loop = heroVideoPlayback === 'loop';
 // loads, and used as the share image when there is no hero image.
 const poster = videoPoster(heroVideo);
 
-const [settings, heroSize] = await Promise.all([getSiteSettings(), publicImageSize(heroImage)]);
+// A post with neither a hero image nor a poster shares its first body image,
+// provided that image is one the site can actually serve.
+const bodyImage = firstBodyImage(bodyMarkdown);
+const shareImage =
+	heroImage ??
+	poster ??
+	(bodyImage && (bodyImage.startsWith('/uploads/') || publicFile(bodyImage)) ? bodyImage : undefined);
+
+const [settings, home, heroSize, allPosts, allProjects] = await Promise.all([
+	getSiteSettings(),
+	getHomePage(),
+	publicImageSize(heroImage),
+	listPosts(),
+	listProjects(),
+]);
+
+const portrait = portraitImage(home.portrait);
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+
+// The projects this post is about, found by the tags they share; the CMS
+// records no link between them yet. Newest first, like the projects page.
+const related = relatedByTags(
+	post,
+	[...allProjects].sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf()),
+);
+
+const { newer, older } = neighbours(
+	[...allPosts].sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf()),
+	id,
+);
 ---
 
 <html lang="en">
@@ -29,12 +78,13 @@ const [settings, heroSize] = await Promise.all([getSiteSettings(), publicImageSi
 		<BaseHead
 			title={`${title} | ${settings.siteTitle}`}
 			description={description}
-			image={heroImage ?? poster}
+			image={shareImage}
 			imageAlt={title}
 			type="article"
 			publishedTime={pubDate}
 			modifiedTime={updatedDate}
 		/>
+		<StructuredData data={blogPostingSchema(post, settings, Astro.site!, shareImage)} />
 	</head>
 
 	<body>
@@ -118,6 +168,59 @@ const [settings, heroSize] = await Promise.all([getSiteSettings(), publicImageSi
 				<div class="wrap-narrow prose">
 					<slot />
 				</div>
+
+				<footer class="wrap-narrow post-footer">
+					<div class="share-row">
+						<span class="share-label">Share this post</span>
+						<div class="share-links"><ShareLinks url={pageUrl} title={title} /></div>
+					</div>
+
+					<AuthorCard name={settings.siteTitle} line={home.heading} portrait={portrait} />
+
+					{
+						related.length > 0 && (
+							<section class="related" aria-labelledby="related-heading">
+								<h2 id="related-heading">{related.length === 1 ? 'The project behind this post' : 'Related projects'}</h2>
+								<div class="related-grid">
+									{related.map((project) => (
+										<ProjectCard
+											href={getNavHref(`/projects/${project.id}/`)}
+											stage={project.stage}
+											title={project.title}
+											description={project.description}
+											date={project.pubDate}
+											cardColor={project.cardColor}
+											cardColorAlt={project.cardColorAlt}
+											avatar={portrait}
+											contributors={project.contributors}
+										/>
+									))}
+								</div>
+							</section>
+						)
+					}
+
+					{
+						(newer || older) && (
+							<nav class="pager" aria-label="Other posts">
+								{older ? (
+									<a class="pager-link" href={getNavHref(`/blog/${older.id}/`)} rel="prev">
+										<span class="pager-label">&larr; Older</span>
+										<span class="pager-title">{older.title}</span>
+									</a>
+								) : (
+									<span />
+								)}
+								{newer && (
+									<a class="pager-link newer" href={getNavHref(`/blog/${newer.id}/`)} rel="next">
+										<span class="pager-label">Newer &rarr;</span>
+										<span class="pager-title">{newer.title}</span>
+									</a>
+								)}
+							</nav>
+						)
+					}
+				</footer>
 			</article>
 		</main>
 		<Footer />
@@ -178,7 +281,98 @@ const [settings, heroSize] = await Promise.all([getSiteSettings(), publicImageSi
 			}
 
 			.prose {
+				padding-bottom: 1rem;
+			}
+
+			/* Everything after the piece: a hairline, then the share row, the
+			   author, the work it describes, and the way to the next post. */
+			.post-footer {
+				display: grid;
+				gap: 2rem;
+				padding-top: 2rem;
 				padding-bottom: 3rem;
+				border-top: 1px solid var(--color-sand-200);
+			}
+
+			.share-row {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+			}
+
+			.share-label {
+				font-family: var(--font-mono);
+				font-size: 0.6875rem;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			.share-links {
+				display: flex;
+				align-items: center;
+				gap: 0.85rem;
+			}
+
+			.related h2,
+			.pager-label {
+				font-family: var(--font-mono);
+				font-size: 0.6875rem;
+				font-weight: 500;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			.related h2 {
+				margin: 0 0 1rem;
+			}
+
+			.related-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 1.25rem;
+			}
+
+			.pager {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 1rem;
+			}
+
+			.pager-link {
+				display: grid;
+				gap: 0.35rem;
+				padding: 1rem 1.15rem;
+				background: var(--color-paper);
+				border: 1px solid var(--color-sand-200);
+				border-radius: 12px;
+				box-shadow: var(--shadow-card);
+				color: var(--color-ink);
+				text-decoration: none;
+				transition:
+					box-shadow 0.2s ease,
+					border-color 0.2s ease;
+			}
+
+			.pager-link:hover {
+				box-shadow: var(--shadow-card-hover);
+				border-color: var(--color-sand-300);
+			}
+
+			.pager-link.newer {
+				text-align: right;
+			}
+
+			.pager-title {
+				font-size: 0.9375rem;
+				font-weight: 600;
+				line-height: 1.35;
+			}
+
+			.pager-link:hover .pager-title {
+				text-decoration: underline;
+				text-underline-offset: 2px;
 			}
 
 			@media (max-width: 720px) {
@@ -187,6 +381,12 @@ const [settings, heroSize] = await Promise.all([getSiteSettings(), publicImageSi
 				}
 				.article-head h1 {
 					font-size: 1.875rem;
+				}
+				.pager {
+					grid-template-columns: 1fr;
+				}
+				.pager-link.newer {
+					text-align: left;
 				}
 			}
 		</style>

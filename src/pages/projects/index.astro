@@ -7,7 +7,7 @@ import Header from '../../components/Header.astro';
 import { portraitImage } from '../../lib/badges';
 import { getNavHref } from '../../lib/nav';
 import { getHomePage, getSiteSettings, listProjects } from '../../lib/portfolio-data';
-import { categoryLabel } from '../../lib/projects';
+import { categoryLabel, stageDescription, stageLabel, stagesIn } from '../../lib/projects';
 
 const [home, settings, allProjects] = await Promise.all([
 	getHomePage(),
@@ -25,6 +25,10 @@ const sections = ['active', 'archived'].map((category) => ({
 	category,
 	projects: allProjects.filter((p) => p.category === category),
 }));
+
+// The stage badges on the cards are one word each. This says what the words
+// mean, listing only the stages that actually appear.
+const stages = stagesIn(allProjects);
 ---
 
 <!doctype html>
@@ -77,6 +81,21 @@ const sections = ['active', 'archived'].map((category) => ({
 				)
 			}
 
+			{
+				stages.length > 0 && (
+					<section class="legend" aria-labelledby="legend-heading">
+						<h2 id="legend-heading">What the stages mean</h2>
+						<dl>
+							{stages.map((stage) => (
+								<div class="legend-row">
+									<dt>{stageLabel(stage)}</dt>
+									<dd>{stageDescription(stage)}</dd>
+								</div>
+							))}
+						</dl>
+					</section>
+				)
+			}
 		</main>
 		<Footer />
 
@@ -145,6 +164,53 @@ const sections = ['active', 'archived'].map((category) => ({
 			@media (max-width: 760px) {
 				.grid {
 					grid-template-columns: 1fr;
+				}
+			}
+
+			.legend {
+				max-width: 620px;
+				margin-bottom: 2rem;
+			}
+
+			.legend h2 {
+				margin: 0 0 0.75rem;
+				font-family: var(--font-mono);
+				font-size: 0.6875rem;
+				font-weight: 500;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			.legend dl {
+				margin: 0;
+				border-top: 1px solid var(--color-sand-200);
+			}
+
+			.legend-row {
+				display: grid;
+				grid-template-columns: minmax(0, 11rem) 1fr;
+				gap: 1rem;
+				padding: 0.6rem 0;
+				border-bottom: 1px solid var(--color-sand-200);
+				font-size: 0.875rem;
+			}
+
+			.legend dt {
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				color: var(--color-ink);
+			}
+
+			.legend dd {
+				margin: 0;
+				color: var(--color-ink-muted);
+			}
+
+			@media (max-width: 720px) {
+				.legend-row {
+					grid-template-columns: 1fr;
+					gap: 0.15rem;
 				}
 			}
 

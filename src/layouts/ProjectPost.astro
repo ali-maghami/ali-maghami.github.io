@@ -5,13 +5,19 @@ import Footer from '../components/Footer.astro';
 import GenericAvatar from '../components/GenericAvatar.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import { portraitImage, projectHero } from '../lib/badges';
-import { resizedImage } from '../lib/images';
-import { type ProjectRecord, getHomePage, getSiteSettings } from '../lib/portfolio-data';
-import { stageLabel } from '../lib/projects';
+import PostCard from '../components/PostCard.astro';
+import ShareLinks from '../components/ShareLinks.astro';
+import { heroMedia, portraitImage, projectHero } from '../lib/badges';
+import { firstBodyImage } from '../lib/body-image';
+import { publicFile, resizedImage } from '../lib/images';
+import { getNavHref } from '../lib/nav';
+import { type ProjectRecord, getHomePage, getSiteSettings, listPosts } from '../lib/portfolio-data';
+import { relatedByTags } from '../lib/related';
+import { stageDescription, stageLabel } from '../lib/projects';
 
 type Props = ProjectRecord;
 
+const project = Astro.props;
 const {
 	title,
 	description,
@@ -23,33 +29,35 @@ const {
 	contributors,
 	purpose,
 	heroImage: rawHeroImage,
-} =
-	Astro.props;
+	bodyMarkdown,
+} = project;
 
 // Checked rather than trusted: a stale path renders a blank where the lead
 // image should be, and the CMS is what writes it.
 const heroImage = projectHero(rawHeroImage);
 
+// Several projects carry their lead image in the body rather than the hero
+// field. A share of the page shows that rather than the generic site card, as
+// long as it is a file the site can serve.
+const bodyImage = firstBodyImage(bodyMarkdown);
+const shareImage =
+	heroImage ??
+	(bodyImage && (bodyImage.startsWith('/uploads/') || publicFile(bodyImage)) ? bodyImage : undefined);
+
 // Share links need the page's own absolute URL, which only the built site
 // knows — Astro.site plus this path, the same pair the canonical tag uses.
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
-const shareTargets = [
-	{
-		name: 'X',
-		href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(pageUrl)}&text=${encodeURIComponent(title)}`,
-		path: 'M9.42 6.94 14.3 1.5h-1.16L8.9 6.22 5.53 1.5H1.63l5.11 7.14-5.11 5.7h1.16l4.47-4.99 3.57 4.99h3.9L9.42 6.94Zm-1.58 1.76-.52-.72-4.12-5.7h1.78l3.33 4.6.52.72 4.32 6h-1.78L7.84 8.7Z',
-	},
-	{
-		name: 'LinkedIn',
-		href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`,
-		path: 'M4.94 13.4V6.17H2.54V13.4h2.4Zm-1.2-8.21c.84 0 1.36-.55 1.36-1.25-.02-.7-.52-1.25-1.34-1.25s-1.36.55-1.36 1.25c0 .7.52 1.25 1.33 1.25h.01Zm2.53 8.21h2.4V9.36c0-.22.01-.43.08-.59.17-.43.57-.88 1.23-.88.87 0 1.22.66 1.22 1.63V13.4h2.4V9.25c0-2.22-1.18-3.25-2.76-3.25-1.28 0-1.85.7-2.17 1.2v.02h-.01l.01-.02v-1.03h-2.4c.3.68 0 7.23 0 7.23Z',
-	},
-];
-
 // The contributor photo lives on the home entry, as it does on the cards.
-const [home, settings] = await Promise.all([getHomePage(), getSiteSettings()]);
+const [home, settings, allPosts] = await Promise.all([getHomePage(), getSiteSettings(), listPosts()]);
 const SITE_TITLE = settings.siteTitle;
 const portrait = portraitImage(home.portrait);
+
+// The posts written about this work, found by the tags they share; the CMS
+// records no link between them yet. Newest first.
+const related = relatedByTags(
+	project,
+	[...allPosts].sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf()),
+);
 
 // The site owner leads, then anyone else credited on the entry — so their own
 // name is not retyped on every project. Only the owner has a photograph; the
@@ -66,7 +74,7 @@ const makers = [
 		<BaseHead
 			title={`${title} | ${SITE_TITLE}`}
 			description={description}
-			image={heroImage}
+			image={shareImage}
 			imageAlt={title}
 			type="article"
 			publishedTime={pubDate}
@@ -100,7 +108,7 @@ const makers = [
 							<div class="fact">
 								<dt>Stage</dt>
 								<dd>
-									<span class="stage">{stageLabel(stage)}</span>
+									<span class="stage" title={stageDescription(stage)}>{stageLabel(stage)}</span>
 								</dd>
 							</div>
 
@@ -149,18 +157,7 @@ const makers = [
 							<div class="fact">
 								<dt>Share</dt>
 								<dd class="share">
-									{shareTargets.map((t) => (
-										<a
-											href={t.href}
-											target="_blank"
-											rel="noopener noreferrer"
-											aria-label={`Share on ${t.name}`}
-										>
-											<svg viewBox="0 0 16 16" aria-hidden="true" width="17" height="17">
-												<path fill="currentColor" d={t.path} />
-											</svg>
-										</a>
-									))}
+									<ShareLinks url={pageUrl} title={title} />
 								</dd>
 							</div>
 						</dl>
@@ -207,6 +204,29 @@ const makers = [
 				<div class="wrap-narrow prose">
 					<slot />
 				</div>
+
+				{
+					related.length > 0 && (
+						<section class="wrap-narrow related" aria-labelledby="related-heading">
+							<h2 id="related-heading">{related.length === 1 ? 'Read the write-up' : 'Posts about this work'}</h2>
+							<div class="related-grid">
+								{related.map((post) => (
+									<PostCard
+										href={getNavHref(`/blog/${post.id}/`)}
+										kind={post.kind}
+										title={post.title}
+										description={post.description}
+										date={post.pubDate}
+										avatar={portrait}
+										heroImage={heroMedia(post.heroImage)}
+										heroVideo={heroMedia(post.heroVideo)}
+										heroVideoPlayback={post.heroVideoPlayback}
+									/>
+								))}
+							</div>
+						</section>
+					)
+				}
 			</article>
 		</main>
 		<Footer />
@@ -304,14 +324,24 @@ const makers = [
 				gap: 0.85rem;
 			}
 
-			.share a {
-				display: inline-flex;
-				color: var(--color-ink-soft);
-				transition: color 0.2s ease;
+			.related {
+				padding-top: 1rem;
+				padding-bottom: 2rem;
 			}
 
-			.share a:hover {
-				color: var(--color-ink);
+			.related h2 {
+				margin: 0 0 1rem;
+				font-family: var(--font-mono);
+				font-size: 0.6875rem;
+				font-weight: 500;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			.related-grid {
+				display: grid;
+				gap: 1.25rem;
 			}
 
 			/* One row each, rather than a run of names: a photograph beside a

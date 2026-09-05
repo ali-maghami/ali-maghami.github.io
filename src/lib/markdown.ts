@@ -2,10 +2,11 @@ import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 
 import { rehypeBodyMedia } from './body-media';
 import { rehypeExternalLinks } from './external-links';
+import { rehypeNotes } from './notes';
 import { primeDimensions, publicImagePathsIn, uploadPathsIn } from './media-dimensions';
 
 const processor = createMarkdownProcessor({
-	rehypePlugins: [rehypeExternalLinks, rehypeBodyMedia],
+	rehypePlugins: [rehypeExternalLinks, rehypeBodyMedia, rehypeNotes],
 });
 
 export async function renderPortfolioMarkdown(markdown: string): Promise<string> {

@@ -134,3 +134,24 @@ licensed for reuse. Open an issue if you want to use part of it.
 Site content is separate in any case: the writing, portrait, project imagery, publications and
 certification badges are © Ali Maghami or their respective owners. The fonts are under the SIL Open
 Font Licence and carry their own terms.
+
+## The schema contract
+
+The site issues `SELECT *` and maps columns by hand, so a column the CMS
+renames does not fail a build here; it arrives as `undefined`.
+[`src/lib/schema-contract.ts`](./src/lib/schema-contract.ts) lists every column
+the site reads. A test keeps the list matched to the mappers in both
+directions, and `/healthz` compares it to `information_schema` on every probe,
+so a deploy stops on a mismatch instead of shipping pages that quietly lost a
+field. The CMS repository's `docs/schema-contract.md` describes the other half.
+
+## Conventions the content relies on
+
+- A paragraph written as italic inline code — `*`like this`*` — renders as a
+  styled note. The bodies use it for disclaimers.
+- A video's poster is the image with the same name beside it in `public/`:
+  `/hero/clip.mp4` shows `/hero/clip.jpg` while it loads.
+- A CV committed at `public/pdf/cv.pdf` is offered for download on the About
+  page; nothing is shown when the file is absent.
+- Posts and projects are related by the tags they share. A post's footer
+  shows the projects with the most tags in common, and a project page the posts.

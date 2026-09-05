@@ -355,6 +355,20 @@ main {
 	border: 1px solid var(--color-sand-200);
 }
 
+/* An aside the author set apart from the prose — a disclaimer, a caveat. The
+   markdown pipeline marks it (see lib/notes.ts); this makes it read as a note
+   rather than as a line of code. */
+.prose .note {
+	margin: 1.25rem 0 1.5rem;
+	padding: 0.85rem 1.1rem 0.85rem 1.25rem;
+	border-left: 3px solid var(--color-banana);
+	border-radius: 0 10px 10px 0;
+	background: color-mix(in srgb, var(--color-banana) 16%, var(--color-paper));
+	color: var(--color-ink-soft);
+	font-size: 0.9375rem;
+	line-height: 1.6;
+}
+
 /* Body media set to hero width. Prose is capped at 720px for readability, so
    a wider embed has to escape its column: centred on the viewport rather than
    on the column, and capped at the same 1160px the page wrap uses. The 2.5rem

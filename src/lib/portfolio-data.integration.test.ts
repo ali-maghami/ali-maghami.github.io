@@ -88,6 +88,10 @@ describe.skipIf(!url)('portfolio-data against PostgreSQL', () => {
 		await expect(data.pingDatabase()).resolves.toBeUndefined();
 	});
 
+	it('finds every column it reads in the schema it was given', async () => {
+		await expect(data.verifySchema()).resolves.toEqual([]);
+	});
+
 	it('lists only published posts, newest first, with media columns mapped', async () => {
 		const posts = await data.listPosts();
 		expect(posts.map((post) => post.id)).toEqual(['newer', 'older']);

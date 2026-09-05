@@ -3,7 +3,7 @@ import FormattedDate from './FormattedDate.astro';
 import GenericAvatar from './GenericAvatar.astro';
 import { cardGradient } from '../lib/cards';
 import { resizedImage } from '../lib/images';
-import { stageLabel } from '../lib/projects';
+import { stageDescription, stageLabel } from '../lib/projects';
 
 interface Props {
 	href: string;
@@ -39,7 +39,7 @@ const wash = cardGradient(cardColor, cardColorAlt);
 	<a class="project-link" href={href}>
 		<div class="project-meta">
 			<FormattedDate date={date} precision="monthYear" />
-			<span class="project-label">{stageLabel(stage)}</span>
+			<span class="project-label" title={stageDescription(stage)}>{stageLabel(stage)}</span>
 		</div>
 
 		<div class="project-body">
