@@ -4,7 +4,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import { assertPortrait } from '../../lib/badges';
+import { portraitImage } from '../../lib/badges';
 import { getNavHref } from '../../lib/nav';
 import { getHomePage, getSiteSettings, listProjects } from '../../lib/portfolio-data';
 import { categoryLabel } from '../../lib/projects';
@@ -14,7 +14,7 @@ const [home, settings, allProjects] = await Promise.all([
 	getSiteSettings(),
 	listProjects(),
 ]);
-const portrait = assertPortrait(home.portrait);
+const portrait = portraitImage(home.portrait);
 
 allProjects.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
 
