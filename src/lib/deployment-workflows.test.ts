@@ -35,3 +35,32 @@ describe('Hetzner deployment workflows', () => {
 		expect(config.ci.collect.staticDistDir).toBeUndefined();
 	});
 });
+
+/*
+ * The retired /admin/ editor was deleted from the repository and kept answering
+ * 200 in production: the deploy extracted each release over the previous one,
+ * so a file removed from Git stayed in the Docker build context and was copied
+ * straight back into the image. Deleting something has to actually delete it.
+ */
+describe('deploy-hetzner.sh', () => {
+	const script = readFileSync(path.join(root, 'scripts', 'deploy-hetzner.sh'), 'utf8');
+
+	it('installs the release into an emptied directory', () => {
+		expect(script).toContain('-mindepth 1 -maxdepth 1');
+		expect(script).toContain('-exec rm -rf -- {} +');
+	});
+
+	it('extracts to a staging directory rather than over the live tree', () => {
+		expect(script).toContain('tar xzf /tmp/portfolio.tar.gz -C');
+		expect(script).not.toMatch(/tar xzf \/tmp\/portfolio\.tar\.gz\s*$/m);
+	});
+
+	it('keeps the protected environment file through the clean', () => {
+		expect(script).toContain('! -name .env.reader');
+	});
+
+	it('refuses to clean a directory outside the applications root', () => {
+		expect(script).toContain('/home/ali/apps/*');
+		expect(script).toContain('refusing to clean');
+	});
+});
