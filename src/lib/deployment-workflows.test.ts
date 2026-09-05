@@ -130,3 +130,46 @@ describe('revision in the image', () => {
 		expect(dockerfile).toContain('ENV GIT_REVISION=${GIT_REVISION}');
 	});
 });
+
+/*
+ * The built site is opened in a browser in CI, against fixture content. The
+ * fixture and the test agree on slugs, and the workflow has to wire them up.
+ */
+describe('browser smoke test in CI', () => {
+	const workflow = readWorkflow('pr-checks.yml');
+	const steps: Array<{ run?: string; env?: Record<string, string> }> = workflow.jobs.checks.steps;
+	const smoke = steps.find((step) => step.run?.includes('tests/smoke.test.ts'));
+
+	it('runs after the build, against a server started from the build output', () => {
+		const build = steps.findIndex((step) => step.run === 'npm run build');
+		expect(smoke).toBeDefined();
+		expect(steps.indexOf(smoke!)).toBeGreaterThan(build);
+		expect(smoke!.run).toContain('dist/server/entry.mjs');
+		expect(smoke!.run).toContain('scripts/test-content.sql');
+		expect(smoke!.env?.SMOKE_BASE_URL).toMatch(/^http:\/\/127\.0\.0\.1:\d+$/);
+	});
+
+	it('seeds the slugs the smoke test visits', () => {
+		const content = readFileSync(path.join(root, 'scripts', 'test-content.sql'), 'utf8');
+		const test = readFileSync(path.join(root, 'tests', 'smoke.test.ts'), 'utf8');
+		// The named constants are the pages expected to exist; the 404 test
+		// visits made-up slugs inline and those must stay absent.
+		const slugs = [...test.matchAll(/^const \w+ = '\/(?:blog|projects)\/([a-z0-9-]+)\/';/gm)].map((m) => m[1]);
+		expect(slugs.length).toBeGreaterThan(0);
+		for (const slug of slugs) {
+			expect(content, slug).toContain(`'${slug}'`);
+		}
+	});
+});
+
+describe('Lighthouse audit', () => {
+	it('runs on a schedule with budgets that fail the run', () => {
+		const workflow = readWorkflow('lighthouse.yml');
+		expect(workflow.on.schedule?.[0]?.cron).toMatch(/\S/);
+
+		const config = JSON.parse(readFileSync(path.join(root, 'lighthouserc.json'), 'utf8'));
+		for (const category of ['performance', 'accessibility', 'best-practices', 'seo']) {
+			expect(config.ci.assert.assertions[`categories:${category}`][0], category).toBe('error');
+		}
+	});
+});

@@ -12,7 +12,7 @@ an Astro artifact to GitHub Pages.
 | Dependency Review | Yes | — | — | — |
 | CodeQL | — | Yes | Weekly | Yes |
 | Link Check | — | — | Weekly | Yes |
-| Lighthouse CI | — | — | — | Yes |
+| Lighthouse CI | — | — | Weekly | Yes |
 
 ## Build Checks
 
@@ -27,6 +27,12 @@ copy of the CMS migration for the tables the reader role can see — and points
 `PORTFOLIO_TEST_DATABASE_URL` at it. `src/lib/portfolio-data.integration.test.ts`
 runs the real queries against it and is skipped wherever that variable is
 unset, so the suite still passes on a workstation without a database.
+
+After the build, the job seeds a second database from
+[`scripts/test-content.sql`](../scripts/test-content.sql), starts the built
+server and runs `tests/smoke.test.ts` against it in the runner's Chrome:
+layout at phone and desktop widths, console errors and failed requests under
+the content security policy, dark mode, the section palettes and the 404 page.
 
 ## Security workflows
 
@@ -45,7 +51,9 @@ checks target `https://maghami.dev`:
   homepage and its links weekly. Hosts that reject automated requests are
   excluded explicitly.
 - [`lighthouse.yml`](../.github/workflows/lighthouse.yml) audits representative
-  live routes on demand. It reports scores but has no pass/fail thresholds.
+  live routes weekly and on demand. The budgets in `lighthouserc.json` fail the
+  run when a category score drops below them; it audits the deployed site, so
+  it is not a merge gate.
 
 ## Production deployment
 
