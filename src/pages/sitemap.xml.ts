@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 
 import { listPosts, listProjects } from '../lib/portfolio-data';
-import { renderSitemap, type SitemapEntry } from '../lib/sitemap';
+import { latestDate, renderSitemap, type SitemapEntry } from '../lib/sitemap';
 
 /*
  * Rendered per request, not at build time.
@@ -29,8 +29,19 @@ export const GET: APIRoute = async ({ site }) => {
 
 	const [projects, posts] = await Promise.all([listProjects(), listPosts()]);
 
+	// An index page changed when its newest entry did. The papers and
+	// certificate rows carry no update time the site reads, so those indexes
+	// and the About page go undated rather than misdated.
+	const projectsChanged = latestDate(projects.map((project) => project.updatedAt));
+	const postsChanged = latestDate(posts.map((post) => post.updatedAt));
+	const indexDates: Record<string, Date | undefined> = {
+		'/': latestDate([projectsChanged, postsChanged]),
+		'/blog/': postsChanged,
+		'/projects/': projectsChanged,
+	};
+
 	const entries: SitemapEntry[] = [
-		...staticPaths.map((path) => ({ path })),
+		...staticPaths.map((path) => ({ path, lastmod: indexDates[path] })),
 		...projects.map((project) => ({
 			path: `/projects/${project.id}/`,
 			lastmod: project.updatedAt,

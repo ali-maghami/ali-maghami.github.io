@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { renderSitemap } from './sitemap';
+import { latestDate, renderSitemap } from './sitemap';
 
 const site = new URL('https://maghami.dev');
 
@@ -48,5 +48,24 @@ describe('renderSitemap', () => {
 		expect(xml.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true);
 		expect(xml).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
 		expect(xml.trimEnd().endsWith('</urlset>')).toBe(true);
+	});
+});
+
+describe('latestDate', () => {
+	it('picks the most recent date', () => {
+		expect(
+			latestDate([new Date('2026-01-01'), new Date('2026-09-04'), new Date('2026-03-01')])?.toISOString(),
+		).toBe('2026-09-04T00:00:00.000Z');
+	});
+
+	it('skips what is missing or invalid', () => {
+		expect(latestDate([undefined, new Date('nope'), new Date('2026-02-02')])?.toISOString()).toBe(
+			'2026-02-02T00:00:00.000Z',
+		);
+	});
+
+	it('is undefined with nothing to go on', () => {
+		expect(latestDate([])).toBeUndefined();
+		expect(latestDate([undefined])).toBeUndefined();
 	});
 });
