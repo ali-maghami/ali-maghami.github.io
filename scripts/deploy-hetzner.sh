@@ -35,6 +35,11 @@ cd "${APP_DIR}"
 tar xzf /tmp/portfolio.tar.gz
 rm -f /tmp/portfolio.tar.gz
 
+test -s .env.reader || {
+  echo "Missing ${APP_DIR}/.env.reader; refusing to start"
+  exit 1
+}
+
 echo "==> building ${REV}"
 docker compose -f compose.prod.yml build
 

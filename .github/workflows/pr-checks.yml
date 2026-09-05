@@ -1,35 +1,14 @@
 name: Build Checks
 
-# Runs on `main` after the fact, not as a gate on pull requests. Nothing blocks
-# a merge any more: the lint, tests and build run once the code has landed, and
-# a failure is a notification to go and fix it rather than a barrier.
-#
-# The site is protected either way, because deploy.yml publishes only a
-# successful build — a broken commit fails there and the live site stays on its
-# last good version.
-#
-# Content-only pushes are skipped, which is what a CMS save produces:
-# everything unique to this workflow is `astro check` and the unit tests, and
-# neither can be broken by markdown. A push is skipped only when every changed
-# file matches, so a save that also touches code still runs the full set.
+# The live site is a standalone Astro Node application on Hetzner. This
+# workflow verifies application changes before merge and re-verifies main; it
+# does not deploy. Production deployment is an explicit operation from a
+# trusted workstation after the PR has merged.
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
-    # Everything the CMS writes. The media folders have to be listed one by one
-    # because a pattern cannot exclude public/admin, which is configuration
-    # rather than content — so ADD ANY NEW CMS MEDIA FOLDER HERE, or a save
-    # that uploads to it stops counting as content-only and runs the lot.
-    paths-ignore:
-      - 'src/content/**'
-      - 'src/data/**'
-      - 'src/assets/**'
-      - 'public/badges/**'
-      - 'public/portrait/**'
-      - 'public/hero/**'
-      - 'public/pdf/**'
-      - 'public/media/**'
-      - 'docs/**'
-      - '**.md'
   workflow_dispatch:
 
 permissions:
@@ -55,9 +34,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: node_modules
-          # Keyed on the lock file, so the cache is only reused for exactly the
-          # dependency tree it was built from. A CMS save never touches that
-          # file, which is why every content deploy hits this.
+          # Keyed on the lock file so a cache is reused only for the exact
+          # dependency tree it was created from.
           key: node-modules-${{ runner.os }}-node22-${{ hashFiles('package-lock.json') }}
 
       # setup-node's own cache holds the downloaded tarballs, so npm still had

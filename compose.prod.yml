@@ -11,11 +11,26 @@ services:
         SITE_URL: ${SITE_URL:-https://maghami.dev}
     container_name: portfolio
     restart: unless-stopped
+    env_file: .env.reader
+    environment:
+      HOST: 0.0.0.0
+      PORT: 8080
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - portfolio_uploads:/app/uploads:ro
     security_opt:
       - no-new-privileges:true
     networks:
       - edge
+      - data
+
+volumes:
+  portfolio_uploads:
+    external: true
+    name: portfolio-cms_uploads
 
 networks:
   edge:
+    external: true
+  data:
     external: true

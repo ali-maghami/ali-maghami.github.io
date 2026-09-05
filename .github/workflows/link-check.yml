@@ -1,9 +1,8 @@
 name: Link Check
 
-# Weekly and on demand, not per pull request. The social profiles now in the
-# header and footer are all hosts that refuse crawlers, so every run failed on
-# links that are perfectly fine in a browser — a red cross that meant nothing,
-# on every pull request. Weekly still catches a genuinely dead link, just later.
+# Weekly and on demand against the running application. Database-backed pages
+# do not exist as HTML files in the build artifact, so the previous static-dist
+# scan is not applicable to the standalone Node deployment.
 on:
   schedule:
     - cron: '0 6 * * 1'
@@ -20,28 +19,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build site
-        run: npm run build
-
       - name: Check links
         uses: lycheeverse/lychee-action@v2
         with:
           # Two exclusions, for different reasons.
-          #
-          # Self-referencing absolute URLs (canonical, og:url) point at the
-          # deployed site, so a PR adding a page always 404s on its own new
-          # URLs and could never pass. Internal navigation is relative and
-          # still checked locally via --root-dir; this only skips refetching
-          # production copies of the pages being built here.
           #
           # LinkedIn answers automated requests with 999, a status of its own
           # invention, whether or not the page exists. Checking it therefore
@@ -54,9 +35,7 @@ jobs:
             --no-progress
             --accept 200,206,301,302,303,307,308,429
             --max-retries 2
-            --exclude '^https://ali-maghami\.github\.io'
             --exclude '^https://(www\.)?linkedin\.com'
             --exclude '^https://scholar\.google\.'
-            --root-dir "${{ github.workspace }}/dist"
-            './dist/**/*.html'
+            'https://maghami.dev/'
           fail: true

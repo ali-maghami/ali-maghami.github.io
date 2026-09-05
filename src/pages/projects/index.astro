@@ -1,5 +1,4 @@
 ---
-import { getCollection } from 'astro:content';
 import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
@@ -7,21 +6,24 @@ import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import { assertPortrait } from '../../lib/badges';
 import { getNavHref } from '../../lib/nav';
+import { getHomePage, getSiteSettings, listProjects } from '../../lib/portfolio-data';
 import { categoryLabel } from '../../lib/projects';
 
-const [home] = await getCollection('home');
-const portrait = assertPortrait(home?.data.portrait);
+const [home, settings, allProjects] = await Promise.all([
+	getHomePage(),
+	getSiteSettings(),
+	listProjects(),
+]);
+const portrait = assertPortrait(home.portrait);
 
-const allProjects = (await getCollection('projects')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+allProjects.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
 
 // Active first, then archived. Listed rather than derived from the data so the
 // order is fixed: archived work should not lead the page just because it
 // happens to be the newer of the two groups on a given day.
 const sections = ['active', 'archived'].map((category) => ({
 	category,
-	projects: allProjects.filter((p) => p.data.category === category),
+	projects: allProjects.filter((p) => p.category === category),
 }));
 ---
 
@@ -29,7 +31,7 @@ const sections = ['active', 'archived'].map((category) => ({
 <html lang="en">
 	<head>
 		<BaseHead
-			title="Projects | Ali Maghami"
+			title={`Projects | ${settings.siteTitle}`}
 			description="Personal projects and previous engineering work in computer vision, robotics, and applied AI."
 		/>
 	</head>
@@ -59,14 +61,14 @@ const sections = ['active', 'archived'].map((category) => ({
 									{projects.map((project) => (
 										<ProjectCard
 											href={getNavHref(`/projects/${project.id}/`)}
-											stage={project.data.stage}
-											title={project.data.title}
-											description={project.data.description}
-											date={project.data.pubDate}
-											cardColor={project.data.cardColor}
-											cardColorAlt={project.data.cardColorAlt}
+											stage={project.stage}
+											title={project.title}
+											description={project.description}
+											date={project.pubDate}
+											cardColor={project.cardColor}
+											cardColorAlt={project.cardColorAlt}
 											avatar={portrait}
-											contributors={project.data.contributors}
+											contributors={project.contributors}
 										/>
 									))}
 								</div>

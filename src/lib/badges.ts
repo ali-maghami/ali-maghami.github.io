@@ -32,10 +32,13 @@ export function assertPublicImage(
 	label: string,
 ): string | undefined {
 	if (!value) return undefined;
+	if (/^\/uploads\/[0-9a-f-]{36}\.(?:gif|jpe?g|png|webp|mp4|webm|pdf)$/i.test(value)) {
+		return value;
+	}
 
 	if (!value.startsWith(prefix)) {
 		throw new Error(
-			`${label} path must start with ${prefix} so it resolves to public${prefix}: ${value}`,
+			`${label} path must start with ${prefix} or /uploads/: ${value}`,
 		);
 	}
 

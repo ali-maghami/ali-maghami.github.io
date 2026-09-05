@@ -1,16 +1,15 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import GenericAvatar from '../components/GenericAvatar.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import { SITE_TITLE } from '../consts';
 import { assertPortrait, assertProjectHero } from '../lib/badges';
+import { type ProjectRecord, getHomePage, getSiteSettings } from '../lib/portfolio-data';
 import { stageLabel } from '../lib/projects';
 
-type Props = CollectionEntry<'projects'>['data'];
+type Props = ProjectRecord;
 
 const {
 	title,
@@ -47,8 +46,9 @@ const shareTargets = [
 ];
 
 // The contributor photo lives on the home entry, as it does on the cards.
-const [home] = await getCollection('home');
-const portrait = assertPortrait(home?.data.portrait);
+const [home, settings] = await Promise.all([getHomePage(), getSiteSettings()]);
+const SITE_TITLE = settings.siteTitle;
+const portrait = assertPortrait(home.portrait);
 
 // The site owner leads, then anyone else credited on the entry — so their own
 // name is not retyped on every project. Only the owner has a photograph; the

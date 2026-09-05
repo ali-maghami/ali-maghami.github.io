@@ -1,7 +1,12 @@
 {
   "ci": {
     "collect": {
-      "staticDistDir": "./dist"
+      "url": [
+        "https://maghami.dev/",
+        "https://maghami.dev/about",
+        "https://maghami.dev/projects",
+        "https://maghami.dev/blog"
+      ]
     }
   }
 }

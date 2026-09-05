@@ -1,11 +1,7 @@
 name: Lighthouse CI
 
-# Run on demand only. This audit has no `assert` block in lighthouserc.json, so
-# it measures the build without holding it to any threshold — as a required PR
-# check it could only ever fail when the build itself failed, which "Build and
-# verify" already catches in a third of the time. Kept here so a performance
-# question can still be answered on request; add assertions before making it a
-# gate again.
+# Run on demand against the live Node application. This audit reports scores but
+# has no assertions, so it is intentionally not a merge gate.
 on:
   workflow_dispatch:
 
@@ -19,18 +15,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build site
-        run: npm run build
 
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v12

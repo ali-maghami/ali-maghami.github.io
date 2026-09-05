@@ -13,6 +13,12 @@ describe('assertBadge', () => {
 		);
 	});
 
+	it('accepts immutable files from the shared CMS upload volume', () => {
+		expect(assertBadge('/uploads/123e4567-e89b-12d3-a456-426614174000.webp')).toBe(
+			'/uploads/123e4567-e89b-12d3-a456-426614174000.webp',
+		);
+	});
+
 	it('rejects a path that names no file, rather than shipping a broken image', () => {
 		// A public path is just a string, so nothing else would catch a typo.
 		expect(() => assertBadge('/badges/not-here.png')).toThrow(/Badge image not found/);

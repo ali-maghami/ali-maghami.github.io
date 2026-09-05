@@ -1,37 +1,39 @@
 # Ali Maghami — personal site and portfolio
 
-The source of [maghami.dev](https://maghami.dev) — a static site built with
-[Astro](https://astro.build), served from an isolated container on Hetzner, and retained on GitHub
-Pages as a rollback copy.
+The source of [maghami.dev](https://maghami.dev) — an
+[Astro](https://astro.build) Node application served from an isolated container
+on Hetzner.
 
 Computer vision, AI and robotics: projects, posts, publications and certifications.
 
 ## How it works
 
-Content is markdown in [`src/content/`](./src/content/), validated against Zod schemas in
-[`src/content.config.ts`](./src/content.config.ts). Astro renders it to static HTML at build time —
-there is no server and no database.
+Published content is read at request time from a dedicated PostgreSQL database
+through a least-privilege, read-only role. Drafts are never returned by public
+queries. Uploaded images, videos and PDFs live in the CMS upload volume and are
+mounted read-only into this application.
 
-Editing happens two ways, and both end in the same place:
+Editing happens in the private CMS at
+[`cms.maghami.dev`](https://cms.maghami.dev). It provides collection editors,
+rendered Markdown previews, direct media uploads, Home and About page controls,
+and site/social/footer settings. A successful save is visible on the public
+site without a Git commit or rebuild.
 
-- **In the browser.** [Sveltia CMS](https://github.com/sveltia/sveltia-cms) at `/admin` writes the
-  same markdown files. Save commits straight to `main`, and the deploy publishes. One button, no
-  review step. See [`docs/cms.md`](./docs/cms.md).
-- **In an editor.** Edit the markdown, open a pull request, merge.
-
-A save that breaks a schema fails the build, so nothing is deployed and the live site stays on its
-last good version until the entry is fixed.
+The Markdown under [`src/content/`](./src/content/) remains a local development
+fallback when `PORTFOLIO_DATABASE_URL` is not configured; it is not the
+production source of truth.
 
 ## Content
 
-| Collection | Where | What it holds |
+| Collection | Database table | What it holds |
 |---|---|---|
-| `home` | [`src/content/home/`](./src/content/home/) | The hero: heading, lede, portrait and its treatment, how many cards each column shows |
-| `about` | [`src/content/about/`](./src/content/about/) | The about page |
-| `blog` | [`src/content/blog/`](./src/content/blog/) | Posts, with an optional hero image or video |
-| `projects` | [`src/content/projects/`](./src/content/projects/) | Work, each with a stage, a category, a card colour and any contributors |
-| `papers` | [`src/content/papers/`](./src/content/papers/) | Publications, with tags and an optional PDF |
-| `certificates` | [`src/content/certificates/`](./src/content/certificates/) | Credentials, shown as badges in the footer |
+| `home`, `about` | `portfolio_page` | Page copy, repeatable sections and presentation options |
+| `blog` | `portfolio_post` | Posts, with an optional hero image or video |
+| `projects` | `portfolio_project` | Work, each with a stage, category, colours and contributors |
+| `papers` | `portfolio_paper` | Publications, with tags and an optional PDF |
+| `certificates` | `portfolio_certificate` | Credentials, including footer badges |
+| site settings | `portfolio_setting` | Site identity, social links and footer configuration |
+| media | `portfolio_media` | Metadata for files stored in the shared upload volume |
 
 A project's frontmatter looks like this:
 
@@ -59,7 +61,7 @@ Requires Node 22.12 or newer.
 ```sh
 npm install
 npm run dev      # development server
-npm run build    # static build into dist/
+npm run build    # standalone Node server in dist/
 npm run preview  # serve that build
 npm run lint     # astro check — types and Astro diagnostics
 npm test         # vitest
@@ -71,9 +73,8 @@ The logic that would be awkward to verify by eye lives in [`src/lib/`](./src/lib
 each with a test beside it: link handling, media options, card gradients, navigation state, schema
 coercion, and the CMS video block's round trip between editor fields and markup.
 
-One test reads the CMS config and both CI workflows and asserts they agree — adding a media folder
-to the CMS without telling the workflows would otherwise make every image upload run the full CI
-set instead of just the deploy.
+Production database and upload access are integration concerns; the application
+logic continues to use focused unit tests.
 
 ## Styling
 
@@ -86,30 +87,27 @@ The page background is a soft wash that picks a different palette on each load �
 
 ## Deployment and CI
 
-`main` deploys to GitHub Pages on every push, including a CMS save.
+GitHub Actions validates application changes. It does not publish the live
+site; production deployment is explicit and only uses a merged commit.
 
 | Workflow | Runs on | Purpose |
 |---|---|---|
-| [`deploy.yml`](./.github/workflows/deploy.yml) | push to `main` | Build and publish. Never filtered — a save must always publish. |
-| [`pr-checks.yml`](./.github/workflows/pr-checks.yml) | push to `main` | Lint, test, build. Skipped when a push only touches content. |
+| [`pr-checks.yml`](./.github/workflows/pr-checks.yml) | pull requests, push to `main` | Lint, test and build the standalone server. |
 | [`codeql.yml`](./.github/workflows/codeql.yml) | push to `main`, weekly | Static analysis. Skipped on content-only pushes. |
 | [`link-check.yml`](./.github/workflows/link-check.yml) | weekly | Finds dead links. |
 | [`dependency-review.yml`](./.github/workflows/dependency-review.yml) | pull requests | Flags vulnerable dependencies. |
 | [`lighthouse.yml`](./.github/workflows/lighthouse.yml) | manual | Performance and accessibility audit on demand. |
 
-Nothing gates a merge. Checks run after code lands and a failure is a notification rather than a
-barrier — the site is protected regardless, because a broken commit fails the deploy and the last
-good version stays live.
-
-`main` is protected against deletion and force-pushing, with no bypass. It deliberately does **not**
-require pull requests: the CMS commits directly, and that rule would stop saving from working.
+Application changes use a feature branch and pull request. After merge,
+[`scripts/deploy-hetzner.sh`](./scripts/deploy-hetzner.sh) archives the committed
+revision, builds it on the server, waits for container health and verifies the
+public URL. Database content saves do not run this pipeline.
 
 ## Documentation
 
 [`docs/`](./docs/) explains why things are set up this way, not just what the config says:
 
-- [`docs/cms.md`](./docs/cms.md) — the CMS, the GitHub OAuth app, and the Cloudflare Worker that
-  brokers the token exchange
+- [`docs/cms.md`](./docs/cms.md) — notes about the retired Git-backed editor
 - [`docs/hetzner.md`](./docs/hetzner.md) — the isolated container and staged cutover to
   `maghami.dev`
 - [`docs/ci-cd.md`](./docs/ci-cd.md) — what each workflow does and what its output means
