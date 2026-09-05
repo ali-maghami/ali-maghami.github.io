@@ -5,7 +5,7 @@ import Footer from '../components/Footer.astro';
 import GenericAvatar from '../components/GenericAvatar.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
-import { assertPortrait, assertProjectHero } from '../lib/badges';
+import { portraitImage, projectHero } from '../lib/badges';
 import { type ProjectRecord, getHomePage, getSiteSettings } from '../lib/portfolio-data';
 import { stageLabel } from '../lib/projects';
 
@@ -27,7 +27,7 @@ const {
 
 // Checked rather than trusted: a stale path renders a blank where the lead
 // image should be, and the CMS is what writes it.
-const heroImage = assertProjectHero(rawHeroImage);
+const heroImage = projectHero(rawHeroImage);
 
 // Share links need the page's own absolute URL, which only the built site
 // knows — Astro.site plus this path, the same pair the canonical tag uses.
@@ -48,7 +48,7 @@ const shareTargets = [
 // The contributor photo lives on the home entry, as it does on the cards.
 const [home, settings] = await Promise.all([getHomePage(), getSiteSettings()]);
 const SITE_TITLE = settings.siteTitle;
-const portrait = assertPortrait(home.portrait);
+const portrait = portraitImage(home.portrait);
 
 // The site owner leads, then anyone else credited on the entry — so their own
 // name is not retyped on every project. Only the owner has a photograph; the

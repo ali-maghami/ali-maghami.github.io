@@ -5,7 +5,7 @@ import PostCard from '../components/PostCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { assertHeroMedia, assertPortrait } from '../lib/badges';
+import { heroMedia, portraitImage } from '../lib/badges';
 import { renderPortfolioMarkdown } from '../lib/markdown';
 import { getNavHref } from '../lib/nav';
 import { getHomePage, getSiteSettings, listPosts, listProjects } from '../lib/portfolio-data';
@@ -36,7 +36,7 @@ const posts = allPosts
 const { heading, focusAreas } = home;
 // Checked rather than trusted: a public path is only a string, so a stale one
 // would render a broken image in the most prominent place on the site.
-const portrait = assertPortrait(home.portrait);
+const portrait = portraitImage(home.portrait);
 // Size, border, opacity and filter are all set in the CMS. They arrive as
 // custom properties rather than as classes so any value in range works without
 // a stylesheet listing every one.
@@ -109,8 +109,8 @@ const heroLede = await renderPortfolioMarkdown(home.bodyMarkdown);
 										description={post.description}
 										date={post.pubDate}
 										avatar={portrait}
-										heroImage={assertHeroMedia(post.heroImage)}
-										heroVideo={assertHeroMedia(post.heroVideo)}
+										heroImage={heroMedia(post.heroImage)}
+										heroVideo={heroMedia(post.heroVideo)}
 										heroVideoPlayback={post.heroVideoPlayback}
 									/>
 								))}

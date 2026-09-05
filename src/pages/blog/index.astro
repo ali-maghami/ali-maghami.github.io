@@ -4,13 +4,13 @@ import BaseHead from '../../components/BaseHead.astro';
 import PostCard from '../../components/PostCard.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import { assertHeroMedia, assertPortrait } from '../../lib/badges';
+import { heroMedia, portraitImage } from '../../lib/badges';
 import { getNavHref } from '../../lib/nav';
 import { getHomePage, getSiteSettings, listPosts } from '../../lib/portfolio-data';
 
 // The contributor avatar lives on the home entry, where the portrait is set.
 const [home, settings, posts] = await Promise.all([getHomePage(), getSiteSettings(), listPosts()]);
-const portrait = assertPortrait(home.portrait);
+const portrait = portraitImage(home.portrait);
 
 posts.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
 ---
@@ -47,8 +47,8 @@ posts.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
 								description={post.description}
 								date={post.pubDate}
 								avatar={portrait}
-								heroImage={assertHeroMedia(post.heroImage)}
-								heroVideo={assertHeroMedia(post.heroVideo)}
+								heroImage={heroMedia(post.heroImage)}
+								heroVideo={heroMedia(post.heroVideo)}
 								heroVideoPlayback={post.heroVideoPlayback}
 							/>
 						))}

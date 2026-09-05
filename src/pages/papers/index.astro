@@ -3,7 +3,7 @@ import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import { assertPaperPdf } from '../../lib/badges';
+import { paperPdf } from '../../lib/badges';
 import { getSiteSettings, listPapers } from '../../lib/portfolio-data';
 
 // Newest first. Not grouped under year headings any more: each card carries its
@@ -105,7 +105,7 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.citations ?? 0), 0);
 								{paper.abstract && <p class="abstract">{paper.abstract}</p>}
 
 								<p class="paper-meta">
-									{assertPaperPdf(paper.pdf) && (
+									{paperPdf(paper.pdf) && (
 										<a class="pdf-link" href={paper.pdf} target="_blank" rel="noopener noreferrer">
 											<svg viewBox="0 0 16 16" aria-hidden="true" width="13" height="13">
 												<path

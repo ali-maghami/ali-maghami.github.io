@@ -1,5 +1,5 @@
 ---
-import { assertBadge } from '../lib/badges';
+import { badgeImage } from '../lib/badges';
 import ExternalLink from './ExternalLink.astro';
 import { buildNavItems, getNavHref, showsFooterBadges } from '../lib/nav';
 import { getSiteSections } from '../lib/sections';
@@ -22,7 +22,7 @@ const navItems = buildNavItems(counts);
 // the strip. A limit of 0 means no cap.
 const eligible = allCertificates.filter((c) => c.featured);
 const featured = (FOOTER_BADGE_LIMIT > 0 ? eligible.slice(0, FOOTER_BADGE_LIMIT) : eligible).map(
-	(c) => ({ ...c, badge: assertBadge(c.badge) }),
+	(c) => ({ ...c, badge: badgeImage(c.badge) }),
 );
 const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 ---
