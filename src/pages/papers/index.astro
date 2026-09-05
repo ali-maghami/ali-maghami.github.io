@@ -1,15 +1,16 @@
 ---
-import { getCollection } from 'astro:content';
 import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import { SOCIAL } from '../../consts';
 import { assertPaperPdf } from '../../lib/badges';
+import { getSiteSettings, listPapers } from '../../lib/portfolio-data';
 
 // Newest first. Not grouped under year headings any more: each card carries its
 // own year, so a heading above it would say the same thing twice.
-const papers = (await getCollection('papers')).sort((a, b) => b.data.year - a.data.year);
+const [papers, settings] = await Promise.all([listPapers(), getSiteSettings()]);
+papers.sort((a, b) => b.year - a.year);
+const SOCIAL = settings.social;
 
 const KIND_LABELS: Record<string, string> = {
 	journal: 'Journal',
@@ -19,14 +20,14 @@ const KIND_LABELS: Record<string, string> = {
 	preprint: 'Preprint',
 };
 
-const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 0);
+const totalCitations = papers.reduce((sum, p) => sum + (p.citations ?? 0), 0);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead
-			title="Papers | Ali Maghami"
+			title={`Papers | ${settings.siteTitle}`}
 			description="Peer-reviewed publications and patents in computer vision, robotics, and applied AI."
 		/>
 	</head>
@@ -75,37 +76,37 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 					<ol class="paper-list">
 						{papers.map((paper) => (
 							<li class="paper">
-								{paper.data.tags.length > 0 && (
+								{paper.tags.length > 0 && (
 									<div class="tags">
-										{paper.data.tags.map((tag: string) => (
+										{paper.tags.map((tag: string) => (
 											<span class="tag">{tag}</span>
 										))}
 									</div>
 								)}
 
 								<h2 class="paper-title">
-									{paper.data.url ? (
-										<a href={paper.data.url} target="_blank" rel="noopener noreferrer">
-											{paper.data.title}
+									{paper.url ? (
+										<a href={paper.url} target="_blank" rel="noopener noreferrer">
+											{paper.title}
 										</a>
 									) : (
-										paper.data.title
+										paper.title
 									)}
 								</h2>
 
-								<p class="authors">{paper.data.authors}</p>
-								<p class="venue">{paper.data.venue}</p>
+								<p class="authors">{paper.authors}</p>
+								<p class="venue">{paper.venue}</p>
 
 								<div class="paper-tags">
-									<span class="year-badge">{paper.data.year}</span>
-									<span class="kind">{KIND_LABELS[paper.data.kind] ?? paper.data.kind}</span>
+									<span class="year-badge">{paper.year}</span>
+									<span class="kind">{KIND_LABELS[paper.kind] ?? paper.kind}</span>
 								</div>
 
-								{paper.data.abstract && <p class="abstract">{paper.data.abstract}</p>}
+								{paper.abstract && <p class="abstract">{paper.abstract}</p>}
 
 								<p class="paper-meta">
-									{assertPaperPdf(paper.data.pdf) && (
-										<a class="pdf-link" href={paper.data.pdf} target="_blank" rel="noopener noreferrer">
+									{assertPaperPdf(paper.pdf) && (
+										<a class="pdf-link" href={paper.pdf} target="_blank" rel="noopener noreferrer">
 											<svg viewBox="0 0 16 16" aria-hidden="true" width="13" height="13">
 												<path
 													d="M4 1.5h5L12.5 5v9.5H4z"
@@ -124,17 +125,17 @@ const totalCitations = papers.reduce((sum, p) => sum + (p.data.citations ?? 0), 
 											PDF
 										</a>
 									)}
-									{paper.data.doi && (
+									{paper.doi && (
 										<a
-											href={`https://doi.org/${paper.data.doi}`}
+											href={`https://doi.org/${paper.doi}`}
 											target="_blank"
 											rel="noopener noreferrer"
 										>
-											DOI: {paper.data.doi}
+											DOI: {paper.doi}
 										</a>
 									)}
-									{typeof paper.data.citations === 'number' && paper.data.citations > 0 && (
-										<span class="citations">Cited by {paper.data.citations}</span>
+									{typeof paper.citations === 'number' && paper.citations > 0 && (
+										<span class="citations">Cited by {paper.citations}</span>
 									)}
 								</p>
 							</li>

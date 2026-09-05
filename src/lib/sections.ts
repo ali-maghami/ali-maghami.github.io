@@ -1,9 +1,15 @@
-import { type CollectionEntry, getCollection } from 'astro:content';
-import { buildNavItems, isPublished, type NavItem } from './nav';
+import { buildNavItems, type NavItem } from './nav';
+import {
+	type CertificateRecord,
+	listCertificates,
+	listPapers,
+	listPosts,
+	listProjects,
+} from './portfolio-data';
 
 export interface SiteSections {
 	counts: Record<string, number>;
-	certificates: CollectionEntry<'certificates'>[];
+	certificates: CertificateRecord[];
 }
 
 /**
@@ -13,31 +19,26 @@ export interface SiteSections {
  * keeps the "collection is empty" notice for a not-yet-populated section down to
  * one line per build instead of one per page.
  */
-let cached: Promise<SiteSections> | undefined;
-
 async function loadSections(): Promise<SiteSections> {
 	const [projects, blog, papers, certificates] = await Promise.all([
-		getCollection('projects'),
-		getCollection('blog'),
-		getCollection('papers'),
-		getCollection('certificates'),
+		listProjects(),
+		listPosts(),
+		listPapers(),
+		listCertificates(),
 	]);
 
 	return {
 		counts: {
 			projects: projects.length,
-			blog: blog.filter(isPublished).length,
+			blog: blog.length,
 			papers: papers.length,
 		},
-		certificates: certificates.sort(
-			(a, b) => b.data.issueDate.valueOf() - a.data.issueDate.valueOf(),
-		),
+		certificates,
 	};
 }
 
 export function getSiteSections(): Promise<SiteSections> {
-	cached ??= loadSections();
-	return cached;
+	return loadSections();
 }
 
 export async function getNavItems(): Promise<NavItem[]> {

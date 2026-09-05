@@ -1,30 +1,11 @@
 name: CodeQL
 
-# Scans `main` after a merge and weekly, rather than on every pull request.
-# This is a static site whose only first-party script is a few lines inline, so
-# per-PR scanning cost about a minute on each content edit to re-scan code that
-# had not changed. Findings still surface in the Security tab, just after the
-# fact rather than as a gate — CodeQL was never a required check here.
+# Scans the deployed application's source on `main` and weekly. Findings surface
+# in the Security tab after a merge; dependency changes are still reviewed on
+# pull requests by the dedicated dependency-review workflow.
 on:
   push:
     branches: [main]
-    # A CMS save commits straight to `main`, and scanning code for a change that
-    # only touched markdown finds nothing. A push is skipped only when every
-    # changed file matches, so the moment a save also touches code this runs.
-    # The weekly scan covers anything these filters let through.
-    # Keep in step with the same list in pr-checks.yml — including any new CMS
-    # media folder, or an upload to it makes the push look like a code change.
-    paths-ignore:
-      - 'src/content/**'
-      - 'src/data/**'
-      - 'src/assets/**'
-      - 'public/badges/**'
-      - 'public/portrait/**'
-      - 'public/hero/**'
-      - 'public/pdf/**'
-      - 'public/media/**'
-      - 'docs/**'
-      - '**.md'
   schedule:
     - cron: '23 4 * * 1'
   workflow_dispatch:

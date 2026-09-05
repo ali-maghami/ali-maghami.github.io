@@ -1,57 +1,56 @@
 ---
-import { getCollection, render } from 'astro:content';
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
 import PostCard from '../components/PostCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { assertHeroMedia, assertPortrait } from '../lib/badges';
-import { getNavHref, isPublished } from '../lib/nav';
+import { renderPortfolioMarkdown } from '../lib/markdown';
+import { getNavHref } from '../lib/nav';
+import { getHomePage, getSiteSettings, listPosts, listProjects } from '../lib/portfolio-data';
 import { portraitStyle } from '../lib/portrait';
 
-const [home] = await getCollection('home');
-
-if (!home) {
-	throw new Error(
-		'The home collection is empty. Expected src/content/home/index.md — the hero renders from it.',
-	);
-}
+const [home, settings, allProjects, allPosts] = await Promise.all([
+	getHomePage(),
+	getSiteSettings(),
+	listProjects(),
+	listPosts(),
+]);
+const { siteTitle: SITE_TITLE, siteDescription: SITE_DESCRIPTION } = settings;
 
 // Newest first, with nothing jumping the queue. How many of each the page
 // shows is set in the CMS alongside the rest of the home page.
 // Active work only. The home page is a shopfront, not an archive — anything
 // retired is still a click away on the projects page, which groups it under
 // its own heading.
-const projects = (await getCollection('projects'))
-	.filter((project) => project.data.category === 'active')
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, home.data.projectCount);
+const projects = allProjects
+	.filter((project) => project.category === 'active')
+	.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf())
+	.slice(0, home.projectCount);
 
-const posts = (await getCollection('blog'))
-	.filter(isPublished)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, home.data.postCount);
+const posts = allPosts
+	.sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf())
+	.slice(0, home.postCount);
 
-const { heading, focusAreas } = home.data;
+const { heading, focusAreas } = home;
 // Checked rather than trusted: a public path is only a string, so a stale one
 // would render a broken image in the most prominent place on the site.
-const portrait = assertPortrait(home.data.portrait);
+const portrait = assertPortrait(home.portrait);
 // Size, border, opacity and filter are all set in the CMS. They arrive as
 // custom properties rather than as classes so any value in range works without
 // a stylesheet listing every one.
 const portraitVars = portraitStyle({
-	size: home.data.portraitSize,
-	borderWidth: home.data.portraitBorderWidth,
-	opacity: home.data.portraitOpacity,
-	filter: home.data.portraitFilter,
-	background: home.data.portraitBackground,
-	backgroundOpacity: home.data.portraitBackgroundOpacity,
+	size: home.portraitSize,
+	borderWidth: home.portraitBorderWidth,
+	opacity: home.portraitOpacity,
+	filter: home.portraitFilter,
+	background: home.portraitBackground,
+	backgroundOpacity: home.portraitBackgroundOpacity,
 });
 // The lede carries a link and emphasis, so it is markdown rather than a plain
 // string and Astro renders it here.
-const { Content: HeroLede } = await render(home);
+const heroLede = await renderPortfolioMarkdown(home.bodyMarkdown);
 ---
 
 <!doctype html>
@@ -76,7 +75,7 @@ const { Content: HeroLede } = await render(home);
 						<div class="hero-text">
 							<h1>{heading}</h1>
 							<div class="lede">
-								<HeroLede />
+								<Fragment set:html={heroLede} />
 							</div>
 							<ul class="focus-list">
 								{focusAreas.map((area) => <li>{area}</li>)}
@@ -105,14 +104,14 @@ const { Content: HeroLede } = await render(home);
 								{posts.map((post) => (
 									<PostCard
 										href={getNavHref(`/blog/${post.id}/`)}
-										kind={post.data.kind}
-										title={post.data.title}
-										description={post.data.description}
-										date={post.data.pubDate}
+										kind={post.kind}
+										title={post.title}
+										description={post.description}
+										date={post.pubDate}
 										avatar={portrait}
-										heroImage={assertHeroMedia(post.data.heroImage)}
-										heroVideo={assertHeroMedia(post.data.heroVideo)}
-										heroVideoPlayback={post.data.heroVideoPlayback}
+										heroImage={assertHeroMedia(post.heroImage)}
+										heroVideo={assertHeroMedia(post.heroVideo)}
+										heroVideoPlayback={post.heroVideoPlayback}
 									/>
 								))}
 							</div>
@@ -130,14 +129,14 @@ const { Content: HeroLede } = await render(home);
 							projects.map((proj) => (
 								<ProjectCard
 									href={getNavHref(`/projects/${proj.id}/`)}
-									stage={proj.data.stage}
-									title={proj.data.title}
-									description={proj.data.description}
-									date={proj.data.pubDate}
-									cardColor={proj.data.cardColor}
-									cardColorAlt={proj.data.cardColorAlt}
+									stage={proj.stage}
+									title={proj.title}
+									description={proj.description}
+									date={proj.pubDate}
+									cardColor={proj.cardColor}
+									cardColorAlt={proj.cardColorAlt}
 									avatar={portrait}
-									contributors={proj.data.contributors}
+									contributors={proj.contributors}
 								/>
 							))
 						}

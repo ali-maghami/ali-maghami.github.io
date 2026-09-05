@@ -28,7 +28,7 @@ Bypass list: **empty**, and `current_user_can_bypass` reports `never`. That's no
 
 Each of these has already mattered in this repo's actual history, not just in theory:
 
-1. **Nothing broken reaches the live site silently.** Before this ruleset, a direct push to `main` with a failing build or type error would still trigger `deploy.yml` and go live. Now `Build and verify` must pass first.
+1. **Nothing broken is selected for deployment silently.** `Build and verify` checks the standalone server before a feature branch is merged, and production deployment uses only a committed, merged revision.
 2. **It catches interaction between concurrent changes.** Two PRs (#11 and #12) independently touched `link-check.yml` — one fixed a `--root-dir` bug, the other removed an obsolete `--exclude-mail` flag. Without "strict status checks" (see below), the second PR could have merged on top of stale `main`, silently losing or conflicting with the first. The strict policy forced a re-test against the *combined* state instead.
 3. **Vulnerable dependencies get a hard stop, not just a warning.** `Scan dependency changes` (`fail-on-severity: high`) now actually blocks a merge instead of posting an ignorable status.
 4. **History can't be rewritten or deleted by mistake** (`non_fast_forward` + `deletion`).

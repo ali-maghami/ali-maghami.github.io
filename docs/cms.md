@@ -1,4 +1,8 @@
-# Content Management (Sveltia CMS)
+# Legacy Git-based CMS
+
+> This documents the retired GitHub Pages editor. The active CMS is the private
+> `ali-maghami/portfolio-cms` application at `https://cms.maghami.dev`.
+> Published database changes are now read by the Astro server on every request.
 
 The site's content lives as markdown and JSON under [`src/content/`](../src/content/) and
 [`src/data/`](../src/data/), validated against the schemas in
@@ -154,21 +158,18 @@ Windows) rather than an HTTP status. That is not a misconfiguration — it clear
 typically within half an hour. Confirm the deploy is otherwise healthy by checking that the
 hostname resolves to a Cloudflare address.
 
-## How editing works day to day
+## How editing worked day to day
 
 1. Open `/admin/` and sign in with GitHub.
 2. Create or edit an entry. Fields map 1:1 to the frontmatter schema.
 3. Save. That commits straight to `main` — there is no second step.
-4. [`deploy.yml`](../.github/workflows/deploy.yml) publishes the site, roughly 40 seconds later.
+4. The former GitHub Pages workflow published the site roughly 40 seconds later.
 
 Saving *is* publishing. There is no draft state and no pull request per entry, which is the
 point: the review stage cost a branch, a pull request and a merge for every certificate.
 
-What still stands between a mistake and a broken site is that `deploy.yml` publishes only a
-successful build. An entry that breaks the schema fails the build, nothing is deployed, and the
-live site stays on its last good version until the entry is fixed. `pr-checks.yml` also runs on
-`main`, so the failure arrives with a message naming the field rather than as a silent
-non-deployment.
+This workflow is retained here only as migration history. Production editing now
+happens in the database-backed CMS and supports explicit draft/published status.
 
 This only works while `main` does not require a pull request for every change. Restore that rule
 and the CMS's push is refused, so saving fails outright — the ruleset and `publish_mode` have to

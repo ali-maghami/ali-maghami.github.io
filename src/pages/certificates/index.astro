@@ -1,23 +1,23 @@
 ---
-import { getCollection, render } from 'astro:content';
 import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { assertBadge } from '../../lib/badges';
+import { renderPortfolioMarkdown } from '../../lib/markdown';
+import { getSiteSettings, listCertificates } from '../../lib/portfolio-data';
 
-const entries = (await getCollection('certificates')).sort(
-	(a, b) => b.data.issueDate.valueOf() - a.data.issueDate.valueOf(),
-);
+const [entries, settings] = await Promise.all([listCertificates(), getSiteSettings()]);
+entries.sort((a, b) => b.issueDate.valueOf() - a.issueDate.valueOf());
 
 // The CMS offers a Notes field on every certificate, so render it. Rendering is
 // async, so it is resolved up front rather than inside the template.
 const certificates = await Promise.all(
 	entries.map(async (entry) => ({
 		...entry,
-		Notes: (await render(entry)).Content,
-		badge: assertBadge(entry.data.badge),
+		notesHtml: await renderPortfolioMarkdown(entry.bodyMarkdown),
+		badge: assertBadge(entry.badge),
 	})),
 );
 
@@ -28,7 +28,7 @@ const now = new Date();
 <html lang="en">
 	<head>
 		<BaseHead
-			title="Certificates | Ali Maghami"
+			title={`Certificates | ${settings.siteTitle}`}
 			description="Professional certifications and credentials."
 		/>
 	</head>
@@ -46,7 +46,7 @@ const now = new Date();
 				certificates.length > 0 ? (
 					<ul class="cert-list">
 						{certificates.map((cert) => {
-							const expired = cert.data.expiryDate && cert.data.expiryDate < now;
+							const expired = cert.expiryDate && cert.expiryDate < now;
 							return (
 								<li class="cert-row">
 									{cert.badge && (
@@ -62,28 +62,28 @@ const now = new Date();
 									)}
 									<div class="cert-main">
 										<h2 class="cert-name">
-											{cert.data.url ? (
-												<a href={cert.data.url} target="_blank" rel="noopener noreferrer">
-													{cert.data.name}
+											{cert.url ? (
+												<a href={cert.url} target="_blank" rel="noopener noreferrer">
+													{cert.name}
 												</a>
 											) : (
-												cert.data.name
+												cert.name
 											)}
 										</h2>
-										<p class="cert-issuer">{cert.data.issuer}</p>
-										{cert.data.credentialId && (
-											<p class="cert-id">ID: {cert.data.credentialId}</p>
+										<p class="cert-issuer">{cert.issuer}</p>
+										{cert.credentialId && (
+											<p class="cert-id">ID: {cert.credentialId}</p>
 										)}
 										<div class="cert-notes">
-											<cert.Notes />
+											<Fragment set:html={cert.notesHtml} />
 										</div>
 									</div>
 									<div class="cert-dates">
-										<FormattedDate date={cert.data.issueDate} />
-										{cert.data.expiryDate && (
+										<FormattedDate date={cert.issueDate} />
+										{cert.expiryDate && (
 											<span class:list={['expiry', { expired }]}>
 												{expired ? 'Expired' : 'Expires'}{' '}
-												<FormattedDate date={cert.data.expiryDate} />
+												<FormattedDate date={cert.expiryDate} />
 											</span>
 										)}
 									</div>

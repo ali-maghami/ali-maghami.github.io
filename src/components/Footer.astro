@@ -1,12 +1,18 @@
 ---
-import { FOOTER_BADGE_LIMIT, FOOTER_BADGE_PAGES, SITE_TITLE, SOCIAL } from '../consts';
 import { assertBadge } from '../lib/badges';
 import ExternalLink from './ExternalLink.astro';
 import { buildNavItems, getNavHref, showsFooterBadges } from '../lib/nav';
 import { getSiteSections } from '../lib/sections';
+import { getSiteSettings } from '../lib/portfolio-data';
 
 const today = new Date();
-const { counts, certificates: allCertificates } = await getSiteSections();
+const [{ counts, certificates: allCertificates }, settings] = await Promise.all([
+	getSiteSections(),
+	getSiteSettings(),
+]);
+const { siteTitle: SITE_TITLE, social: SOCIAL } = settings;
+const FOOTER_BADGE_LIMIT = settings.footerBadges.limit;
+const FOOTER_BADGE_PAGES = settings.footerBadges.pages;
 const navItems = buildNavItems(counts);
 
 // Three separate switches, all set in the CMS. `featured` on a certificate
@@ -14,9 +20,9 @@ const navItems = buildNavItems(counts);
 // them at all, since the footer is on every page; footerBadges.limit caps *how
 // many* appear, so marking another certificate featured cannot quietly stretch
 // the strip. A limit of 0 means no cap.
-const eligible = allCertificates.filter((c) => c.data.featured);
+const eligible = allCertificates.filter((c) => c.featured);
 const featured = (FOOTER_BADGE_LIMIT > 0 ? eligible.slice(0, FOOTER_BADGE_LIMIT) : eligible).map(
-	(c) => ({ ...c, badge: assertBadge(c.data.badge) }),
+	(c) => ({ ...c, badge: assertBadge(c.badge) }),
 );
 const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 ---
@@ -43,13 +49,13 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 											decoding="async"
 										/>
 									)}
-									<span class="cert-name">{cert.data.name}</span>
+									<span class="cert-name">{cert.name}</span>
 								</>
 							);
 							return (
 								<li class="cert">
-									{cert.data.url ? (
-										<a href={cert.data.url} target="_blank" rel="noopener noreferrer">
+								{cert.url ? (
+									<a href={cert.url} target="_blank" rel="noopener noreferrer">
 											{inner}
 										</a>
 									) : (
@@ -82,6 +88,7 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 			{SOCIAL.github && <ExternalLink href={SOCIAL.github}>GitHub</ExternalLink>}
 			{SOCIAL.linkedin && <ExternalLink href={SOCIAL.linkedin}>LinkedIn</ExternalLink>}
 			{SOCIAL.scholar && <ExternalLink href={SOCIAL.scholar}>Scholar</ExternalLink>}
+			{SOCIAL.email && <a href={`mailto:${SOCIAL.email}`}>Email</a>}
 		</nav>
 	</div>
 </footer>

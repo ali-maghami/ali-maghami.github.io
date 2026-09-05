@@ -1,24 +1,18 @@
 ---
-import { getCollection, render } from 'astro:content';
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import { renderPortfolioMarkdown } from '../lib/markdown';
+import { getAboutPage } from '../lib/portfolio-data';
 
 // A single-entry collection: the About page is content, edited at /admin/,
 // rather than markup. The prose is the markdown body; the two definition
 // lists below come from structured frontmatter so they stay consistently
 // formatted no matter who edits them.
-const [about] = await getCollection('about');
-
-if (!about) {
-	throw new Error(
-		'The about collection is empty. Expected src/content/about/index.md — the About page renders from it.',
-	);
-}
-
-const { title, eyebrow, standfirst, skills, education } = about.data;
-const { Content } = await render(about);
+const about = await getAboutPage();
+const { title, eyebrow, standfirst, skills, education } = about;
+const bodyHtml = await renderPortfolioMarkdown(about.bodyMarkdown);
 ---
 
 <!doctype html>
@@ -38,7 +32,7 @@ const { Content } = await render(about);
 			</div>
 
 			<div class="wrap-narrow prose">
-				<Content />
+				<Fragment set:html={bodyHtml} />
 
 				{
 					skills.length > 0 && (
