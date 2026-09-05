@@ -35,7 +35,13 @@ const [home, settings, allProjects, allPosts, papers, certificates] = await Prom
 
 // The figures under the lede, counted from what is published rather than
 // typed in, so they cannot drift from the pages behind them.
-const proof = highlights({ papers, projects: allProjects, certificates, since: home.since });
+const proof = highlights({
+	papers,
+	projects: allProjects,
+	certificates,
+	since: home.since,
+	custom: home.highlights,
+});
 const { siteTitle: SITE_TITLE, siteDescription: SITE_DESCRIPTION } = settings;
 
 // Newest first, with nothing jumping the queue. How many of each the page

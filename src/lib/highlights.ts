@@ -1,12 +1,13 @@
 import type { CertificateRecord, PaperRecord, ProjectRecord } from './portfolio-data';
 
 /**
- * The numbers that back up the home page's claim, taken from the content
- * rather than typed in: publications, patents, projects and certifications are
- * counted from what is published, so the row can never drift from the pages
- * behind it. Years of experience is the one figure content cannot supply; it
- * comes from the year the CMS says the career started, and is left out until
- * that is set.
+ * The numbers that back up the home page's claim.
+ *
+ * Typed in the CMS when the owner wants to choose them — "11+ years in the
+ * field" is not something content can count. Otherwise taken from the
+ * content: publications, patents, projects and certifications are counted
+ * from what is published, so the row can never drift from the pages behind
+ * it, and years come from a start year if the CMS has one.
  */
 export interface Highlight {
 	value: string;
@@ -21,9 +22,13 @@ export function highlights(
 		projects: ProjectRecord[];
 		certificates: CertificateRecord[];
 		since?: number;
+		/** What the CMS says, which wins outright when there is anything in it. */
+		custom?: Highlight[];
 	},
 	today = new Date(),
 ): Highlight[] {
+	if (content.custom && content.custom.length > 0) return content.custom;
+
 	const items: Highlight[] = [];
 
 	if (content.since && content.since <= today.getUTCFullYear()) {
