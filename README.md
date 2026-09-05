@@ -88,6 +88,13 @@ PORTFOLIO_TEST_DATABASE_URL=postgres://postgres:portfolio@localhost:5432/portfol
 
 Without that variable the integration file is skipped and everything else runs.
 
+`tests/smoke.test.ts` opens the built site in the Chrome installed on the
+machine: no sideways scrolling on a phone, no console errors or failed
+requests under the content security policy, dark mode actually dark, one
+palette per section, a real 404. CI seeds `scripts/test-content.sql` into a
+second database, starts `dist/server/entry.mjs` and points the test at it with
+`SMOKE_BASE_URL`; the same three steps work locally.
+
 ## Styling
 
 Design tokens and layout live in [`src/styles/global.css`](./src/styles/global.css) as custom
@@ -144,6 +151,20 @@ the site reads. A test keeps the list matched to the mappers in both
 directions, and `/healthz` compares it to `information_schema` on every probe,
 so a deploy stops on a mismatch instead of shipping pages that quietly lost a
 field. The CMS repository's `docs/schema-contract.md` describes the other half.
+
+## Appearance
+
+Each section owns a background palette — home is the bloom, posts the dusk,
+projects the lagoon — set as `data-palette` on `<html>` from
+[`src/lib/palettes.ts`](./src/lib/palettes.ts) and painted by the matching
+rules in `global.css`; a test keeps the two files in step. The site follows the
+reader's colour scheme: every colour is a token in `global.css`, and the dark
+block re-points the tokens. There is no toggle, deliberately.
+
+Responses carry a content security policy computed by Astro (a hash per script
+and stylesheet, sent as a header by the node adapter) plus the permissions,
+referrer and framing headers from `src/middleware.ts`. Anything the site loads
+must be its own; there is nothing third-party to allow.
 
 ## Conventions the content relies on
 

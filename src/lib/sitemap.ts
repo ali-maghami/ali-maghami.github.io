@@ -36,6 +36,19 @@ function formatLastmod(date: Date): string | undefined {
 	return date.toISOString().slice(0, 10);
 }
 
+/**
+ * The most recent of a set of dates, for an index page whose content is the
+ * entries beneath it: the blog index changed when its newest post did.
+ * Undefined when there is nothing to date it by.
+ */
+export function latestDate(dates: Array<Date | undefined>): Date | undefined {
+	let latest: Date | undefined;
+	for (const date of dates) {
+		if (date && !Number.isNaN(date.getTime()) && (!latest || date > latest)) latest = date;
+	}
+	return latest;
+}
+
 export function renderSitemap(site: URL, entries: SitemapEntry[]): string {
 	const urls = entries.map((entry) => {
 		const location = escapeXml(new URL(entry.path, site).href);

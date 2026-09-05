@@ -93,3 +93,21 @@ jobs:
 
       - name: Build site
         run: npm run build
+
+      # The built server, against fixture content, in the Chrome the runner
+      # already has. Started and tested in one step so the process is still
+      # there when the tests run. See tests/smoke.test.ts for what is checked.
+      - name: Smoke-test the built site in a browser
+        env:
+          SITE_DATABASE_URL: postgres://postgres:portfolio@localhost:5432/portfolio_site
+          SMOKE_BASE_URL: http://127.0.0.1:4321
+        run: |
+          psql "$PORTFOLIO_TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -qc 'CREATE DATABASE portfolio_site'
+          psql "$SITE_DATABASE_URL" -v ON_ERROR_STOP=1 -q -f scripts/test-database.sql -f scripts/test-content.sql
+          PORTFOLIO_DATABASE_URL="$SITE_DATABASE_URL" HOST=127.0.0.1 PORT=4321 node dist/server/entry.mjs > server.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            curl -sf "$SMOKE_BASE_URL/healthz" > /dev/null && break
+            sleep 1
+          done
+          curl -sf "$SMOKE_BASE_URL/healthz"
+          npx vitest run tests/smoke.test.ts || { echo '--- server log ---'; cat server.log; exit 1; }

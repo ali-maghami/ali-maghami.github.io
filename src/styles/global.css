@@ -39,8 +39,123 @@
 }
 
 :root {
-	--shadow-card: 0 1px 2px rgb(48 48 38 / 6%);
-	--shadow-card-hover: 0 6px 20px rgb(48 48 38 / 10%);
+	/* Both schemes are supported, so native controls and scrollbars follow. */
+	color-scheme: light dark;
+
+	/* The frosted panels — nav pill, focus chips, certificate strip — sit on
+	   the colour wash, so they are translucent white rather than paper. */
+	--color-glass: rgb(255 255 255 / 55%);
+	--color-glass-border: rgb(255 255 255 / 45%);
+
+	/* Shadows are ink at low opacity; the triple is what changes in the dark. */
+	--shadow-rgb: 48 48 38;
+	--shadow-card: 0 1px 2px rgb(var(--shadow-rgb) / 6%);
+	--shadow-card-hover: 0 6px 20px rgb(var(--shadow-rgb) / 10%);
+
+	/* How strongly the aurora blobs paint; dimmed in the dark, where the same
+	   saturation glares. */
+	--aurora-strength: 1;
+}
+
+/* ------------------------------------------------------------- palettes */
+
+/* One palette per section, keyed on data-palette on <html>; see
+   lib/palettes.ts, which is the source of these values and is tested against
+   this file. The default (no attribute) is the paper tone from the theme. */
+[data-palette='bloom'] {
+	--surface: #fdf7fb;
+	--accent-1: #f2a0d0;
+	--accent-2: #b795f0;
+	--accent-3: #8fb8f5;
+	--accent-4: #f9c9e4;
+}
+[data-palette='dusk'] {
+	--surface: #faf6fd;
+	--accent-1: #c0abfd;
+	--accent-2: #f0a6fb;
+	--accent-3: #9fb0fc;
+	--accent-4: #fbc8e8;
+}
+[data-palette='lagoon'] {
+	--surface: #f2fbfd;
+	--accent-1: #6ecbfb;
+	--accent-2: #5fe3f2;
+	--accent-3: #9db0fb;
+	--accent-4: #8ef0dd;
+}
+[data-palette='meadow'] {
+	--surface: #f5fcf4;
+	--accent-1: #79e9a4;
+	--accent-2: #b8ee5f;
+	--accent-3: #6ecbfb;
+	--accent-4: #fbe07a;
+}
+[data-palette='citrus'] {
+	--surface: #fffaf2;
+	--accent-1: #fcb265;
+	--accent-2: #fb9d9d;
+	--accent-3: #fbcf47;
+	--accent-4: #fb9fb0;
+}
+[data-palette='coral'] {
+	--surface: #fff6f5;
+	--accent-1: #fb9dab;
+	--accent-2: #fcb265;
+	--accent-3: #f79ad2;
+	--accent-4: #fdd0a4;
+}
+
+/* ------------------------------------------------------------ dark mode */
+
+/* Follows the reader's system preference. The tokens are re-pointed and
+   everything built from them follows; the accents stay, dimmed by
+   --aurora-strength, and each palette's surface becomes the same hue over the
+   dark base. GitHub's dark foreground scale, for the same reason the light
+   one is GitHub's: it was tuned for long reading. */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-paper: #1c2128;
+		--color-base: #0f1318;
+		--color-sand-50: #1a1f26;
+		--color-sand-100: #232a32;
+		--color-sand-200: #30383f;
+		--color-sand-300: #3e4850;
+
+		--color-ink: #e6edf3;
+		--color-ink-soft: #c9d1d9;
+		--color-ink-muted: #8b949e;
+
+		--color-lavender: #9aa2f2;
+		--color-lavender-deep: #b6bcf7;
+
+		--color-glass: rgb(28 33 40 / 60%);
+		--color-glass-border: rgb(255 255 255 / 10%);
+
+		--shadow-rgb: 0 0 0;
+		--shadow-card: 0 1px 2px rgb(0 0 0 / 30%);
+		--shadow-card-hover: 0 6px 20px rgb(0 0 0 / 40%);
+
+		--aurora-strength: 0.42;
+	}
+
+	[data-palette='bloom'] {
+		--surface: #191219;
+	}
+	[data-palette='dusk'] {
+		--surface: #16131d;
+	}
+	[data-palette='lagoon'] {
+		--surface: #0f171b;
+	}
+	[data-palette='meadow'] {
+		--surface: #111a14;
+	}
+	[data-palette='citrus'] {
+		--surface: #1a1610;
+	}
+	[data-palette='coral'] {
+		--surface: #1a1213;
+	}
 }
 
 *,
@@ -68,8 +183,8 @@ body {
 	font-size: 16px;
 	line-height: 1.6;
 	color: var(--color-ink);
-	/* --surface is set per page load by BackgroundPalette; the token is the
-	   fallback, so the site keeps its paper tone without JavaScript. */
+	/* --surface comes from the section's palette on <html>; the token is the
+	   fallback for a page without one. */
 	background-color: var(--surface, var(--color-base));
 	text-align: left;
 	word-wrap: break-word;
@@ -247,16 +362,6 @@ main {
 	white-space: nowrap;
 }
 
-.badge-personal {
-	background-color: color-mix(in srgb, var(--color-mint) 55%, var(--color-base));
-	color: #5e6136;
-}
-
-.badge-previous {
-	background-color: color-mix(in srgb, var(--color-copper) 20%, var(--color-base));
-	color: #8c412d;
-}
-
 .tag {
 	display: inline-block;
 	font-family: var(--font-mono);
@@ -415,8 +520,8 @@ main {
 }
 
 .btn-primary:hover {
-	background: #45453a;
-	border-color: #45453a;
+	background: color-mix(in srgb, var(--color-ink) 82%, var(--color-paper));
+	border-color: color-mix(in srgb, var(--color-ink) 82%, var(--color-paper));
 	color: var(--color-paper);
 }
 

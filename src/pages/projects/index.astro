@@ -1,10 +1,12 @@
 ---
+import { paletteForPath } from '../../lib/palettes';
 import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import { portraitImage } from '../../lib/badges';
+import { portraitImage, projectHero } from '../../lib/badges';
+import { leadImage } from '../../lib/body-image';
 import { getNavHref } from '../../lib/nav';
 import { getHomePage, getSiteSettings, listProjects } from '../../lib/portfolio-data';
 import { categoryLabel, stageDescription, stageLabel, stagesIn } from '../../lib/projects';
@@ -29,10 +31,13 @@ const sections = ['active', 'archived'].map((category) => ({
 // The stage badges on the cards are one word each. This says what the words
 // mean, listing only the stages that actually appear.
 const stages = stagesIn(allProjects);
+
+// The section's colour, set on <html> so the stylesheet can key on it.
+const paletteName = paletteForPath(Astro.url.pathname).name;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-palette={paletteName}>
 	<head>
 		<BaseHead
 			title={`Projects | ${settings.siteTitle}`}
@@ -73,6 +78,7 @@ const stages = stagesIn(allProjects);
 											cardColorAlt={project.cardColorAlt}
 											avatar={portrait}
 											contributors={project.contributors}
+											image={leadImage(projectHero(project.heroImage), project.bodyMarkdown)}
 										/>
 									))}
 								</div>

@@ -56,6 +56,20 @@ export function isResizable(publicPath: string): boolean {
 	return RESIZABLE.test(publicPath) && publicFile(publicPath) !== undefined;
 }
 
+/** Files in the shared upload volume, served by src/pages/uploads/[...path].ts. */
+const UPLOAD_IMAGE = /^\/uploads\/[0-9a-f-]{36}\.(?:gif|jpe?g|png|webp)$/i;
+
+/**
+ * Whether an image path names something the site can actually serve: a
+ * committed file in public/, or an upload in the shape the CMS mints. A body
+ * may reference anything; only these are worth putting on a share card or a
+ * project card.
+ */
+export function servableImage(publicPath: string | undefined): boolean {
+	if (!publicPath) return false;
+	return UPLOAD_IMAGE.test(publicPath) || publicFile(publicPath) !== undefined;
+}
+
 const versions = new Map<string, string>();
 
 /** Eight hex characters of the file's content hash, for cache-safe URLs. */

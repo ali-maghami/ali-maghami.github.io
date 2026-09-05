@@ -1,8 +1,13 @@
 name: Lighthouse CI
 
-# Run on demand against the live Node application. This audit reports scores but
-# has no assertions, so it is intentionally not a merge gate.
+# Weekly and on demand against the live Node application. The budgets in
+# lighthouserc.json fail the run when a category score drops below them, so a
+# regression in performance or accessibility shows up as a red run rather than
+# a number nobody reads. It audits the deployed site, not a pull request, so it
+# is not a merge gate.
 on:
+  schedule:
+    - cron: '0 7 * * 1'
   workflow_dispatch:
 
 permissions:

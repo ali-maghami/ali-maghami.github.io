@@ -1,3 +1,5 @@
+import { servableImage } from './images';
+
 /**
  * The first image a body embeds, for a page that has no hero of its own.
  *
@@ -16,4 +18,16 @@ export function firstBodyImage(markdown: string): string | undefined {
 		if (STILL.test(target)) return target;
 	}
 	return undefined;
+}
+
+/**
+ * The image that stands for an entry: its hero if it has one, otherwise the
+ * first body image the site can serve. Used for share cards and for the
+ * thumbnail on a project card.
+ */
+export function leadImage(hero: string | undefined, markdown: string): string | undefined {
+	if (hero) return hero;
+
+	const fromBody = firstBodyImage(markdown);
+	return fromBody && servableImage(fromBody) ? fromBody : undefined;
 }
