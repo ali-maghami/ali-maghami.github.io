@@ -1,6 +1,7 @@
 import postgres from 'postgres';
 
 import { cached } from './request-cache';
+import { READ_COLUMNS, missingColumns } from './schema-contract';
 
 type OptionalString = string | null | undefined;
 
@@ -82,6 +83,10 @@ export interface HomePageRecord {
 	portraitBackgroundOpacity: number;
 	projectCount: number;
 	postCount: number;
+	/** One line on what the owner is doing at the moment, if the CMS has it. */
+	now?: string;
+	/** The year the career started, for "N+ years"; unset until the CMS has it. */
+	since?: number;
 	bodyMarkdown: string;
 }
 
@@ -143,6 +148,27 @@ function getDatabase() {
 export async function pingDatabase(): Promise<void> {
 	const sql = getDatabase();
 	await sql`SELECT 1`;
+}
+
+/**
+ * The columns the site reads but the database does not show it, as
+ * "table.column" — empty when the schema still matches. Read from
+ * information_schema rather than the CMS's definition, because that reflects
+ * both what exists and what the reader role was granted, which are the two
+ * ways a column stops arriving. See lib/schema-contract.ts.
+ */
+export async function verifySchema(): Promise<string[]> {
+	const sql = getDatabase();
+	const tables = Object.keys(READ_COLUMNS);
+	const rows = await sql`
+		SELECT table_name, column_name
+		FROM information_schema.columns
+		WHERE table_schema = 'public' AND table_name = ANY(${tables})
+	`;
+	return missingColumns(
+		READ_COLUMNS,
+		rows.map((row) => ({ table: String(row.table_name), column: String(row.column_name) })),
+	);
 }
 
 /** Closes the pool. For tests, which would otherwise leave a worker waiting on it. */
@@ -378,6 +404,8 @@ export function mapHomePage(row: Record<string, unknown>): HomePageRecord {
 		portraitBackgroundOpacity: number(data.portraitBackgroundOpacity, 0),
 		projectCount: number(data.projectCount, 4),
 		postCount: number(data.postCount, 5),
+		now: optional(data.now as OptionalString),
+		since: typeof data.since === 'number' && Number.isInteger(data.since) ? data.since : undefined,
 		bodyMarkdown,
 	};
 }

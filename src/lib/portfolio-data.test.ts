@@ -178,7 +178,20 @@ describe('mapHomePage', () => {
 			portraitBackgroundOpacity: 0,
 			projectCount: 4,
 			postCount: 5,
+			now: undefined,
+			since: undefined,
 			bodyMarkdown: '',
+		});
+	});
+
+	it('reads the current-role line and the start year only when they are well formed', () => {
+		expect(mapHomePage({ data: { now: ' Leading vision at Hatch ', since: 2015 }, body_markdown: '' })).toMatchObject({
+			now: 'Leading vision at Hatch',
+			since: 2015,
+		});
+		expect(mapHomePage({ data: { now: '', since: '2015' }, body_markdown: '' })).toMatchObject({
+			now: undefined,
+			since: undefined,
 		});
 	});
 
