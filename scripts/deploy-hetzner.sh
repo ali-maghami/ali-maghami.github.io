@@ -30,15 +30,34 @@ scp -q "$ARCHIVE" "${DEPLOY_TARGET}:/tmp/portfolio.tar.gz"
 
 ssh "$DEPLOY_TARGET" bash -s <<EOF
 set -euo pipefail
-mkdir -p "${APP_DIR}"
-cd "${APP_DIR}"
-tar xzf /tmp/portfolio.tar.gz
-rm -f /tmp/portfolio.tar.gz
 
-test -s .env.reader || {
+case "${APP_DIR}" in
+  /home/ali/apps/*) ;;
+  *)
+    echo "APP_DIR must remain below /home/ali/apps; refusing to clean ${APP_DIR}"
+    exit 1
+    ;;
+esac
+
+release_dir="\$(mktemp -d)"
+trap 'rm -rf -- "\$release_dir"; rm -f -- /tmp/portfolio.tar.gz' EXIT
+tar xzf /tmp/portfolio.tar.gz -C "\$release_dir"
+test -f "\$release_dir/compose.prod.yml"
+
+mkdir -p "${APP_DIR}"
+
+test -s "${APP_DIR}/.env.reader" || {
   echo "Missing ${APP_DIR}/.env.reader; refusing to start"
   exit 1
 }
+
+# Install the exact release rather than extracting over the previous one.
+# Overlay extraction leaves files deleted in Git sitting in the Docker build
+# context, so they are copied back into the image: the retired /admin/ editor
+# survived its own removal that way and kept answering 200 in production.
+find "${APP_DIR}" -mindepth 1 -maxdepth 1 ! -name .env.reader -exec rm -rf -- {} +
+cp -a "\$release_dir/." "${APP_DIR}/"
+cd "${APP_DIR}"
 
 echo "==> building ${REV}"
 docker compose -f compose.prod.yml build
