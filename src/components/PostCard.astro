@@ -1,5 +1,6 @@
 ---
 import FormattedDate from './FormattedDate.astro';
+import { resizedImage, videoPoster } from '../lib/images';
 
 interface Props {
 	href: string;
@@ -30,6 +31,12 @@ const {
 // shows the first frame instead, which is the preview the card wants anyway.
 const autoplay = heroVideoPlayback !== 'viewer';
 const loop = heroVideoPlayback === 'loop';
+
+// With a poster the clip itself is not fetched until the card scrolls into
+// view (see the script below): the home page used to download a 2.4 MB video
+// for every visitor, whether or not they ever scrolled to it. Without a poster
+// the card would sit blank, so the clip loads its first frame as before.
+const poster = videoPoster(heroVideo);
 ---
 
 <article class="post-card">
@@ -43,7 +50,13 @@ const loop = heroVideoPlayback === 'loop';
 	<a class="post-link" href={href}>
 		{
 			heroImage && (
-				<img class="post-hero" src={heroImage} alt="" loading="lazy" decoding="async" />
+				<img
+					class="post-hero"
+					src={resizedImage(heroImage, 1280)}
+					alt=""
+					loading="lazy"
+					decoding="async"
+				/>
 			)
 		}
 
@@ -55,21 +68,38 @@ const loop = heroVideoPlayback === 'loop';
 			</svg>
 			<span class="post-kind">{kind}</span>
 			<FormattedDate date={date} />
-			{avatar && <img class="post-avatar" src={avatar} alt="" width="44" height="44" loading="lazy" />}
+			{
+				avatar && (
+					<img
+						class="post-avatar"
+						src={resizedImage(avatar, 88)}
+						alt=""
+						width="44"
+						height="44"
+						loading="lazy"
+					/>
+				)
+			}
 		</div>
 
 		<h3 class="post-title">{title}</h3>
 
 		{
+			/*
+			 * Autoplay is done by the script below rather than the attribute,
+			 * so the clip starts when it is on screen and not before. Muted
+			 * stays, because a browser will not start an unmuted clip itself.
+			 */
 			heroVideo && (
 				<video
 					class="post-video"
 					src={heroVideo}
-					autoplay={autoplay}
+					poster={poster}
 					loop={loop}
 					muted={autoplay}
 					playsinline
-					preload="metadata"
+					preload={poster ? 'none' : 'metadata'}
+					data-autoplay={autoplay ? '' : undefined}
 				/>
 			)
 		}
@@ -200,6 +230,42 @@ const loop = heroVideoPlayback === 'loop';
 			video.autoplay = false;
 			video.controls = true;
 			video.pause();
+		}
+	}
+</script>
+
+<script>
+	/*
+	 * Card clips start when they scroll into view and pause when they leave,
+	 * so a page loads none of the video a reader never reaches. A reader who
+	 * asked for reduced motion gets controls and no autoplay at all. Without
+	 * IntersectionObserver the clips simply start, as they used to.
+	 */
+	const clips = document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]');
+
+	const start = (clip: HTMLVideoElement) => {
+		if (clip.ended && !clip.loop) return;
+		clip.preload = 'auto';
+		clip.play().catch(() => {});
+	};
+
+	if (clips.length > 0) {
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			for (const clip of clips) clip.controls = true;
+		} else if ('IntersectionObserver' in window) {
+			const watcher = new IntersectionObserver(
+				(entries) => {
+					for (const entry of entries) {
+						const clip = entry.target as HTMLVideoElement;
+						if (entry.isIntersecting) start(clip);
+						else clip.pause();
+					}
+				},
+				{ rootMargin: '25% 0px' },
+			);
+			for (const clip of clips) watcher.observe(clip);
+		} else {
+			for (const clip of clips) start(clip);
 		}
 	}
 </script>
