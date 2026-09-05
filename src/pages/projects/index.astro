@@ -5,8 +5,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import { portraitImage, projectHero } from '../../lib/badges';
-import { leadImage } from '../../lib/body-image';
+import { portraitImage } from '../../lib/badges';
 import { getNavHref } from '../../lib/nav';
 import { getHomePage, getSiteSettings, listProjects } from '../../lib/portfolio-data';
 import { categoryLabel, stageDescription, stageLabel, stagesIn } from '../../lib/projects';
@@ -78,7 +77,6 @@ const paletteName = paletteForPath(Astro.url.pathname).name;
 											cardColorAlt={project.cardColorAlt}
 											avatar={portrait}
 											contributors={project.contributors}
-											image={leadImage(projectHero(project.heroImage), project.bodyMarkdown)}
 										/>
 									))}
 								</div>

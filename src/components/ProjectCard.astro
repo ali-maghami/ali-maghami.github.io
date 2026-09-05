@@ -16,8 +16,6 @@ interface Props {
 	avatar?: string;
 	/** Anyone credited besides the site owner. Names are not shown here. */
 	contributors?: string[];
-	/** The project's lead image, shown small in the wash. */
-	image?: string;
 }
 
 const {
@@ -30,7 +28,6 @@ const {
 	cardColorAlt,
 	avatar,
 	contributors = [],
-	image,
 } = Astro.props;
 
 // Stored per project rather than derived from the page palette, so a card keeps
@@ -44,25 +41,6 @@ const wash = cardGradient(cardColor, cardColorAlt);
 			<FormattedDate date={date} precision="monthYear" />
 			<span class="project-label" title={stageDescription(stage)}>{stageLabel(stage)}</span>
 		</div>
-
-		{
-			/*
-			 * A glimpse of the work where the wash used to sit empty. Small and
-			 * framed rather than full bleed, so the card keeps its colour and
-			 * the title stays the loudest thing on it.
-			 */
-			image && (
-				<img
-					class="project-thumb"
-					src={resizedImage(image, 640)}
-					alt=""
-					width="320"
-					height="180"
-					loading="lazy"
-					decoding="async"
-				/>
-			)
-		}
 
 		<div class="project-body">
 			<h3 class="project-title">{title}</h3>
@@ -144,19 +122,6 @@ const wash = cardGradient(cardColor, cardColorAlt);
 		border-radius: 999px;
 		padding: 0.25rem 0.65rem;
 		color: var(--color-ink-soft);
-	}
-
-	.project-thumb {
-		display: block;
-		width: min(58%, 260px);
-		height: auto;
-		aspect-ratio: 16 / 9;
-		object-fit: cover;
-		margin: 1.25rem 0 0 auto;
-		border-radius: 8px;
-		border: 1px solid var(--color-glass-border);
-		box-shadow: 0 6px 18px rgb(var(--shadow-rgb) / 12%);
-		background: var(--color-paper);
 	}
 
 	/* Pushed to the bottom, leaving the wash uninterrupted at the top. */
