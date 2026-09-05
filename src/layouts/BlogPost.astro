@@ -9,7 +9,7 @@ import Header from '../components/Header.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import ShareLinks from '../components/ShareLinks.astro';
 import StructuredData from '../components/StructuredData.astro';
-import { portraitImage, projectHero } from '../lib/badges';
+import { portraitImage } from '../lib/badges';
 import { leadImage } from '../lib/body-image';
 import { publicImageSize, resizedImage, videoPoster } from '../lib/images';
 import { getNavHref } from '../lib/nav';
@@ -193,7 +193,6 @@ const paletteName = paletteForPath(Astro.url.pathname).name;
 											cardColorAlt={project.cardColorAlt}
 											avatar={portrait}
 											contributors={project.contributors}
-											image={leadImage(projectHero(project.heroImage), project.bodyMarkdown)}
 										/>
 									))}
 								</div>
