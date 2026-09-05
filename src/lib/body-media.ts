@@ -11,6 +11,7 @@
  * loops, spans the full width, and is still described to a screen reader.
  */
 import type { HastNode } from './external-links';
+import { isResizable, resizedImage } from './images';
 import { dimensionsFor } from './media-dimensions';
 
 /** Extensions a browser can play in a <video> element. */
@@ -84,6 +85,28 @@ export function parseMediaOptions(alt: string): MediaOptions {
 	return options;
 }
 
+/**
+ * A committed image is served through the resize endpoint at two widths, so
+ * a phone downloads a phone-sized file. `sizes` says how wide the image will
+ * be laid out: the prose column, or the page wrap for a hero-width embed,
+ * less the wrap's own padding on a narrow window. Uploads and files the site
+ * cannot resize keep their original source.
+ */
+function responsiveSource(src: string, width: Width) {
+	if (!isResizable(src)) return {};
+
+	const small = resizedImage(src, 640);
+	const large = resizedImage(src, 1280);
+	return {
+		src: large,
+		srcSet: `${small} 640w, ${large} 1280w`,
+		sizes:
+			width === 'hero'
+				? '(max-width: 1200px) calc(100vw - 2.5rem), 1160px'
+				: '(max-width: 760px) calc(100vw - 2.5rem), 720px',
+	};
+}
+
 /** The attributes that make a video start the way the author asked. */
 function playbackAttributes(playback: Playback) {
 	switch (playback) {
@@ -133,6 +156,7 @@ export function rehypeBodyMedia() {
 					...node.properties,
 					alt: label,
 					...measured,
+					...responsiveSource(src, width),
 					loading: 'lazy',
 					decoding: 'async',
 					...widthClass,

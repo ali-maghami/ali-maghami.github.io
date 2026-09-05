@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { firstBodyImage } from './body-image';
+import { firstBodyImage, leadImage } from './body-image';
 
 describe('firstBodyImage', () => {
 	it('finds the first still in a body', () => {
@@ -23,5 +23,28 @@ describe('firstBodyImage', () => {
 		expect(firstBodyImage('Only words.')).toBeUndefined();
 		expect(firstBodyImage('![clip](/media/clip.mp4)')).toBeUndefined();
 		expect(firstBodyImage('')).toBeUndefined();
+	});
+});
+
+describe('leadImage', () => {
+	it('prefers the hero when there is one', () => {
+		expect(leadImage('/media/hero.webp', '![x](/badges/aws-certified-solutions-architect-associate.png)')).toBe(
+			'/media/hero.webp',
+		);
+	});
+
+	it('falls back to the first body image the site can serve', () => {
+		// A real committed file, so this runs against what ships.
+		expect(leadImage(undefined, 'Words ![x](/badges/aws-certified-solutions-architect-associate.png)')).toBe(
+			'/badges/aws-certified-solutions-architect-associate.png',
+		);
+		expect(leadImage(undefined, '![x](/uploads/123e4567-e89b-12d3-a456-426614174000.webp)')).toBe(
+			'/uploads/123e4567-e89b-12d3-a456-426614174000.webp',
+		);
+	});
+
+	it('has nothing for a body image that is not there, or no image at all', () => {
+		expect(leadImage(undefined, '![x](/media/not-committed.png)')).toBeUndefined();
+		expect(leadImage(undefined, 'Only words.')).toBeUndefined();
 	});
 });
