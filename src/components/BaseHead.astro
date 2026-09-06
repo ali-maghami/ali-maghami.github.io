@@ -4,7 +4,7 @@
 import '../styles/global.css';
 import { Font } from 'astro:assets';
 import { publicImageSize } from '../lib/images';
-import { paletteForPath } from '../lib/palettes';
+import { paletteForRequest } from '../lib/palettes';
 import { getSiteSettings } from '../lib/portfolio-data';
 
 interface Props {
@@ -46,8 +46,9 @@ const {
 const settings = await getSiteSettings();
 
 // The browser chrome on a phone takes the page's surface colour, in whichever
-// scheme the reader is using.
-const palette = paletteForPath(Astro.url.pathname);
+// scheme the reader is using. The same palette the page element carries: both
+// read it from the request cache, so they cannot disagree.
+const palette = await paletteForRequest();
 
 const imageURL = new URL(image ?? DEFAULT_IMAGE, canonicalURL);
 const imageSize = image ? await publicImageSize(image) : DEFAULT_IMAGE_SIZE;

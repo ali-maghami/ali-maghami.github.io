@@ -1,5 +1,5 @@
 ---
-import { paletteForPath } from '../lib/palettes';
+import { paletteForRequest } from '../lib/palettes';
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
@@ -65,8 +65,8 @@ const makers = [
 	...contributors.map((name) => ({ name, photo: undefined })),
 ];
 
-// The section's colour, set on <html> so the stylesheet can key on it.
-const paletteName = paletteForPath(Astro.url.pathname).name;
+// This page load's colour, set on <html> so the stylesheet can key on it.
+const paletteName = (await paletteForRequest()).name;
 ---
 
 <html lang="en" data-palette={paletteName}>

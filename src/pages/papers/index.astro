@@ -1,5 +1,5 @@
 ---
-import { paletteForPath } from '../../lib/palettes';
+import { paletteForRequest } from '../../lib/palettes';
 import Aurora from '../../components/Aurora.astro';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
@@ -33,8 +33,8 @@ const entries = papers.map((paper) => ({
 	authors: formatAuthors(paper.authors, settings.siteTitle),
 }));
 
-// The section's colour, set on <html> so the stylesheet can key on it.
-const paletteName = paletteForPath(Astro.url.pathname).name;
+// This page load's colour, set on <html> so the stylesheet can key on it.
+const paletteName = (await paletteForRequest()).name;
 ---
 
 <!doctype html>

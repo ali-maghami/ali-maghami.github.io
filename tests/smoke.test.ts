@@ -120,17 +120,36 @@ describe.skipIf(!base)('the built site in a browser', () => {
 		}
 	}, 60_000);
 
-	it('keeps one palette within a section and changes it between sections', async () => {
+	it('changes the palette on every load, and never repeats it back to back', async () => {
 		const context = await browser.newContext({ viewport: VIEWPORTS.desktop });
-		const palette = async (path: string) => {
-			const { page } = await visit(context, path);
-			const name = await page.evaluate(() => document.documentElement.dataset.palette);
-			await page.close();
-			return name;
-		};
-		expect(await palette('/blog/')).toBe(await palette(POST));
-		expect(await palette('/projects/')).toBe(await palette(PROJECT));
-		expect(await palette('/blog/')).not.toBe(await palette('/projects/'));
+		const page = await context.newPage();
+
+		const seen: string[] = [];
+		for (let i = 0; i < 8; i += 1) {
+			await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
+			const [palette, themeColor] = await page.evaluate(() => [
+				document.documentElement.dataset.palette,
+				document
+					.querySelector('meta[name="theme-color"][media*="light"]')
+					?.getAttribute('content'),
+			]);
+			expect(palette, 'the page names a palette').toBeTruthy();
+			// The head and the page element have to agree, or the browser chrome
+			// is one colour and the page below it another.
+			const surface = await page.evaluate(() =>
+				getComputedStyle(document.documentElement).getPropertyValue('--surface').trim(),
+			);
+			expect(surface.toLowerCase()).toBe(themeColor?.toLowerCase());
+			seen.push(palette!);
+		}
+
+		for (let i = 1; i < seen.length; i += 1) {
+			expect(seen[i], `load ${i + 1} repeated load ${i}`).not.toBe(seen[i - 1]);
+		}
+		// Eight loads that only ever alternated between two would be a rotation
+		// that has quietly stopped shuffling.
+		expect(new Set(seen).size).toBeGreaterThan(2);
+
 		await context.close();
 	}, 60_000);
 
