@@ -8,40 +8,26 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import StructuredData from '../components/StructuredData.astro';
 import { heroMedia, portraitImage } from '../lib/badges';
-import { highlights } from '../lib/highlights';
 import { resizedImage } from '../lib/images';
 import { renderPortfolioMarkdown } from '../lib/markdown';
 import { getNavHref } from '../lib/nav';
-import {
-	getHomePage,
-	getSiteSettings,
-	listCertificates,
-	listPapers,
-	listPosts,
-	listProjects,
-} from '../lib/portfolio-data';
+import { getHomePage, getSiteSettings, listPosts, listProjects } from '../lib/portfolio-data';
 import { portraitStyle } from '../lib/portrait';
 import { personSchema, websiteSchema } from '../lib/structured-data';
 import { metaDescription, plainText } from '../lib/summary';
 
-const [home, settings, allProjects, allPosts, papers, certificates] = await Promise.all([
+const [home, settings, allProjects, allPosts] = await Promise.all([
 	getHomePage(),
 	getSiteSettings(),
 	listProjects(),
 	listPosts(),
-	listPapers(),
-	listCertificates(),
 ]);
 
-// The figures under the lede, counted from what is published rather than
-// typed in, so they cannot drift from the pages behind them.
-const proof = highlights({
-	papers,
-	projects: allProjects,
-	certificates,
-	since: home.since,
-	custom: home.highlights,
-});
+// The figures under the lede, exactly as they are typed in the CMS. An empty
+// list shows nothing: this used to fall back to counting publications,
+// projects and certifications from the content, which meant deleting every row
+// could not say "show none" — the counted figures simply came back.
+const proof = home.highlights;
 const { siteTitle: SITE_TITLE, siteDescription: SITE_DESCRIPTION } = settings;
 
 // Newest first, with nothing jumping the queue. How many of each the page

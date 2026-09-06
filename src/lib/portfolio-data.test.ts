@@ -179,7 +179,6 @@ describe('mapHomePage', () => {
 			projectCount: 4,
 			postCount: 5,
 			now: undefined,
-			since: undefined,
 			highlights: [],
 			bodyMarkdown: '',
 		});
@@ -197,15 +196,19 @@ describe('mapHomePage', () => {
 		expect(mapHomePage({ data: { highlights: 'nope' }, body_markdown: '' }).highlights).toEqual([]);
 	});
 
-	it('reads the current-role line and the start year only when they are well formed', () => {
-		expect(mapHomePage({ data: { now: ' Leading vision at Hatch ', since: 2015 }, body_markdown: '' })).toMatchObject({
-			now: 'Leading vision at Hatch',
-			since: 2015,
-		});
-		expect(mapHomePage({ data: { now: '', since: '2015' }, body_markdown: '' })).toMatchObject({
-			now: undefined,
-			since: undefined,
-		});
+	it('reads the current-role line, and treats a blank one as unset', () => {
+		expect(mapHomePage({ data: { now: ' Leading vision at Hatch ' }, body_markdown: '' }).now).toBe(
+			'Leading vision at Hatch',
+		);
+		expect(mapHomePage({ data: { now: '   ' }, body_markdown: '' }).now).toBeUndefined();
+	});
+
+	it('shows no figures when the list is emptied, rather than inventing some', () => {
+		// Deleting every row in the CMS has to mean "show none". This used to
+		// fall back to counting the content, so an emptied list brought the
+		// counted figures straight back.
+		expect(mapHomePage({ data: { highlights: [] }, body_markdown: '' }).highlights).toEqual([]);
+		expect(mapHomePage({ data: {}, body_markdown: '' }).highlights).toEqual([]);
 	});
 
 	it('takes what is set and ignores a value of the wrong type', () => {
