@@ -154,10 +154,11 @@ field. The CMS repository's `docs/schema-contract.md` describes the other half.
 
 ## Appearance
 
-Each section owns a background palette — home is the bloom, posts the dusk,
-projects the lagoon — set as `data-palette` on `<html>` from
-[`src/lib/palettes.ts`](./src/lib/palettes.ts) and painted by the matching
-rules in `global.css`; a test keeps the two files in step. The site follows the
+The background palette changes on every page load, the way githubnext.com
+recolours itself. It is chosen on the server, written as `data-palette` on
+`<html>` from [`src/lib/palettes.ts`](./src/lib/palettes.ts) and painted by the
+matching rules in `global.css`; a test keeps the two files in step, and no two
+consecutive renders share a palette. The site follows the
 reader's colour scheme: every colour is a token in `global.css`, and the dark
 block re-points the tokens. There is no toggle, deliberately.
 

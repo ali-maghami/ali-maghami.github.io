@@ -1,5 +1,5 @@
 ---
-import { paletteForPath } from '../lib/palettes';
+import { paletteForRequest } from '../lib/palettes';
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
@@ -27,8 +27,8 @@ const CV_PATH = '/pdf/cv.pdf';
 const cv = publicFile(CV_PATH) ? CV_PATH : undefined;
 const hasContact = Boolean(SOCIAL.email || SOCIAL.linkedin || SOCIAL.github || SOCIAL.scholar || cv);
 
-// The section's colour, set on <html> so the stylesheet can key on it.
-const paletteName = paletteForPath(Astro.url.pathname).name;
+// This page load's colour, set on <html> so the stylesheet can key on it.
+const paletteName = (await paletteForRequest()).name;
 ---
 
 <!doctype html>

@@ -1,8 +1,15 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
-import { PALETTES, SECTION_PALETTES, paletteForPath } from './palettes';
+import { runWithRequestCache } from './request-cache';
+import {
+	PALETTES,
+	nextPalette,
+	paletteForRequest,
+	pickPaletteIndex,
+	resetPaletteRotation,
+} from './palettes';
 
 const HEX = /^#[0-9a-f]{6}$/;
 
@@ -27,6 +34,10 @@ describe('PALETTES', () => {
 		expect(new Set(PALETTES.map((p) => p.name)).size).toBe(PALETTES.length);
 	});
 
+	it('offer more than one, or nothing could change on a refresh', () => {
+		expect(PALETTES.length).toBeGreaterThan(1);
+	});
+
 	it('keep every light surface light enough for the ink to read on', () => {
 		// --color-ink is #24292e, so anything below about 0.8 here would start
 		// to hurt body-text contrast.
@@ -42,29 +53,71 @@ describe('PALETTES', () => {
 	});
 });
 
-describe('paletteForPath', () => {
-	it('gives every section a palette that exists', () => {
-		for (const [section, name] of Object.entries(SECTION_PALETTES)) {
-			expect(PALETTES.some((p) => p.name === name), section).toBe(true);
+describe('pickPaletteIndex', () => {
+	it('never repeats the previous palette, so a refresh always changes', () => {
+		for (let previous = 0; previous < 6; previous += 1) {
+			for (const roll of [0, 0.2, 0.5, 0.99]) {
+				const picked = pickPaletteIndex(6, previous, () => roll);
+				expect(picked, `previous ${previous}, roll ${roll}`).not.toBe(previous);
+				expect(picked).toBeGreaterThanOrEqual(0);
+				expect(picked).toBeLessThan(6);
+			}
 		}
 	});
 
-	it('gives a section the same palette on every page of it', () => {
-		expect(paletteForPath('/blog/').name).toBe('dusk');
-		expect(paletteForPath('/blog/some-post/').name).toBe('dusk');
-		expect(paletteForPath('/projects/coilsense/').name).toBe(paletteForPath('/projects/').name);
+	it('can pick anything when there is no previous, or it is out of range', () => {
+		expect(pickPaletteIndex(6, null, () => 0)).toBe(0);
+		expect(pickPaletteIndex(6, null, () => 0.99)).toBe(5);
+		expect(pickPaletteIndex(6, 99, () => 0)).toBe(0);
+		expect(pickPaletteIndex(6, -1, () => 0)).toBe(0);
 	});
 
-	it('gives different sections different palettes', () => {
-		const names = ['/', '/blog/', '/projects/', '/papers/', '/about/', '/certificates/'].map(
-			(p) => paletteForPath(p).name,
+	it('reaches every alternative rather than favouring one', () => {
+		const seen = new Set([0, 0.25, 0.5, 0.75, 0.99].map((roll) => pickPaletteIndex(6, 2, () => roll)));
+		expect(seen.size).toBeGreaterThan(3);
+		expect(seen.has(2)).toBe(false);
+	});
+
+	it('has nowhere else to go with a single palette', () => {
+		expect(pickPaletteIndex(1, 0, () => 0.5)).toBe(0);
+	});
+});
+
+describe('nextPalette', () => {
+	beforeEach(resetPaletteRotation);
+
+	it('gives a different palette every time it is asked', () => {
+		let previous = nextPalette().name;
+		for (let i = 0; i < 20; i += 1) {
+			const current = nextPalette().name;
+			expect(current).not.toBe(previous);
+			previous = current;
+		}
+	});
+
+	it('serves palettes from the set, and gets around all of them', () => {
+		const seen = new Set(Array.from({ length: 60 }, () => nextPalette().name));
+		expect(seen.size).toBe(PALETTES.length);
+		for (const name of seen) expect(PALETTES.some((p) => p.name === name)).toBe(true);
+	});
+});
+
+describe('paletteForRequest', () => {
+	beforeEach(resetPaletteRotation);
+
+	it('gives one palette to everything rendered in the same request', async () => {
+		// The head writes theme-color and the page element writes data-palette;
+		// two different colours would show in the browser chrome and the page.
+		const [head, body] = await runWithRequestCache(() =>
+			Promise.all([paletteForRequest(), paletteForRequest()]),
 		);
-		expect(new Set(names).size).toBe(names.length);
+		expect(head).toBe(body);
 	});
 
-	it('is stable for a section it has never heard of', () => {
-		expect(paletteForPath('/nothing-here/')).toBe(paletteForPath('/nothing-here/'));
-		expect(PALETTES).toContain(paletteForPath('/nothing-here/'));
+	it('gives the next request a different one', async () => {
+		const first = await runWithRequestCache(() => paletteForRequest());
+		const second = await runWithRequestCache(() => paletteForRequest());
+		expect(second.name).not.toBe(first.name);
 	});
 });
 
