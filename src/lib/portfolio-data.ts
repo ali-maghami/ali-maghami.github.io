@@ -85,11 +85,9 @@ export interface HomePageRecord {
 	postCount: number;
 	/** One line on what the owner is doing at the moment, if the CMS has it. */
 	now?: string;
-	/** The year the career started, for "N+ years"; unset until the CMS has it. */
-	since?: number;
 	/**
-	 * The figures under the lede as typed in the CMS. Empty means the site
-	 * counts them from the published content instead.
+	 * The figures under the lede, as typed in the CMS. Empty means the page
+	 * shows none: the row is the editor's, not something the site invents.
 	 */
 	highlights: Array<{ value: string; label: string }>;
 	bodyMarkdown: string;
@@ -410,7 +408,6 @@ export function mapHomePage(row: Record<string, unknown>): HomePageRecord {
 		projectCount: number(data.projectCount, 4),
 		postCount: number(data.postCount, 5),
 		now: optional(data.now as OptionalString),
-		since: typeof data.since === 'number' && Number.isInteger(data.since) ? data.since : undefined,
 		highlights: highlightList(data.highlights),
 		bodyMarkdown,
 	};
