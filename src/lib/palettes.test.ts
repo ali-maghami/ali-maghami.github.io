@@ -145,3 +145,52 @@ describe('the stylesheet', () => {
 		}
 	});
 });
+
+/*
+ * The palette changes on every load, so text has to stay readable on all of
+ * them, not just on the one that happened to render. The link colour was
+ * shipped at 3.89:1 against the brightest surface and a weekly Lighthouse
+ * audit caught it; this is the guard that would have caught it first.
+ */
+describe('text contrast against every surface', () => {
+	const css = readFileSync(path.join(process.cwd(), 'src', 'styles', 'global.css'), 'utf8');
+
+	/** The value of a custom property, from the light block or the dark one. */
+	function token(name: string, scheme: 'light' | 'dark'): string {
+		const all = [...css.matchAll(new RegExp(`--${name}:[ \t]*(#[0-9a-fA-F]{6})`, 'g'))].map((m) => m[1]);
+		const value = scheme === 'light' ? all[0] : all[all.length - 1];
+		expect(value, `--${name} (${scheme})`).toMatch(HEX);
+		return value.toLowerCase();
+	}
+
+	const channel = (v: number) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+	const relative = (hex: string) => {
+		const [r, g, b] = [1, 3, 5].map((i) => channel(parseInt(hex.slice(i, i + 2), 16) / 255));
+		return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+	};
+	const contrast = (a: string, b: string) => {
+		const [high, low] = [relative(a), relative(b)].sort((x, y) => y - x);
+		return (high + 0.05) / (low + 0.05);
+	};
+
+	/* Everything below is set at 17px or smaller, so WCAG AA asks for 4.5:1. */
+	const foregrounds = ['color-ink', 'color-ink-soft', 'color-ink-muted', 'color-lavender', 'color-lavender-deep'];
+
+	for (const scheme of ['light', 'dark'] as const) {
+		it(`keeps every text colour above 4.5:1 in the ${scheme} scheme`, () => {
+			const surfaces = [
+				token('color-paper', scheme),
+				token('color-base', scheme),
+				...PALETTES.map((p) => (scheme === 'light' ? p.surface : p.surfaceDark)),
+			];
+
+			for (const name of foregrounds) {
+				const colour = token(name, scheme);
+				for (const surface of surfaces) {
+					const ratio = contrast(colour, surface);
+					expect(ratio, `${name} on ${surface} (${scheme})`).toBeGreaterThanOrEqual(4.5);
+				}
+			}
+		});
+	}
+});

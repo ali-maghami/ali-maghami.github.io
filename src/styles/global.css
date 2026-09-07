@@ -31,8 +31,12 @@
 	--color-banana: #fdc987;
 	--color-sky: #c4d7d9;
 	--color-slate-blue: #b4bdcb;
-	--color-lavender: #6b73d1;
-	--color-lavender-deep: #5158a8;
+	/* Links, and the small label on a post card. Dark enough to clear 4.5:1 on
+	   the lightest palette surface, not only on paper — the surface changes on
+	   every load, so the worst case is the one that has to hold. See the
+	   contrast test in palettes.test.ts. */
+	--color-lavender: #575fbe;
+	--color-lavender-deep: #454c96;
 
 	--font-sans: var(--font-mona), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 	--font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
