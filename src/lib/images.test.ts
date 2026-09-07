@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -121,5 +122,80 @@ describe('the share card', () => {
 			width: 1200,
 			height: 630,
 		});
+	});
+});
+
+/*
+ * The icons and the manifest are built by scripts/build-icons.mjs and
+ * committed. Nothing at build time regenerates them, so these check that what
+ * is in the repository is what the head and the manifest promise.
+ */
+describe('the brand icons', () => {
+	const sizes: Array<[string, number, number]> = [
+		['public/apple-touch-icon.png', 180, 180],
+		['public/icon-192.png', 192, 192],
+		['public/icon-512.png', 512, 512],
+		['public/icon-maskable-512.png', 512, 512],
+	];
+
+	it.each(sizes)('%s is committed at %ix%i', async (file, width, height) => {
+		const { default: sharp } = await import('sharp');
+		await expect(sharp(file).metadata()).resolves.toMatchObject({ format: 'png', width, height });
+	});
+
+	it('ships an icon iOS can use, with no transparency to composite onto black', async () => {
+		const { default: sharp } = await import('sharp');
+		const { channels, hasAlpha } = await sharp('public/apple-touch-icon.png').metadata();
+		const opaque = await sharp('public/apple-touch-icon.png').stats();
+		expect(channels).toBeGreaterThanOrEqual(3);
+		// Whatever the channel count, every pixel has to be fully opaque.
+		if (hasAlpha) expect(opaque.channels[3].min).toBe(255);
+	});
+
+	it('has an .ico holding the small sizes, as a real icon container', () => {
+		const bytes = readFileSync('public/favicon.ico');
+		// ICONDIR: reserved 0, type 1 (icon), then the count.
+		expect(bytes.readUInt16LE(0)).toBe(0);
+		expect(bytes.readUInt16LE(2)).toBe(1);
+		const count = bytes.readUInt16LE(4);
+		expect(count).toBeGreaterThanOrEqual(3);
+
+		const declared = Array.from({ length: count }, (_, i) => bytes.readUInt8(6 + i * 16));
+		expect(declared).toEqual([16, 32, 48]);
+	});
+
+	it('has an SVG favicon on a square viewBox, so it cannot render stretched', () => {
+		const svg = readFileSync('public/favicon.svg', 'utf8');
+		const box = svg.match(/viewBox="([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+)"/);
+		expect(box, 'favicon.svg declares a viewBox').not.toBeNull();
+		const [, , , w, h] = box!.map(Number);
+		expect(w).toBeCloseTo(h, 1);
+		expect(svg).toContain('<path');
+	});
+
+	it('has a manifest whose icons all exist at the sizes it claims', async () => {
+		const { default: sharp } = await import('sharp');
+		const manifest = JSON.parse(readFileSync('public/site.webmanifest', 'utf8'));
+
+		expect(manifest.name).toMatch(/\w/);
+		expect(manifest.start_url).toBe('/');
+		expect(manifest.icons.length).toBeGreaterThan(0);
+		// A launcher crops a maskable icon; without one it crops the plain icon.
+		expect(manifest.icons.some((i: { purpose?: string }) => i.purpose === 'maskable')).toBe(true);
+
+		for (const icon of manifest.icons) {
+			const [width, height] = icon.sizes.split('x').map(Number);
+			await expect(sharp(`public${icon.src}`).metadata(), icon.src).resolves.toMatchObject({
+				width,
+				height,
+			});
+		}
+	});
+
+	it('is linked from the head, every file the browser is told about', () => {
+		const head = readFileSync('src/components/BaseHead.astro', 'utf8');
+		for (const href of ['/favicon.svg', '/favicon.ico', '/apple-touch-icon.png', '/site.webmanifest']) {
+			expect(head, href).toContain(`href="${href}"`);
+		}
 	});
 });

@@ -1,6 +1,7 @@
 ---
 import { badgeImage } from '../lib/badges';
 import ExternalLink from './ExternalLink.astro';
+import Monogram from './Monogram.astro';
 import { buildNavItems, getNavHref, showsFooterBadges } from '../lib/nav';
 import { getSiteSections } from '../lib/sections';
 import { getSiteSettings } from '../lib/portfolio-data';
@@ -76,7 +77,10 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 	}
 
 	<div class="footer-inner">
-		<p class="copy">&copy; {today.getFullYear()} {SITE_TITLE}</p>
+		<p class="copy">
+			<Monogram class="copy-mark" />
+			<span>&copy; {today.getFullYear()} {SITE_TITLE}</span>
+		</p>
 
 		<nav class="footer-nav" aria-label="Footer">
 			{
@@ -198,10 +202,24 @@ const showBadges = showsFooterBadges(Astro.url.pathname, FOOTER_BADGE_PAGES);
 	}
 
 	.copy {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 		margin: 0;
 		font-family: var(--font-mono);
 		font-size: 0.75rem;
 		color: var(--color-ink-muted);
+	}
+
+	/* Taller than the line it sits beside, because the mark is mostly
+	   horizontal strokes and matching the cap height would leave it looking
+	   like a smudge. Ink rather than the brand blue: the wash behind it is a
+	   different colour on every load, and one saturated mark down there would
+	   pick a fight with four of the six. */
+	.copy :global(.copy-mark) {
+		height: 1.5em;
+		color: var(--color-ink-muted);
+		opacity: 0.75;
 	}
 
 	.footer-nav {
