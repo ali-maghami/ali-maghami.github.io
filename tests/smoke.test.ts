@@ -101,6 +101,30 @@ describe.skipIf(!base)('the built site in a browser', () => {
 		);
 	}
 
+	it('gives every page one h1 and headings that never skip a level', async () => {
+		// A skipped level is what a screen reader hears as a missing section.
+		// The posts index shipped with h1 followed by h3 and a weekly audit
+		// caught it, so it is checked on every page from here on.
+		const context = await browser.newContext({ viewport: VIEWPORTS.desktop });
+		for (const path of PAGES) {
+			const { page } = await visit(context, path);
+			const levels = await page.evaluate(() =>
+				[...document.querySelectorAll('h1, h2, h3, h4, h5, h6')].map((h) => Number(h.tagName[1])),
+			);
+
+			expect(levels.filter((level) => level === 1).length, `${path} has exactly one h1`).toBe(1);
+			expect(levels[0], `${path} opens with its h1`).toBe(1);
+			for (let i = 1; i < levels.length; i += 1) {
+				expect(
+					levels[i] - levels[i - 1],
+					`${path} jumps from h${levels[i - 1]} to h${levels[i]}`,
+				).toBeLessThanOrEqual(1);
+			}
+			await page.close();
+		}
+		await context.close();
+	}, 120_000);
+
 	it('is dark for readers who prefer it, and light for everyone else', async () => {
 		for (const [scheme, check] of [
 			['dark', (l: number) => expect(l).toBeLessThan(0.2)],

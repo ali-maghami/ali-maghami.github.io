@@ -12,6 +12,13 @@ interface Props {
 	heroImage?: string;
 	heroVideo?: string;
 	heroVideoPlayback?: 'loop' | 'once' | 'viewer';
+	/**
+	 * The heading level for the card's title. A card sitting under a section
+	 * heading is a level below it; on the posts index the cards sit directly
+	 * under the page title, so they are level 2. Skipping a level is what a
+	 * screen reader hears as a missing section.
+	 */
+	headingLevel?: 2 | 3;
 }
 
 const {
@@ -24,7 +31,10 @@ const {
 	heroImage,
 	heroVideo,
 	heroVideoPlayback = 'loop',
+	headingLevel = 3,
 } = Astro.props;
+
+const Title = `h${headingLevel}` as 'h2' | 'h3';
 
 // 'viewer' cannot mean what it does on the post page: the card is a link, so a
 // play button inside it would compete with the click that opens the post. It
@@ -82,7 +92,7 @@ const poster = videoPoster(heroVideo);
 			}
 		</div>
 
-		<h3 class="post-title">{title}</h3>
+		<Title class="post-title">{title}</Title>
 
 		{
 			/*
