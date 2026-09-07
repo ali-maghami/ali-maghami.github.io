@@ -61,8 +61,12 @@ const imageDescription = imageAlt ?? (image ? title : `${settings.siteTitle}: ${
 <meta name="color-scheme" content="light dark" />
 <meta name="theme-color" media="(prefers-color-scheme: light)" content={palette.surface} />
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content={palette.surfaceDark} />
+<!-- The SVG is what a current browser uses; the .ico carries 16, 32 and 48 for
+     everything else. Both are built from src/brand by scripts/build-icons.mjs. -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="icon" href="/favicon.ico" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
 <link rel="sitemap" href="/sitemap.xml" />
 <!-- Feed readers look for this on any page, not just /blog/. -->
 <link rel="alternate" type="application/rss+xml" title={settings.siteTitle} href="/rss.xml" />
