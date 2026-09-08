@@ -54,7 +54,7 @@ jobs:
 
       - name: Restore node_modules
         id: node-modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: node_modules
           # Keyed on the lock file so a cache is reused only for the exact
