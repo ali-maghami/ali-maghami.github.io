@@ -125,6 +125,29 @@ describe.skipIf(!base)('the built site in a browser', () => {
 		await context.close();
 	}, 120_000);
 
+	it('sets a code block smaller than the prose around it', async () => {
+		// Nothing else exercises the highlighter's output. This checks the block
+		// renders at all and stays below body size; the exact ratio lives in
+		// global.css, where changing it is a deliberate act.
+		const context = await browser.newContext({ viewport: VIEWPORTS.desktop });
+		const { page, problems } = await visit(context, POST);
+
+		const sizes = await page.evaluate(() => {
+			const size = (el: Element | null) => (el ? parseFloat(getComputedStyle(el).fontSize) : 0);
+			const body = [...document.querySelectorAll('.prose p')].find(
+				(p) => !p.classList.contains('note'),
+			);
+			const block = document.querySelector('pre code');
+			return { body: size(body ?? null), code: size(block), family: block ? getComputedStyle(block).fontFamily : '' };
+		});
+
+		expect(sizes.code, 'the post renders a code block').toBeGreaterThan(0);
+		expect(sizes.code).toBeLessThan(sizes.body);
+		expect(sizes.family.toLowerCase()).toMatch(/mono/);
+		expect(problems).toEqual([]);
+		await context.close();
+	}, 60_000);
+
 	it('is dark for readers who prefer it, and light for everyone else', async () => {
 		for (const [scheme, check] of [
 			['dark', (l: number) => expect(l).toBeLessThan(0.2)],

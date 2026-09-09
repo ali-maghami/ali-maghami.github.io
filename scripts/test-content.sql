@@ -42,7 +42,7 @@ INSERT INTO portfolio_post (slug, title, description, pub_date, tags, kind, hero
 	('teaching-steel-industry-equipment-to-see', 'Teaching Steel Industry Equipment to See',
 	 'A practical look at how AI, computer vision, and deterministic geometry can work together.',
 	 '2026-09-04', '{"Computer Vision","Industrial AI","Edge AI"}', 'Post', '/hero/herocoilbox.webp',
-	 E'*`Images are AI-generated and used for illustrative purposes.`*\n\nImagine a steel mill producing a very long, hot strip of steel.\n\n![A Coilbox winding hot steel strip into a coil](/media/coilsense-coilbox.jpg)\n\n## Giving the machine another sensor\n\nCameras provide the raw data. AI extracts important features.\n\n![hero: The perception pipeline](/media/coilsense-perception-pipeline.jpg)\n\nThat difference matters.',
+	 E'*`Images are AI-generated and used for illustrative purposes.`*\n\nImagine a steel mill producing a very long, hot strip of steel.\n\n![A Coilbox winding hot steel strip into a coil](/media/coilsense-coilbox.jpg)\n\n## Giving the machine another sensor\n\nCameras provide the raw data. AI extracts important features.\n\n![hero: The perception pipeline](/media/coilsense-perception-pipeline.jpg)\n\nA fenced block, so the smoke test has some highlighted code to measure:\n\n```python\ndef inner_diameter(coil):\n    return coil.measure()\n```\n\nThat difference matters.',
 	 'published');
 
 INSERT INTO portfolio_post (slug, title, description, pub_date, tags, kind, hero_video, hero_video_playback, body_markdown, status) VALUES
