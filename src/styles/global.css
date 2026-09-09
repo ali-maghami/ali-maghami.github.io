@@ -266,6 +266,11 @@ code {
 
 pre {
 	font-family: var(--font-mono);
+	/* Three tenths smaller than the prose it sits in. A block of code is read
+	   differently from a sentence — scanned for shape and indentation rather
+	   than word by word — and at the body size it dominated the page. Relative
+	   so it still tracks whatever the surrounding text is set at. */
+	font-size: 0.7em;
 	padding: 1.25em;
 	border-radius: 12px;
 	border: 1px solid var(--color-sand-200);
