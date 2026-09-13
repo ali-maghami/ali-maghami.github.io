@@ -217,6 +217,8 @@ describe.skipIf(!base)('the built site in a browser', () => {
 		const { page, status } = await visit(context, CONNECT);
 		expect(status).toBe(200);
 		expect(await page.locator('main h1').textContent()).toContain('Nice meeting you at Queen’s!');
+		// Only the card: no site navigation or footer competing with the buttons.
+		expect(await page.locator('header.site-header, footer').count()).toBe(0);
 
 		// The LinkedIn button falls back to the settings' address, and is on
 		// screen without scrolling on a phone.

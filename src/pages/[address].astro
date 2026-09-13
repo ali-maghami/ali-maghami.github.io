@@ -1,8 +1,6 @@
 ---
 import Aurora from '../components/Aurora.astro';
 import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
 import { portraitImage } from '../lib/badges';
 import { connectHeading, linkedinHref, projectsHref, taglineParts } from '../lib/connect-page';
 import { resizedImage } from '../lib/images';
@@ -18,7 +16,8 @@ import { getConnectPage, getHomePage, getSiteSettings } from '../lib/portfolio-d
  *
  * It is written to be opened on a phone a few seconds after a conversation:
  * the face first so the reader knows whose page it is, then the one thing to
- * do, as a LinkedIn-blue button, then the way to find out more.
+ * do, as a LinkedIn-blue button, then the way to find out more. No header or
+ * footer: nothing on it competes with those two buttons.
  */
 const [connect, settings, home] = await Promise.all([getConnectPage(), getSiteSettings(), getHomePage()]);
 
@@ -50,7 +49,6 @@ const paletteName = (await paletteForRequest()).name;
 	</head>
 	<body>
 		<Aurora />
-		<Header />
 		<main id="main" class="connect">
 			<section class="panel" aria-labelledby="connect-heading">
 				<div class="intro">
@@ -67,17 +65,7 @@ const paletteName = (await paletteForRequest()).name;
 						)
 					}
 					<p class="name">{settings.siteTitle}</p>
-					<h1 id="connect-heading">
-						{
-							connect.eventName ? (
-								<>
-									{connect.greeting} at <span class="event">{connect.eventName}</span>!
-								</>
-							) : (
-								<>{connect.greeting}!</>
-							)
-						}
-					</h1>
+					<h1 id="connect-heading">{heading}</h1>
 					{
 						tagline.length > 1 ? (
 							<ul class="tagline" aria-label="Focus areas">
@@ -150,16 +138,18 @@ const paletteName = (await paletteForRequest()).name;
 				</div>
 			</section>
 		</main>
-		<Footer />
 
 		<style>
+			/* With nothing above or below it, the card sits in the middle of the
+			   screen; body is a full-height flex column, so this fills it. */
 			.connect {
+				flex: 1;
 				display: grid;
-				place-items: start center;
-				padding: 1.5rem 1.25rem 4rem;
+				place-items: center;
+				padding: 2.5rem 1.25rem;
 			}
 
-			/* One frosted card over the colour wash, like the nav pill and the
+			/* One frosted card over the colour wash, like the site's nav pill and
 			   focus chips, so the page reads as part of the site at a glance. */
 			.panel {
 				width: 100%;
@@ -208,19 +198,6 @@ const paletteName = (await paletteForRequest()).name;
 				line-height: 1.15;
 				letter-spacing: -0.03em;
 				text-wrap: balance;
-			}
-
-			/* The part that changes each event, marked the way a pen would. */
-			.event {
-				/* A long event name may wrap; each line keeps its own mark. */
-				-webkit-box-decoration-break: clone;
-				box-decoration-break: clone;
-				background: linear-gradient(
-					transparent 60%,
-					color-mix(in srgb, var(--accent-2, var(--color-banana)) 55%, transparent) 60%,
-					color-mix(in srgb, var(--accent-1, var(--color-copper-warm)) 45%, transparent) 92%,
-					transparent 92%
-				);
 			}
 
 			.tagline {
@@ -387,7 +364,7 @@ const paletteName = (await paletteForRequest()).name;
 
 			@media (max-width: 720px) {
 				.connect {
-					padding: 0.75rem 1rem 3rem;
+					padding: 1rem 1rem 2rem;
 				}
 				/* Tighter on a phone, so the LinkedIn button is on screen without
 				   scrolling on all but the smallest. */
