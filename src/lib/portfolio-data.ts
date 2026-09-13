@@ -1,5 +1,6 @@
 import postgres from 'postgres';
 
+import { type ConnectPage, mapConnectPage } from './connect-page';
 import { cached } from './request-cache';
 import { READ_COLUMNS, missingColumns } from './schema-contract';
 
@@ -446,6 +447,22 @@ export function mapAboutPage(row: Record<string, unknown>): AboutPageRecord {
 		education: Array.isArray(data.education) ? (data.education as AboutPageRecord['education']) : [],
 		bodyMarkdown,
 	};
+}
+
+/**
+ * The event page's content, with defaults when the CMS has not saved it yet.
+ * See lib/connect-page.ts.
+ *
+ * `key::text` rather than comparing to the enum: until the CMS migration that
+ * adds 'connect' has run, the literal is not a valid enum value and the query
+ * would raise instead of finding nothing.
+ */
+export function getConnectPage(): Promise<ConnectPage> {
+	return cached('page:connect', async () => {
+		const sql = getDatabase();
+		const rows = await sql`SELECT data FROM portfolio_page WHERE key::text = 'connect' LIMIT 1`;
+		return mapConnectPage(rows[0]?.data);
+	});
 }
 
 export function getSiteSettings(): Promise<SiteSettings> {
