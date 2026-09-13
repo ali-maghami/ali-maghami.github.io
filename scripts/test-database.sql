@@ -10,7 +10,7 @@
 --   psql "$PORTFOLIO_TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f scripts/test-database.sql
 
 CREATE TYPE "public"."portfolio_content_status" AS ENUM('draft', 'published', 'archived');
-CREATE TYPE "public"."portfolio_page_key" AS ENUM('home', 'about');
+CREATE TYPE "public"."portfolio_page_key" AS ENUM('home', 'about', 'connect');
 CREATE TYPE "public"."portfolio_paper_kind" AS ENUM('journal', 'conference', 'patent', 'thesis', 'preprint');
 CREATE TYPE "public"."portfolio_project_category" AS ENUM('active', 'archived');
 CREATE TYPE "public"."portfolio_project_stage" AS ENUM('napkin-sketch', 'research-prototype', 'piloted', 'completed', 'product');

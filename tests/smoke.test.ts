@@ -21,7 +21,8 @@ const base = process.env.SMOKE_BASE_URL;
 const POST = '/blog/teaching-steel-industry-equipment-to-see/';
 const VIDEO_POST = '/blog/fourteen-agents-one-trace-observability-for-multi-agent-systems/';
 const PROJECT = '/projects/coilsense/';
-const PAGES = ['/', '/blog/', '/projects/', '/papers/', '/about/', '/certificates/', POST, VIDEO_POST, PROJECT];
+const CONNECT = '/meet/';
+const PAGES = ['/', '/blog/', '/projects/', '/papers/', '/about/', '/certificates/', POST, VIDEO_POST, PROJECT, CONNECT];
 
 const VIEWPORTS = {
 	phone: { width: 390, height: 844 },
@@ -208,6 +209,30 @@ describe.skipIf(!base)('the built site in a browser', () => {
 			expect(await page.locator('main h1').textContent(), path).toContain('nothing at this address');
 			await page.close();
 		}
+		await context.close();
+	}, 60_000);
+
+	it('answers the event page at the address the CMS chose, and only there', async () => {
+		const context = await browser.newContext({ viewport: VIEWPORTS.phone });
+		const { page, status } = await visit(context, CONNECT);
+		expect(status).toBe(200);
+		expect(await page.locator('main h1').textContent()).toContain('Nice meeting you at Queen’s!');
+
+		// The LinkedIn button falls back to the settings' address, and is on
+		// screen without scrolling on a phone.
+		const linkedin = page.locator('a.action-linkedin');
+		expect(await linkedin.getAttribute('href')).toBe('https://www.linkedin.com/in/samaghami/');
+		const box = await linkedin.boundingBox();
+		expect(box!.y + box!.height).toBeLessThanOrEqual(VIEWPORTS.phone.height);
+		expect(await page.locator('a.action-explore').getAttribute('href')).toBe('/projects/');
+		await page.close();
+
+		const response = await context.request.get(base + CONNECT);
+		expect(response.headers()['x-robots-tag']).toBe('noindex');
+
+		// The default address is not the page once the CMS has moved it.
+		const { status: moved } = await visit(context, '/connect/');
+		expect(moved).toBe(404);
 		await context.close();
 	}, 60_000);
 

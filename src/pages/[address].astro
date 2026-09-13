@@ -1,0 +1,440 @@
+---
+import Aurora from '../components/Aurora.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { portraitImage } from '../lib/badges';
+import { connectHeading, linkedinHref, projectsHref, taglineParts } from '../lib/connect-page';
+import { resizedImage } from '../lib/images';
+import { paletteForRequest } from '../lib/palettes';
+import { getConnectPage, getHomePage, getSiteSettings } from '../lib/portfolio-data';
+
+/*
+ * The page for people met at an event: maghami.dev/connect by default, at
+ * whatever single-segment address the CMS gives it. Every fixed route —
+ * /about, /blog/, /projects/ and the rest — outranks a dynamic one, so this
+ * only ever sees addresses nothing else claimed, and answers the one it was
+ * given with the page and everything else with the site's 404.
+ *
+ * It is written to be opened on a phone a few seconds after a conversation:
+ * the face first so the reader knows whose page it is, then the one thing to
+ * do, as a LinkedIn-blue button, then the way to find out more.
+ */
+const [connect, settings, home] = await Promise.all([getConnectPage(), getSiteSettings(), getHomePage()]);
+
+if (Astro.params.address?.toLowerCase() !== connect.address) {
+	return new Response(null, { status: 404 });
+}
+
+// Changes with every event and says nothing to a search engine, so it is kept
+// out of results; a share of the link still gets a full card.
+Astro.response.headers.set('X-Robots-Tag', 'noindex');
+
+const heading = connectHeading(connect);
+const tagline = taglineParts(connect.tagline);
+const linkedin = linkedinHref(connect, settings.social.linkedin);
+const projects = projectsHref(connect);
+const portrait = portraitImage(home.portrait);
+const description = [connect.tagline, `${connect.linkedinLabel}, or ${connect.projectsLabel.toLowerCase()}.`]
+	.filter(Boolean)
+	.join(' — ');
+
+// This page load's colour, set on <html> so the stylesheet can key on it.
+const paletteName = (await paletteForRequest()).name;
+---
+
+<!doctype html>
+<html lang="en" data-palette={paletteName}>
+	<head>
+		<BaseHead title={`${heading} | ${settings.siteTitle}`} description={description} />
+	</head>
+	<body>
+		<Aurora />
+		<Header />
+		<main id="main" class="connect">
+			<section class="panel" aria-labelledby="connect-heading">
+				<div class="intro">
+					{
+						portrait && (
+							<img
+								class="avatar"
+								src={resizedImage(portrait, 640)}
+								alt={`Portrait of ${settings.siteTitle}`}
+								width="112"
+								height="112"
+								fetchpriority="high"
+							/>
+						)
+					}
+					<p class="name">{settings.siteTitle}</p>
+					<h1 id="connect-heading">
+						{
+							connect.eventName ? (
+								<>
+									{connect.greeting} at <span class="event">{connect.eventName}</span>!
+								</>
+							) : (
+								<>{connect.greeting}!</>
+							)
+						}
+					</h1>
+					{
+						tagline.length > 1 ? (
+							<ul class="tagline" aria-label="Focus areas">
+								{tagline.map((part) => (
+									<li>{part}</li>
+								))}
+							</ul>
+						) : (
+							tagline.length === 1 && <p class="tagline-line">{tagline[0]}</p>
+						)
+					}
+				</div>
+
+				{
+					connect.shares.length > 0 && (
+						<div class="shares">
+							{connect.sharesIntro && <p class="shares-intro">{connect.sharesIntro}</p>}
+							<ul>
+								{connect.shares.map((item) => (
+									<li>
+										<span class="tick" aria-hidden="true">
+											<svg viewBox="0 0 16 16" width="12" height="12">
+												<path
+													d="M3.5 8.5l3 3 6-7"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												/>
+											</svg>
+										</span>
+										{item}
+									</li>
+								))}
+							</ul>
+						</div>
+					)
+				}
+
+				<div class="actions">
+					{
+						/* Same tab on purpose: on a phone a LinkedIn address opens the
+						   app, and a new tab would only leave an empty one behind. */
+						linkedin && (
+							<a class="action action-linkedin" href={linkedin}>
+								<svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20">
+									<path
+										fill="currentColor"
+										d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146Zm4.943 12.248V6.169H2.542v7.225h2.401Zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016Zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4Z"
+									/>
+								</svg>
+								<span>{connect.linkedinLabel}</span>
+							</a>
+						)
+					}
+					<a class="action action-explore" href={projects}>
+						<span>{connect.projectsLabel}</span>
+						<svg class="arrow" viewBox="0 0 16 16" aria-hidden="true" width="16" height="16">
+							<path
+								d="M3 8h9.5M8.5 4l4 4-4 4"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.6"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+						</svg>
+					</a>
+				</div>
+			</section>
+		</main>
+		<Footer />
+
+		<style>
+			.connect {
+				display: grid;
+				place-items: start center;
+				padding: 1.5rem 1.25rem 4rem;
+			}
+
+			/* One frosted card over the colour wash, like the nav pill and the
+			   focus chips, so the page reads as part of the site at a glance. */
+			.panel {
+				width: 100%;
+				max-width: 34rem;
+				padding: 2.25rem 2rem 2rem;
+				border-radius: 28px;
+				background: color-mix(in srgb, var(--color-paper) 72%, transparent);
+				border: 1px solid var(--color-glass-border);
+				box-shadow:
+					0 1px 2px rgb(var(--shadow-rgb) / 5%),
+					0 18px 48px rgb(var(--shadow-rgb) / 10%);
+				backdrop-filter: blur(22px);
+				-webkit-backdrop-filter: blur(22px);
+				animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+			}
+
+			.intro {
+				text-align: center;
+			}
+
+			.avatar {
+				display: block;
+				width: 112px;
+				height: 112px;
+				margin: 0 auto 1rem;
+				border-radius: 50%;
+				object-fit: cover;
+				border: 3px solid var(--color-paper);
+				box-shadow:
+					0 0 0 1px var(--color-sand-200),
+					0 8px 24px rgb(var(--shadow-rgb) / 12%);
+			}
+
+			.name {
+				margin: 0 0 0.35rem;
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: var(--color-ink-muted);
+			}
+
+			h1 {
+				margin: 0;
+				font-size: 2.125rem;
+				line-height: 1.15;
+				letter-spacing: -0.03em;
+				text-wrap: balance;
+			}
+
+			/* The part that changes each event, marked the way a pen would. */
+			.event {
+				/* A long event name may wrap; each line keeps its own mark. */
+				-webkit-box-decoration-break: clone;
+				box-decoration-break: clone;
+				background: linear-gradient(
+					transparent 60%,
+					color-mix(in srgb, var(--accent-2, var(--color-banana)) 55%, transparent) 60%,
+					color-mix(in srgb, var(--accent-1, var(--color-copper-warm)) 45%, transparent) 92%,
+					transparent 92%
+				);
+			}
+
+			.tagline {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.4rem;
+				list-style: none;
+				margin: 1.1rem 0 0;
+				padding: 0;
+			}
+
+			.tagline li {
+				font-family: var(--font-mono);
+				font-size: 0.75rem;
+				color: var(--color-ink-soft);
+				background: var(--color-glass);
+				border: 1px solid var(--color-sand-200);
+				border-radius: 999px;
+				padding: 0.3rem 0.7rem;
+			}
+
+			.tagline-line {
+				margin: 0.9rem 0 0;
+				font-family: var(--font-mono);
+				font-size: 0.8125rem;
+				color: var(--color-ink-soft);
+			}
+
+			.shares {
+				margin: 1.75rem 0 0;
+				padding: 1.1rem 1.25rem;
+				border-radius: 18px;
+				background: color-mix(in srgb, var(--color-paper) 70%, transparent);
+				border: 1px solid var(--color-sand-200);
+			}
+
+			.shares-intro {
+				margin: 0 0 0.6rem;
+				font-size: 0.875rem;
+				font-weight: 500;
+				color: var(--color-ink-muted);
+			}
+
+			.shares ul {
+				display: grid;
+				gap: 0.6rem;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+
+			.shares li {
+				display: flex;
+				align-items: flex-start;
+				gap: 0.7rem;
+				font-size: 1rem;
+				line-height: 1.45;
+				color: var(--color-ink);
+			}
+
+			.tick {
+				flex-shrink: 0;
+				display: grid;
+				place-items: center;
+				width: 1.35rem;
+				height: 1.35rem;
+				margin-top: 0.05rem;
+				border-radius: 50%;
+				color: var(--color-lavender-deep);
+				background: color-mix(in srgb, var(--accent-3, var(--color-sky)) 40%, var(--color-paper));
+			}
+
+			.actions {
+				display: grid;
+				gap: 0.7rem;
+				margin-top: 1.75rem;
+			}
+
+			/* Big enough to hit with a thumb while holding a drink. */
+			.action {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 0.65rem;
+				min-height: 3.5rem;
+				padding: 0.75rem 1.25rem;
+				border-radius: 999px;
+				font-size: 1.0625rem;
+				font-weight: 600;
+				line-height: 1.2;
+				text-align: center;
+				text-decoration: none;
+				transition:
+					transform 0.15s ease,
+					box-shadow 0.2s ease,
+					background-color 0.2s ease,
+					border-color 0.2s ease;
+			}
+
+			.action:active {
+				transform: scale(0.98);
+			}
+
+			/* LinkedIn's own blue, so it is recognised before it is read. The same
+			   in both schemes: it clears 4.5:1 against white text either way. */
+			.action-linkedin {
+				color: #fff;
+				background: #0a66c2;
+				box-shadow:
+					0 1px 2px rgb(10 102 194 / 30%),
+					0 8px 22px rgb(10 102 194 / 28%);
+			}
+
+			.action-linkedin:hover {
+				color: #fff;
+				background: #004182;
+				box-shadow:
+					0 1px 2px rgb(0 65 130 / 30%),
+					0 10px 26px rgb(0 65 130 / 32%);
+			}
+
+			.action-linkedin:focus-visible {
+				outline-color: #0a66c2;
+				outline-offset: 3px;
+				border-radius: 999px;
+			}
+
+			.action-explore {
+				color: var(--color-ink);
+				background: var(--color-paper);
+				border: 1px solid var(--color-sand-200);
+				box-shadow: var(--shadow-card);
+			}
+
+			.action-explore:hover {
+				color: var(--color-ink);
+				border-color: var(--color-sand-300);
+				box-shadow: var(--shadow-card-hover);
+			}
+
+			.action-explore:focus-visible {
+				border-radius: 999px;
+			}
+
+			.arrow {
+				transition: transform 0.2s ease;
+			}
+
+			.action-explore:hover .arrow {
+				transform: translateX(3px);
+			}
+
+			@keyframes rise {
+				from {
+					opacity: 0;
+					transform: translateY(12px);
+				}
+				to {
+					opacity: 1;
+					transform: none;
+				}
+			}
+
+			@media (max-width: 720px) {
+				.connect {
+					padding: 0.75rem 1rem 3rem;
+				}
+				/* Tighter on a phone, so the LinkedIn button is on screen without
+				   scrolling on all but the smallest. */
+				.panel {
+					padding: 1.5rem 1.25rem 1.25rem;
+					border-radius: 24px;
+				}
+				.avatar {
+					width: 84px;
+					height: 84px;
+					margin-bottom: 0.75rem;
+				}
+				h1 {
+					font-size: 1.75rem;
+				}
+				.tagline {
+					margin-top: 0.85rem;
+				}
+				.shares {
+					margin-top: 1.25rem;
+					padding: 0.9rem 1rem;
+				}
+				.shares ul {
+					gap: 0.45rem;
+				}
+				.shares li {
+					font-size: 0.9375rem;
+				}
+				.actions {
+					margin-top: 1.25rem;
+				}
+				.action {
+					min-height: 3.25rem;
+					padding-inline: 0.9rem;
+					font-size: 1rem;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				.panel {
+					animation: none;
+				}
+				.action,
+				.arrow {
+					transition: none;
+				}
+			}
+		</style>
+	</body>
+</html>

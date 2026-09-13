@@ -38,6 +38,21 @@ INSERT INTO portfolio_page (key, data, body_markdown) VALUES ('about', '{
 	"education": [{ "label": "PhD", "detail": "University of Manitoba" }]
 }', E'I’m an engineer, researcher, and technical leader.\n\n## Background\n\nMore than ten years across engineering, industrial automation, robotics, and applied AI.');
 
+-- The event page, at an address other than the default so the smoke test can
+-- tell the CMS's choice is what decides where it answers.
+INSERT INTO portfolio_page (key, data) VALUES ('connect', '{
+	"address": "meet",
+	"eventName": "Queen’s",
+	"greeting": "Nice meeting you",
+	"tagline": "Machine Vision • Robotics • AI",
+	"sharesIntro": "I occasionally share:",
+	"shares": ["Practical engineering/AI projects", "Computer vision & robotics lessons", "Career and professional-development insights"],
+	"linkedinLabel": "Connect with me on LinkedIn",
+	"linkedinUrl": "",
+	"projectsLabel": "Explore my projects",
+	"projectsUrl": "/projects/"
+}');
+
 INSERT INTO portfolio_post (slug, title, description, pub_date, tags, kind, hero_image, body_markdown, status) VALUES
 	('teaching-steel-industry-equipment-to-see', 'Teaching Steel Industry Equipment to See',
 	 'A practical look at how AI, computer vision, and deterministic geometry can work together.',

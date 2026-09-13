@@ -162,6 +162,22 @@ describe.skipIf(!url)('portfolio-data against PostgreSQL', () => {
 		expect(settings.footerBadges).toEqual({ limit: 2, pages: ['home'] });
 	});
 
+	it('reads the connect page, and its defaults before the CMS has saved one', async () => {
+		expect((await data.getConnectPage()).address).toBe('connect');
+
+		await sql`INSERT INTO portfolio_page (key, data) VALUES ('connect', ${sql.json({ address: 'queens', eventName: "Queen's", shares: [] })})`;
+		try {
+			expect(await data.getConnectPage()).toMatchObject({
+				address: 'queens',
+				eventName: "Queen's",
+				shares: [],
+				greeting: 'Nice meeting you',
+			});
+		} finally {
+			await sql`DELETE FROM portfolio_page WHERE key = 'connect'`;
+		}
+	});
+
 	it('serves upload metadata and only the sizes that were recorded', async () => {
 		await expect(
 			data.getUploadedMedia('/uploads/123e4567-e89b-12d3-a456-426614174000.webp'),
